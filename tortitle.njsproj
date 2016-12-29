@@ -5,7 +5,7 @@
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
     <Name>tortitle</Name>
     <RootNamespace>ExpressApp1</RootNamespace>
-    <NameOfLastUsedPublishProfile>ExpressApp120161229024212 - Web Deploy</NameOfLastUsedPublishProfile>
+    <NameOfLastUsedPublishProfile>tortitle - Web Deploy</NameOfLastUsedPublishProfile>
   </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -51,10 +51,10 @@
     <TypeScriptCompile Include="routes\index.ts" />
     <TypeScriptCompile Include="routes\routes.ts" />
     <TypeScriptCompile Include="routes\user.ts" />
-    <None Include="ExpressApp120161229024212 - Web Deploy.pubxml" />
     <Content Include="package.json" />
     <Content Include="public\stylesheets\style.css" />
     <Content Include="README.md" />
+    <None Include="tortitle - Web Deploy.pubxml" />
     <Content Include="views\user.html" />
     <Content Include="views\index.html" />
     <Content Include="views\layout.html" />

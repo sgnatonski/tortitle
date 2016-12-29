@@ -1,10 +1,10 @@
 {
-  "name": "express-app1",
+  "name": "tortitle",
   "version": "0.0.0",
-  "description": "ExpressApp1",
+  "description": "Tortitle",
   "main": "app.js",
   "author": {
-    "name": "Slawomir.Gnatonski"
+    "name": "Slawomir Gnatonski"
   },
   "dependencies": {
     "@types/body-parser": "0.0.33",
@@ -16,7 +16,6 @@
     "azure-storage": "^1.4.0",
     "body-parser": "^1.15.2",
     "express": "^4.14.0",
-    "marko": "^3.13.2",
     "method-override": "^2.3.7",
     "morgan": "*",
     "serve-static": "*",
