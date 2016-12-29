@@ -1,0 +1,25 @@
+{
+  "name": "express-app1",
+  "version": "0.0.0",
+  "description": "ExpressApp1",
+  "main": "app.js",
+  "author": {
+    "name": "Slawomir.Gnatonski"
+  },
+  "dependencies": {
+    "@types/body-parser": "0.0.33",
+    "@types/express": "^4.0.34",
+    "@types/method-override": "0.0.29",
+    "@types/morgan": "^1.7.32",
+    "@types/node": "*",
+    "@types/serve-static": "*",
+    "azure-storage": "^1.4.0",
+    "body-parser": "^1.15.2",
+    "express": "^4.14.0",
+    "marko": "^3.13.2",
+    "method-override": "^2.3.7",
+    "morgan": "*",
+    "serve-static": "*",
+    "vash": "^0.12.2"
+  }
+}
