@@ -1,7 +1,4 @@
-﻿/*
- * GET users listing.
- */
-import * as express from 'express';
+﻿import * as express from 'express';
 
 export function list(req: express.Request, res: express.Response) {
     var items = [];
