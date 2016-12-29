@@ -6,6 +6,18 @@
 		<div class="mui--text-display3">@model.app</div>
 		<br>
 		<br>
-		<button class="mui-btn mui-btn--raised">Get started</button>		
+		<button class="mui-btn mui-btn--raised">Fetch latest movies</button>
+		<table class="mui-table mui-table--bordered">
+			@model.movies.forEach(function(msg){
+			<tr>
+				<td>
+					@msg.name
+				</td>
+				<td>
+					@msg.rating
+				</td>
+			</tr>
+			})
+		</table>		
     })
 })
