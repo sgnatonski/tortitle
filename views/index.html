@@ -9,15 +9,24 @@
 		<p>Tired of searching for torrents only to find out that the release you found isn't and won't be translated to your favorite language?</p>
 		<p>Tortitle was created as a remedy for such inconvenience - it automatically searches for latest torrent releases and tries to match them with subtitles most suitable for you.</p>
 		<button class="mui-btn mui-btn--raised">Fetch latest movies</button>
-		<table class="mui-table mui-table--bordered">
+		<table class="mui-table mui-table--bordered flex">
 			@model.movies.forEach(function(msg){
 			<tr>
-				<td>
-					@msg.name
-				</td>
-				<td>
-					@msg.rating
-				</td>
+                <td>
+                    @if(msg.pictureLink && msg.pictureLink != 'null'){
+                        <img src="@msg.pictureLink" style="height: 160px"/>
+                    }
+                    else{
+                        <div style="height: 160px"></div>
+                    }
+                </td>
+                <td>
+                    <h4><a href="http://imdb.com/title/tt@msg.imdbId">@msg.name</a></h4>
+                    <p><b>@msg.rating</b> (@msg.addedAt.toLocaleDateString("en-US"))</p>
+                </td>
+                <td>
+                    
+                </td>
 			</tr>
 			})
 		</table>		
