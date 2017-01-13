@@ -6,6 +6,11 @@ var bodyParser = require("body-parser");
 var methodOverride = require("method-override");
 var morgan = require("morgan");
 var serveStatic = require("serve-static");
+var nconf = require("nconf");
+var Entities_1 = require("./backend/Entities");
+nconf.argv()
+    .env()
+    .file({ file: './config.json' });
 var app = express();
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
@@ -17,6 +22,7 @@ app.set('views', path.join(__dirname, '/views'));
 app.set('view engine', 'html');
 app.engine("html", require('vash').__express);
 routes.configure(app);
+Entities_1.Entities.initialize(nconf.get('TORTITLESTORAGENAME'), nconf.get('TORTITLESTORAGEKEY'));
 app.listen(app.get('port'), function () {
     console.log('Express server listening on port ' + app.get('port'));
 });

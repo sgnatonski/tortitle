@@ -2,7 +2,11 @@
 var azure = require("azure-storage");
 var Promise = require("es6-promise");
 var Entities_1 = require("./Entities");
-Entities_1.Entities.initialize(process.env.TORTITLESTORAGENAME, process.env.TORTITLESTORAGEKEY);
+function uberTrim(s) {
+    return s && s.length >= 2 && (s[0] === s[s.length - 1])
+        ? s.slice(1, -1).trim()
+        : s;
+}
 var MoviesService;
 (function (MoviesService) {
     function getRecentTopMovies() {
@@ -10,14 +14,14 @@ var MoviesService;
             var query = new azure.TableQuery();
             Entities_1.Entities.queryEntities('imdbentries', query, function (entities, error) {
                 if (error)
-                    reject();
+                    return reject();
                 var movies = entities.map(function (m) { return ({
                     name: m.MovieName,
                     imdbId: m.RowKey,
-                    pictureLink: m.PictureLink,
+                    pictureLink: uberTrim(m.PictureLink),
                     rating: m.Rating,
-                    addedAt: m.AdddedAt
-                }); });
+                    addedAt: m.AdddedAt || new Date(2017, 0)
+                }); }).sort(function (a, b) { return a.addedAt < b.addedAt ? 1 : a.addedAt > b.addedAt ? -1 : 0; });
                 resolve(movies);
             });
         });

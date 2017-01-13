@@ -33,3 +33,4 @@ obj/
 _ReSharper*/
 [Tt]est[Rr]esult*
 *Web Deploy.pubxml
+config.json

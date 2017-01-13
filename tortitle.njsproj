@@ -68,10 +68,10 @@
     <TypeScriptCompile Include="routes\index.ts" />
     <TypeScriptCompile Include="routes\routes.ts" />
     <TypeScriptCompile Include="routes\user.ts" />
+    <Content Include="favicon.ico" />
     <Content Include="package.json" />
     <Content Include="public\stylesheets\style.css" />
     <Content Include="README.md" />
-    <None Include="tortitle - Web Deploy.pubxml" />
     <Content Include="views\user.html" />
     <Content Include="views\index.html" />
     <Content Include="views\layout.html" />

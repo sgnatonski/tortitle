@@ -5,6 +5,12 @@ import * as bodyParser from 'body-parser';
 import * as methodOverride from 'method-override';
 import * as morgan from 'morgan';
 import * as serveStatic from 'serve-static';
+import * as nconf from "nconf";
+import { Entities } from "./backend/Entities";
+
+nconf.argv()
+    .env()
+    .file({ file: './config.json' });
 
 var app = express();
 
@@ -19,6 +25,8 @@ app.set('view engine', 'html');
 app.engine("html", require('vash').__express);
 
 routes.configure(app);
+
+Entities.initialize(nconf.get('TORTITLESTORAGENAME'), nconf.get('TORTITLESTORAGEKEY'));
 
 app.listen(app.get('port'), () => {
     console.log('Express server listening on port ' + app.get('port'));
