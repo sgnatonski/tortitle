@@ -11,8 +11,9 @@
     "@types/express": "^4.0.34",
     "@types/method-override": "0.0.29",
     "@types/morgan": "^1.7.32",
-    "@types/nconf": "*",
+    "@types/nconf": "0.0.33",
     "@types/node": "^6.0.55",
+    "@types/node-cache": "^3.0.30",
     "@types/serve-static": "*",
     "azure-storage": "^1.4.0",
     "body-parser": "^1.15.2",
@@ -21,6 +22,7 @@
     "method-override": "^2.3.7",
     "morgan": "*",
     "nconf": "*",
+    "node-cache": "^4.1.1",
     "serve-static": "*",
     "vash": "^0.12.2"
   }

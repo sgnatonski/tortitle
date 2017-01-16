@@ -12,20 +12,17 @@
 		<table class="mui-table mui-table--bordered flex">
 			@model.movies.forEach(function(msg){
 			<tr>
-                <td>
-                    @if(msg.pictureLink && msg.pictureLink != 'null'){
-                        <img src="@msg.pictureLink" style="height: 160px"/>
+                <td class="img">
+                    @if(msg.pictureLink){
+                        <img src="@msg.pictureLink"/>
                     }
                     else{
-                        <div style="height: 160px"></div>
+                        <div></div>
                     }
                 </td>
-                <td>
+                <td class="desc">
                     <h4><a href="http://imdb.com/title/tt@msg.imdbId">@msg.name</a></h4>
                     <p><b>@msg.rating</b> (@msg.addedAt.toLocaleDateString("en-US"))</p>
-                </td>
-                <td>
-                    
                 </td>
 			</tr>
 			})
