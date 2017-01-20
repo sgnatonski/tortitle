@@ -8,7 +8,33 @@
 		<br>
 		<p>Tired of searching for torrents only to find out that the release you found isn't and won't be translated to your favorite language?</p>
 		<p>Tortitle was created as a remedy for such inconvenience - it automatically searches for latest torrent releases and tries to match them with subtitles most suitable for you.</p>
-		<button class="mui-btn mui-btn--raised">Fetch latest movies</button>
+		<div class="mui-dropdown">
+		    <button class="mui-btn mui-btn--primary" data-mui-toggle="dropdown">
+		        @{
+		            var sorts = {
+                        0: "New first",
+                        1: "Date added &darr;",
+                        2: "Date added &uarr;",
+                        3: "Rating &darr;",
+                        4: "Rating &uarr;",
+                        5: "Title (A-Z)",
+                        6: "Title (Z-A)",
+                    }
+                    var currentSort = sorts[model.sort] || sorts[0];
+                }
+		        @html.raw(currentSort)
+		        <span class="mui-caret"></span>
+		    </button>
+            <ul class="mui-dropdown__menu">
+                <li><a href="/0">@html.raw(sorts[0])</a></li>
+                <li><a href="/1">@html.raw(sorts[1])</a></li>
+                <li><a href="/2">@html.raw(sorts[2])</a></li>
+                <li><a href="/3">@html.raw(sorts[3])</a></li>
+                <li><a href="/4">@html.raw(sorts[4])</a></li>
+                <li><a href="/5">@html.raw(sorts[5])</a></li>
+                <li><a href="/6">@html.raw(sorts[6])</a></li>
+            </ul>
+        </div>
 		<table class="mui-table mui-table--bordered flex">
 			@model.movies.forEach(function(msg){
 			<tr>

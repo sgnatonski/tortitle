@@ -2,16 +2,17 @@
 var moviesService_1 = require("../backend/moviesService");
 var visitCookie = 'TortitleLastVisit';
 function sortMap(movies, sortType) {
+    var defaultSortType = 0;
     var sorts = {
-        0: function () { return movies.sortByDesc(function (x) { return x.addedAt; }); },
-        1: function () { return movies.sortBy(function (x) { return x.addedAt; }); },
-        2: function () { return movies.sortByDesc(function (x) { return x.rating; }); },
-        3: function () { return movies.sortBy(function (x) { return x.rating; }); },
-        4: function () { return movies.sortBy(function (x) { return x.name; }); },
-        5: function () { return movies.sortByDesc(function (x) { return x.name; }); },
-        6: function () { return movies.sortByDesc(function (x) { return x.isNew; }); }
+        0: function () { return movies.sortByDesc(function (x) { return x.isNew; }); },
+        1: function () { return movies.sortByDesc(function (x) { return x.addedAt; }); },
+        2: function () { return movies.sortBy(function (x) { return x.addedAt; }); },
+        3: function () { return movies.sortByDesc(function (x) { return x.rating; }); },
+        4: function () { return movies.sortBy(function (x) { return x.rating; }); },
+        5: function () { return movies.sortBy(function (x) { return x.name; }); },
+        6: function () { return movies.sortByDesc(function (x) { return x.name; }); }
     };
-    return sorts[sortType || 6];
+    return sorts[sortType] || sorts[defaultSortType];
 }
 function setIsNew(movie, date) {
     if (!date || movie.addedAt > date) {
@@ -27,6 +28,7 @@ function index(req, res) {
         var sortedMovies = movies.map(function (x) { return setIsNew(x, lastVisit); }).sortWith(sortMap, sortType);
         res.render('index', {
             app: 'Tortitle',
+            sort: sortType,
             movies: sortedMovies,
             cache: true
         });
