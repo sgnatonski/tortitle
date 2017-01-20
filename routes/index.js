@@ -1,8 +1,7 @@
 "use strict";
 var moviesService_1 = require("../backend/moviesService");
 var visitCookie = 'TortitleLastVisit';
-function sortMap(movies, sortType) {
-    var defaultSortType = 0;
+function sortMap(movies) {
     var sorts = {
         0: function () { return movies.sortByDesc(function (x) { return x.isNew; }); },
         1: function () { return movies.sortByDesc(function (x) { return x.addedAt; }); },
@@ -12,7 +11,7 @@ function sortMap(movies, sortType) {
         5: function () { return movies.sortBy(function (x) { return x.name; }); },
         6: function () { return movies.sortByDesc(function (x) { return x.name; }); }
     };
-    return sorts[sortType] || sorts[defaultSortType];
+    return function (s) { return (sorts[s] || sorts[0])(); };
 }
 function index(req, res) {
     var lastVisitTime = req.cookies[visitCookie];

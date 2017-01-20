@@ -4,8 +4,7 @@ import { IMovie } from "../backend/movie";
 
 const visitCookie = 'TortitleLastVisit';
 
-function sortMap(movies: IMovie[], sortType: number): () => IMovie[] {
-    const defaultSortType = 0;
+function sortMap(movies: IMovie[]): (s) => () => IMovie[] {
     const sorts = {
         0: () => movies.sortByDesc(x => x.isNew),
         1: () => movies.sortByDesc(x => x.addedAt),
@@ -16,7 +15,7 @@ function sortMap(movies: IMovie[], sortType: number): () => IMovie[] {
         6: () => movies.sortByDesc(x => x.name)
     };
 
-    return sorts[sortType] || sorts[defaultSortType];
+    return (s) => sorts[s] || sorts[0];
 }
 
 export function index(req: express.Request, res: express.Response) {

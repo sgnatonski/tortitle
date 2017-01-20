@@ -16,7 +16,7 @@ Array.prototype["sortByDesc"] = function (name) {
     var variable = getVariableName(name);
     return this.sort(function (a, b) { return a[variable] < b[variable] ? 1 : a[variable] > b[variable] ? -1 : 0; });
 };
-Array.prototype["sortWith"] = function (func, selector) {
-    return func(this, selector)();
+Array.prototype["sortWith"] = function (sortMap, selector) {
+    return sortMap(this)(selector);
 };
 //# sourceMappingURL=utils.js.map

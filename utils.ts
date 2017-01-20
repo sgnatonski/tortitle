@@ -3,7 +3,7 @@ declare global {
     interface Array<T> {
         sortBy(name: (o: T) => any): T[];
         sortByDesc(name: (o: T) => any): T[];
-        sortWith(func: (arr: T[], sel: any) => () => T[], selector: any): T[];
+        sortWith(sortMap: (arr: T[]) => (selector: any) => () => T[], selector: any): T[];
     }
 }
 
@@ -26,6 +26,6 @@ Array.prototype["sortByDesc"] = function <TResult>(name: (o: TResult) => any): T
     return this.sort((a, b) => a[variable] < b[variable] ? 1 : a[variable] > b[variable] ? -1 : 0);
 };
 
-Array.prototype["sortWith"] = function <TResult>(func: (arr: TResult[], sel: any) => () => TResult[], selector: any): TResult[] {
-    return func(this, selector)();
+Array.prototype["sortWith"] = function <TResult>(sortMap: (arr: TResult[]) => (selector: any) => () => TResult[], selector: any): TResult[] {
+    return sortMap(this)(selector)();
 };
