@@ -4,19 +4,15 @@ import { IMovie } from "../backend/movie";
 
 const visitCookie = 'TortitleLastVisit';
 
-function sortMap(movies: IMovie[]): (s) => () => IMovie[] {
-    const sorts = {
-        0: () => movies.sortByDesc(x => x.isNew),
-        1: () => movies.sortByDesc(x => x.addedAt),
-        2: () => movies.sortBy(x => x.addedAt),
-        3: () => movies.sortByDesc(x => x.rating),
-        4: () => movies.sortBy(x => x.rating),
-        5: () => movies.sortBy(x => x.name),
-        6: () => movies.sortByDesc(x => x.name)
-    };
-
-    return (s) => sorts[s] || sorts[0];
-}
+const sortMap = (movies: IMovie[]): ISortFuncSelector<IMovie> => ({
+    0: () => movies.sortByDesc(x => x.isNew),
+    1: () => movies.sortByDesc(x => x.addedAt),
+    2: () => movies.sortBy(x => x.addedAt),
+    3: () => movies.sortByDesc(x => x.rating),
+    4: () => movies.sortBy(x => x.rating),
+    5: () => movies.sortBy(x => x.name),
+    6: () => movies.sortByDesc(x => x.name)
+});
 
 export function index(req: express.Request, res: express.Response) {
     var lastVisitTime: string = req.cookies[visitCookie];

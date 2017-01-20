@@ -16,7 +16,11 @@ Array.prototype["sortByDesc"] = function (name) {
     var variable = getVariableName(name);
     return this.sort(function (a, b) { return a[variable] < b[variable] ? 1 : a[variable] > b[variable] ? -1 : 0; });
 };
-Array.prototype["sortWith"] = function (sortMap, selector) {
-    return sortMap(this)(selector);
+Array.prototype["sortWith"] = function (sortMap, selector, defaultSelector) {
+    var sortFunc = sortMap(this);
+    var sort = sortFunc[selector] || sortFunc[defaultSelector || 0];
+    if (sort == null)
+        throw new Error("sortMap function selector does not contain neither given selector " + selector + " or default one");
+    return sort();
 };
 //# sourceMappingURL=utils.js.map

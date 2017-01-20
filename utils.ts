@@ -3,7 +3,11 @@ declare global {
     interface Array<T> {
         sortBy(name: (o: T) => any): T[];
         sortByDesc(name: (o: T) => any): T[];
-        sortWith(sortMap: (arr: T[]) => (selector: any) => () => T[], selector: any): T[];
+        sortWith(sortMap: (arr: T[]) => ISortFuncSelector<T>, selector: number, defaultSelector?: number): T[];
+    }
+
+    interface ISortFuncSelector<T> {
+        [index: number]: () => T[];
     }
 }
 
@@ -26,6 +30,9 @@ Array.prototype["sortByDesc"] = function <TResult>(name: (o: TResult) => any): T
     return this.sort((a, b) => a[variable] < b[variable] ? 1 : a[variable] > b[variable] ? -1 : 0);
 };
 
-Array.prototype["sortWith"] = function <TResult>(sortMap: (arr: TResult[]) => (selector: any) => () => TResult[], selector: any): TResult[] {
-    return sortMap(this)(selector)();
+Array.prototype["sortWith"] = function <TResult>(sortMap: (arr: TResult[]) => ISortFuncSelector<TResult>, selector: number, defaultSelector?: number): TResult[] {
+    var sortFunc = sortMap(this);
+    var sort = sortFunc[selector] || sortFunc[defaultSelector || 0];
+    if (sort == null) throw new Error("sortMap function selector does not contain neither given selector " + selector + " or default one");
+    return sort();
 };
