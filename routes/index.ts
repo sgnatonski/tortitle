@@ -2,7 +2,10 @@
 import { MoviesService } from "../backend/moviesService";
 import { IMovie } from "../backend/movie";
 
+const visitCookie = 'TortitleLastVisit';
+
 function sortMap(movies: IMovie[], sortType: number): () => IMovie[] {
+    const defaultSortType = 6;
     const sorts = {
         0: () => movies.sortByDesc(x => x.addedAt),
         1: () => movies.sortBy(x => x.addedAt),
@@ -13,19 +16,7 @@ function sortMap(movies: IMovie[], sortType: number): () => IMovie[] {
         6: () => movies.sortByDesc(x => x.isNew)
     };
 
-    return sorts[sortType || 6];
-}
-
-function refreshLastVisitCookie(req: express.Request, res: express.Response) : Date {
-    var lastVisitTime: string = req.cookies['TortitleLastVisit'];
-    var dateLastVisit = lastVisitTime ? new Date(Date.parse(lastVisitTime)) : undefined;
-    var oneWeekAgo = new Date();
-    oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
-    if (!dateLastVisit || dateLastVisit < oneWeekAgo) {
-        let options = { maxAge: 1000 * 60 * 60 * 24 * 30 };
-        res.cookie('TortitleLastVisit', new Date().toISOString(), options);
-    }
-    return dateLastVisit;
+    return sorts[sortType] || sorts[defaultSortType];
 }
 
 function setIsNew(movie: IMovie, date: Date) {
@@ -37,14 +28,27 @@ function setIsNew(movie: IMovie, date: Date) {
 
 export function index(req: express.Request, res: express.Response) {
     MoviesService.getCachedRecentTopMovies().then(movies => {
-        var lastVisit = refreshLastVisitCookie(req, res);
-        var mapped = movies.map(x => setIsNew(x, lastVisit));
+        var sortType = parseInt(req.params.sort);
+        var lastVisitTime: string = req.cookies[visitCookie];
+        var lastVisit = lastVisitTime ? new Date(Date.parse(lastVisitTime)) : undefined;
 
-        let sortType = parseInt(req.params.sort);
+        var sortedMovies = movies.map(x => setIsNew(x, lastVisit)).sortWith(sortMap, sortType);
+
         res.render('index', {
             app: 'Tortitle',
-            movies: mapped.sortWith(sortMap, sortType),
+            movies: sortedMovies,
             cache: true
         });
     });
 };
+
+export function lastVisit(req: express.Request, res: express.Response) {
+    var lastVisitTime: string = req.cookies[visitCookie];
+    var dateLastVisit = lastVisitTime ? new Date(Date.parse(lastVisitTime)) : undefined;
+    var oneWeekAgo = new Date();
+    oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+    if (!dateLastVisit || dateLastVisit < oneWeekAgo) {
+        let options = { maxAge: 1000 * 60 * 60 * 24 * 30 };
+        res.cookie(visitCookie, new Date().toISOString(), options);
+    }
+}
