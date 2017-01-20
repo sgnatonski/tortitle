@@ -7,13 +7,13 @@ var movie_1 = require("./movie");
 var movieCache = new Cache({ stdTTL: 60, checkperiod: 120 });
 var MoviesService;
 (function (MoviesService) {
-    function getCachedRecentTopMovies() {
+    function getCachedRecentTopMovies(lastVisit) {
         var movieCacheKey = "movies";
         return new Promise.Promise(function (resolve, reject) {
             movieCache.get(movieCacheKey, function (error, cached) {
                 if (error)
                     return reject();
-                return cached ? resolve(cached) : getRecentTopMovies().then(function (movies) {
+                return cached ? resolve(cached) : getRecentTopMovies(lastVisit).then(function (movies) {
                     movieCache.set(movieCacheKey, movies);
                     return resolve(movies);
                 });
@@ -21,14 +21,14 @@ var MoviesService;
         });
     }
     MoviesService.getCachedRecentTopMovies = getCachedRecentTopMovies;
-    function getRecentTopMovies() {
+    function getRecentTopMovies(lastVisit) {
         var movieTableName = "imdbentries";
         return new Promise.Promise(function (resolve, reject) {
             var query = new azure.TableQuery();
             Entities_1.Entities.queryEntities(movieTableName, query, function (entities, error) {
                 if (error)
                     return reject();
-                var movies = entities.map(movie_1.map);
+                var movies = entities.map(function (e) { return movie_1.map(e, lastVisit); });
                 return resolve(movies);
             });
         });

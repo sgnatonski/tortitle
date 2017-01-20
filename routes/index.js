@@ -14,18 +14,12 @@ function sortMap(movies, sortType) {
     };
     return sorts[sortType] || sorts[defaultSortType];
 }
-function setIsNew(movie, date) {
-    if (!date || movie.addedAt > date) {
-        movie.isNew = true;
-    }
-    return movie;
-}
 function index(req, res) {
-    moviesService_1.MoviesService.getCachedRecentTopMovies().then(function (movies) {
+    var lastVisitTime = req.cookies[visitCookie];
+    var lastVisit = lastVisitTime ? new Date(Date.parse(lastVisitTime)) : undefined;
+    moviesService_1.MoviesService.getCachedRecentTopMovies(lastVisit).then(function (movies) {
         var sortType = parseInt(req.params.sort);
-        var lastVisitTime = req.cookies[visitCookie];
-        var lastVisit = lastVisitTime ? new Date(Date.parse(lastVisitTime)) : undefined;
-        var sortedMovies = movies.map(function (x) { return setIsNew(x, lastVisit); }).sortWith(sortMap, sortType);
+        var sortedMovies = movies.sortWith(sortMap, sortType);
         res.render('index', {
             app: 'Tortitle',
             sort: sortType,

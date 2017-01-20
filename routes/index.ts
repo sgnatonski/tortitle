@@ -19,20 +19,14 @@ function sortMap(movies: IMovie[], sortType: number): () => IMovie[] {
     return sorts[sortType] || sorts[defaultSortType];
 }
 
-function setIsNew(movie: IMovie, date: Date) {
-    if (!date || movie.addedAt > date) {
-        movie.isNew = true;
-    }
-    return movie;
-}
-
 export function index(req: express.Request, res: express.Response) {
-    MoviesService.getCachedRecentTopMovies().then(movies => {
-        var sortType = parseInt(req.params.sort);
-        var lastVisitTime: string = req.cookies[visitCookie];
-        var lastVisit = lastVisitTime ? new Date(Date.parse(lastVisitTime)) : undefined;
+    var lastVisitTime: string = req.cookies[visitCookie];
+    var lastVisit = lastVisitTime ? new Date(Date.parse(lastVisitTime)) : undefined;
 
-        var sortedMovies = movies.map(x => setIsNew(x, lastVisit)).sortWith(sortMap, sortType);
+    MoviesService.getCachedRecentTopMovies(lastVisit).then(movies => {
+        var sortType = parseInt(req.params.sort);
+        
+        var sortedMovies = movies.sortWith(sortMap, sortType);
 
         res.render('index', {
             app: 'Tortitle',

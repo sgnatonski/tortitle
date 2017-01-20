@@ -7,12 +7,12 @@ import { IMovie, IMovieEntity, map } from "./movie";
 const movieCache = new Cache({ stdTTL: 60, checkperiod: 120 });
 
 export module MoviesService {
-    export function getCachedRecentTopMovies() {
+    export function getCachedRecentTopMovies(lastVisit: Date) {
         const movieCacheKey = "movies";
         return new Promise.Promise<IMovie[]>((resolve, reject) => {
             movieCache.get<IMovie[]>(movieCacheKey, (error, cached) => {
                 if (error) return reject();
-                return cached ? resolve(cached) : getRecentTopMovies().then(movies => {
+                return cached ? resolve(cached) : getRecentTopMovies(lastVisit).then(movies => {
                     movieCache.set(movieCacheKey, movies);
                     return resolve(movies);
                 });
@@ -20,13 +20,13 @@ export module MoviesService {
         });
     }
 
-    export function getRecentTopMovies() {
+    export function getRecentTopMovies(lastVisit: Date) {
         const movieTableName = "imdbentries";
         return new Promise.Promise<IMovie[]>((resolve, reject) => {
             var query = new azure.TableQuery();
             Entities.queryEntities<IMovieEntity>(movieTableName, query, (entities, error) => {
                 if (error) return reject();
-                var movies = entities.map(map);
+                var movies = entities.map(e => map(e, lastVisit));
                 return resolve(movies);
             });
         });
