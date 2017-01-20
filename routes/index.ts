@@ -25,7 +25,6 @@ export function index(req: express.Request, res: express.Response) {
 
     MoviesService.getCachedRecentTopMovies(lastVisit).then(movies => {
         var sortType = parseInt(req.params.sort);
-        
         var sortedMovies = movies.sortWith(sortMap, sortType);
 
         res.render('index', {

@@ -5,10 +5,6 @@ declare global {
         sortByDesc(name: (o: T) => any): T[];
         sortWith(func: (arr: T[], sel: any) => () => T[], selector: any): T[];
     }
-
-    interface String {
-        uberTrim(): string;
-    }
 }
 
 var varExtractor = new RegExp("return (.*);");
@@ -32,10 +28,4 @@ Array.prototype["sortByDesc"] = function <TResult>(name: (o: TResult) => any): T
 
 Array.prototype["sortWith"] = function <TResult>(func: (arr: TResult[], sel: any) => () => TResult[], selector: any): TResult[] {
     return func(this, selector)();
-};
-
-String.prototype["uberTrim"] = function() {
-    return this.length >= 2 && (this[0] === this[this.length - 1])
-        ? this.slice(1, -1).trim()
-        : this;
 };

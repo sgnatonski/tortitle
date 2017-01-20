@@ -19,9 +19,4 @@ Array.prototype["sortByDesc"] = function (name) {
 Array.prototype["sortWith"] = function (func, selector) {
     return func(this, selector)();
 };
-String.prototype["uberTrim"] = function () {
-    return this.length >= 2 && (this[0] === this[this.length - 1])
-        ? this.slice(1, -1).trim()
-        : this;
-};
 //# sourceMappingURL=utils.js.map
