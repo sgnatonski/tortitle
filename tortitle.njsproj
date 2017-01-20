@@ -68,7 +68,7 @@
     <TypeScriptCompile Include="routes\index.ts" />
     <TypeScriptCompile Include="routes\routes.ts" />
     <TypeScriptCompile Include="routes\user.ts" />
-    <Content Include="favicon.ico" />
+    <Content Include="public\favicon.ico" />
     <Content Include="package.json" />
     <Content Include="public\stylesheets\style.css" />
     <Content Include="README.md" />
