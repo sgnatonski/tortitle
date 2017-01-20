@@ -20,10 +20,13 @@
                         <div></div>
                     }
                 </td>
-                <td class="desc">
-                    <h4><a href="http://imdb.com/title/tt@msg.imdbId">@msg.name</a></h4>
-                    <p><b>@msg.rating</b> (@msg.addedAt.toLocaleDateString("en-US"))</p>
-                </td>
+			    <td class="desc">
+                    @if(msg.isNew){
+                    <b>NEW</b>
+                    }
+			        <h4><a href="http://imdb.com/title/tt@msg.imdbId">@msg.name</a></h4>
+			        <p><b>@(msg.rating == 0 ? 'N/A' : msg.rating)</b> (@msg.addedAt.toLocaleDateString("en-US"))</p>
+			    </td>
 			</tr>
 			})
 		</table>		

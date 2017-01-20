@@ -4,5 +4,6 @@ import * as user from "./user";
 
 export function configure(app: express.Express) {
     app.get('/', index.index);
+    app.get('/:sort', index.index);
     app.get('/users', user.list);
 }

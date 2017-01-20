@@ -3,15 +3,18 @@ var express = require("express");
 var routes = require("./routes/routes");
 var path = require("path");
 var bodyParser = require("body-parser");
+var cookieParser = require("cookie-parser");
 var methodOverride = require("method-override");
 var morgan = require("morgan");
 var serveStatic = require("serve-static");
 var nconf = require("nconf");
 var Entities_1 = require("./backend/Entities");
+require("./utils");
 nconf.argv()
     .env()
     .file({ file: './config.json' });
 var app = express();
+app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(methodOverride());

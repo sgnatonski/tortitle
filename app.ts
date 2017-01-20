@@ -2,11 +2,13 @@
 import * as routes from './routes/routes';
 import * as path from 'path';
 import * as bodyParser from 'body-parser';
+import * as cookieParser from 'cookie-parser';
 import * as methodOverride from 'method-override';
 import * as morgan from 'morgan';
 import * as serveStatic from 'serve-static';
 import * as nconf from "nconf";
 import { Entities } from "./backend/Entities";
+import "./utils";
 
 nconf.argv()
     .env()
@@ -14,6 +16,7 @@ nconf.argv()
 
 var app = express();
 
+app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(methodOverride());

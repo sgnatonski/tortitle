@@ -1,11 +1,11 @@
-﻿import {uberTrim} from "../utils";
-
+﻿
 export interface IMovie {
     name: string;
     imdbId: string;
     pictureLink: string;
     rating: number;
     addedAt: Date;
+    isNew: boolean;
 }
 
 export interface IMovieEntity {
@@ -18,12 +18,13 @@ export interface IMovieEntity {
 }
 
 export function map(m: IMovieEntity) {
-    var plink = uberTrim(m.PictureLink);
+    var plink = (m.PictureLink || "").uberTrim();
     return <IMovie>{
         name: m.MovieName,
         imdbId: m.RowKey,
         pictureLink: plink === "null" ? "" : plink,
-        rating: m.Rating,
-        addedAt: m.AdddedAt || new Date(2017, 0)
+        rating: isNaN(m.Rating) ? 0 : m.Rating,
+        addedAt: m.AdddedAt || new Date(2017, 0),
+        isNew: false
     };
 }

@@ -1,13 +1,13 @@
 "use strict";
-var utils_1 = require("../utils");
 function map(m) {
-    var plink = utils_1.uberTrim(m.PictureLink);
+    var plink = (m.PictureLink || "").uberTrim();
     return {
         name: m.MovieName,
         imdbId: m.RowKey,
         pictureLink: plink === "null" ? "" : plink,
-        rating: m.Rating,
-        addedAt: m.AdddedAt || new Date(2017, 0)
+        rating: isNaN(m.Rating) ? 0 : m.Rating,
+        addedAt: m.AdddedAt || new Date(2017, 0),
+        isNew: false
     };
 }
 exports.map = map;
