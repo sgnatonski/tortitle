@@ -1,1 +1,0 @@
-node.exe --harmony %1 %2 %3

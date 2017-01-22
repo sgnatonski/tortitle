@@ -1,0 +1,26 @@
+﻿{
+  "disabled": false,
+  "bindings": [
+    {
+      "name": "timer",
+      "type": "timerTrigger",
+      "direction": "in",
+      "schedule": "0 0 */2 * * *",
+      "runOnStartup": true
+    },
+    {
+      "name": "imdbTable",
+      "type": "table",
+      "tableName": "imdbentries",
+      "connection": "AzureWebJobsStorage",
+      "direction": "inout"
+    },
+    {
+      "name": "torrentsTable",
+      "type": "table",
+      "tableName": "torrents",
+      "connection": "AzureWebJobsStorage",
+      "direction": "inout"
+    }
+  ]
+}
