@@ -27,4 +27,10 @@ Array.prototype["sortWith"] = function (sortMap, selector, defaultSelector) {
 Array.prototype["groupBy"] = function groupBy(keyGetter) {
     return _.groupBy(this, keyGetter);
 };
+Array.prototype["distinct"] = function distinct() {
+    return _.uniq(this);
+};
+Array.prototype["distinctBy"] = function distinctBy(keyGetter) {
+    return _.uniqBy(this, keyGetter);
+};
 //# sourceMappingURL=utils.js.map

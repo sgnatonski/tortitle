@@ -8,6 +8,8 @@ declare global {
         sortWith(sortMap: (arr: T[]) => ISortFuncSelector<T>, selector: number, defaultSelector?: number): T[];
         groupBy(keyGetter: (obj: T) => number): IGroupMapNumber<T>;
         groupBy(keyGetter: (obj: T) => string): IGroupMapString<T>;
+        distinct(): T[];
+        distinctBy(keyGetter: (obj: T) => any): T[];
     }
 
     interface ISortFuncSelector<T> {
@@ -51,4 +53,12 @@ Array.prototype["sortWith"] = function <TResult>(sortMap: (arr: TResult[]) => IS
 
 Array.prototype["groupBy"] = function groupBy<TResult>(keyGetter: (obj: TResult) => any) {
     return _.groupBy(this, keyGetter);
+}
+
+Array.prototype["distinct"] = function distinct<TResult>() {
+    return _.uniq(this);
+}
+
+Array.prototype["distinctBy"] = function distinctBy<TResult>(keyGetter: (obj: TResult) => any) {
+    return _.uniqBy(this, keyGetter);
 }
