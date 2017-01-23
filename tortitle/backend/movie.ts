@@ -8,6 +8,7 @@ export interface IMovie {
     addedAt: Date;
     isNew: boolean;
     torrents: ITorrent[];
+    qualities: string[];
 }
 
 export interface IMovieEntity {
@@ -21,12 +22,15 @@ export interface IMovieEntity {
 
 export function map(m: IMovieEntity, t: IGroupMapString<ITorrentEntity>, date: Date) {
     var added = m.AdddedAt || new Date(2017, 0);
+    var torrents = (t[m.RowKey] || []).map(x => torrentMap(x, date));
+    var qualities = torrents.map(x => x.quality).distinct();
     return <IMovie>{
         name: m.MovieName,
         imdbId: m.RowKey,
         pictureLink: m.PictureLink,
         rating: isNaN(m.Rating) ? 0 : m.Rating,
-        torrents: (t[m.RowKey] || []).map(x => torrentMap(x, date)),
+        torrents: torrents,
+        qualities: qualities,
         addedAt: added,
         isNew: !date || added > date
     };
