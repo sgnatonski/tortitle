@@ -1,4 +1,5 @@
 ﻿import * as azure from "azure-storage";
+import * as Promise from "es6-promise";
 
 var tableService: azure.TableService;
 
@@ -20,14 +21,16 @@ export module Entities {
         tableService = azure.createTableService(accountName, accountKey, undefined);
     }
 
-    export function queryEntities<T>(table: string, query: azure.TableQuery, callback: (result: Array<T>, error: Error) => void) {
-        tableService.queryEntities(table, query, null, (error, result, response) => {
-            if (error) {
-                callback(null, error);
-            } else {
-                var entities = result.entries.map(m => map<any, T>(m));
-                callback(entities, null);
-            }
+    export function queryEntities<T>(table: string, query: azure.TableQuery) {
+        return new Promise.Promise<T[]>((resolve, reject) => {
+            tableService.queryEntities(table, query, null, (error, result, response) => {
+                if (error) {
+                    reject(error);
+                } else {
+                    var entities = result.entries.map(m => map<any, T>(m));
+                    resolve(entities);
+                }
+            });
         });
     }
 }

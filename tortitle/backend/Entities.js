@@ -1,5 +1,6 @@
 "use strict";
 var azure = require("azure-storage");
+var Promise = require("es6-promise");
 var tableService;
 var Entities;
 (function (Entities) {
@@ -15,15 +16,17 @@ var Entities;
         tableService = azure.createTableService(accountName, accountKey, undefined);
     }
     Entities.initialize = initialize;
-    function queryEntities(table, query, callback) {
-        tableService.queryEntities(table, query, null, function (error, result, response) {
-            if (error) {
-                callback(null, error);
-            }
-            else {
-                var entities = result.entries.map(function (m) { return map(m); });
-                callback(entities, null);
-            }
+    function queryEntities(table, query) {
+        return new Promise.Promise(function (resolve, reject) {
+            tableService.queryEntities(table, query, null, function (error, result, response) {
+                if (error) {
+                    reject(error);
+                }
+                else {
+                    var entities = result.entries.map(function (m) { return map(m); });
+                    resolve(entities);
+                }
+            });
         });
     }
     Entities.queryEntities = queryEntities;

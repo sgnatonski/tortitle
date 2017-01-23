@@ -20,16 +20,17 @@ var MoviesService;
     MoviesService.getCachedRecentTopMovies = getCachedRecentTopMovies;
     function getRecentTopMovies(lastVisit) {
         var movieTableName = "imdbentries";
-        var promise = new Promise.Promise(function (resolve, reject) {
-            var query = new azure.TableQuery();
-            Entities_1.Entities.queryEntities(movieTableName, query, function (entities, error) { return error ? reject(error) : resolve(entities); });
-        }).then(function (movies) {
+        var torrentTableName = "torrents";
+        var query = new azure.TableQuery();
+        var promise = Entities_1.Entities.queryEntities(movieTableName, query)
+            .then(function (movies) {
             return new Promise.Promise(function (resolve, reject) {
-                getTorrents()
+                Entities_1.Entities.queryEntities(torrentTableName, new azure.TableQuery())
                     .then(function (torrents) { return resolve({ movies: movies, torrents: torrents }); })
                     .catch(function (error) { return reject(error); });
             });
-        }).then(function (value) {
+        })
+            .then(function (value) {
             var torrentsByImdb = value.torrents.groupBy(function (x) { return x.ImdbId; });
             var movies = value.movies.map(function (e) { return movie_1.map(e, torrentsByImdb, lastVisit); });
             return movies;
@@ -37,12 +38,5 @@ var MoviesService;
         return promise;
     }
     MoviesService.getRecentTopMovies = getRecentTopMovies;
-    function getTorrents() {
-        var torrentTableName = "torrents";
-        return new Promise.Promise(function (resolve, reject) {
-            var query = new azure.TableQuery();
-            Entities_1.Entities.queryEntities(torrentTableName, query, function (entities, error) { return error ? reject(error) : resolve(entities); });
-        });
-    }
 })(MoviesService = exports.MoviesService || (exports.MoviesService = {}));
 //# sourceMappingURL=moviesService.js.map
