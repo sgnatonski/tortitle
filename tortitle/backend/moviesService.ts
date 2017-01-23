@@ -11,11 +11,11 @@ export module MoviesService {
         const movieCacheKey = "movies";
         return new Promise.Promise<IMovie[]>((resolve, reject) => {
             movieCache.get<IMovie[]>(movieCacheKey, (error, cached) => {
-                if (error) return reject();
+                if (error) return reject(error);
                 return cached ? resolve(cached) : getRecentTopMovies(lastVisit).then(movies => {
                     movieCache.set(movieCacheKey, movies);
                     return resolve(movies);
-                });
+                }, e => reject(e));
             });
         });
     }
@@ -25,7 +25,7 @@ export module MoviesService {
         return new Promise.Promise<IMovie[]>((resolve, reject) => {
             var query = new azure.TableQuery();
             Entities.queryEntities<IMovieEntity>(movieTableName, query, (entities, error) => {
-                if (error) return reject();
+                if (error) return reject(error);
                 var movies = entities.map(e => map(e, lastVisit));
                 return resolve(movies);
             });

@@ -12,11 +12,11 @@ var MoviesService;
         return new Promise.Promise(function (resolve, reject) {
             movieCache.get(movieCacheKey, function (error, cached) {
                 if (error)
-                    return reject();
+                    return reject(error);
                 return cached ? resolve(cached) : getRecentTopMovies(lastVisit).then(function (movies) {
                     movieCache.set(movieCacheKey, movies);
                     return resolve(movies);
-                });
+                }, function (e) { return reject(e); });
             });
         });
     }
@@ -27,7 +27,7 @@ var MoviesService;
             var query = new azure.TableQuery();
             Entities_1.Entities.queryEntities(movieTableName, query, function (entities, error) {
                 if (error)
-                    return reject();
+                    return reject(error);
                 var movies = entities.map(function (e) { return movie_1.map(e, lastVisit); });
                 return resolve(movies);
             });
