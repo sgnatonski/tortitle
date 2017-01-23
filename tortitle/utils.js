@@ -1,4 +1,5 @@
 "use strict";
+var _ = require("lodash");
 var varExtractor = new RegExp("return (.*);");
 function getVariableName(name) {
     var m = varExtractor.exec(name + "");
@@ -22,5 +23,8 @@ Array.prototype["sortWith"] = function (sortMap, selector, defaultSelector) {
     if (sort == null)
         throw new Error("sortMap function selector does not contain neither given selector " + selector + " or default one");
     return sort();
+};
+Array.prototype["groupBy"] = function groupBy(keyGetter) {
+    return _.groupBy(this, keyGetter);
 };
 //# sourceMappingURL=utils.js.map

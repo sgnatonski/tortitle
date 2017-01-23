@@ -1,13 +1,25 @@
-﻿export { }
+﻿import * as _ from "lodash";
+
+export { }
 declare global {
     interface Array<T> {
         sortBy(name: (o: T) => any): T[];
         sortByDesc(name: (o: T) => any): T[];
         sortWith(sortMap: (arr: T[]) => ISortFuncSelector<T>, selector: number, defaultSelector?: number): T[];
+        groupBy(keyGetter: (obj: T) => number): IGroupMapNumber<T>;
+        groupBy(keyGetter: (obj: T) => string): IGroupMapString<T>;
     }
 
     interface ISortFuncSelector<T> {
         [index: number]: () => T[];
+    }
+
+    interface IGroupMapString<T> {
+        [index: string]: T[];
+    }
+
+    interface IGroupMapNumber<T> {
+        [index: number]: T[];
     }
 }
 
@@ -36,3 +48,7 @@ Array.prototype["sortWith"] = function <TResult>(sortMap: (arr: TResult[]) => IS
     if (sort == null) throw new Error("sortMap function selector does not contain neither given selector " + selector + " or default one");
     return sort();
 };
+
+Array.prototype["groupBy"] = function groupBy<TResult>(keyGetter: (obj: TResult) => any) {
+    return _.groupBy(this, keyGetter);
+}
