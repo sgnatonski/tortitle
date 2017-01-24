@@ -1,18 +1,14 @@
 ﻿@html.extend('layout', function(model){
-    @html.block('content', function(model){            
+@html.block('content', function(model){       
+    <div class="mui--text-center">
         <div class="mui--appbar-height"></div>
-		<br>
-		<br>
-		<div class="mui--text-display3">@model.app</div>
-		<br>
-		<br>
-		<p>Tired of searching for torrents only to find out that the release you found isn't and won't be translated to your favorite language?</p>
-		<p>Tortitle was created as a remedy for such inconvenience - it automatically searches for latest torrent releases and tries to match them with subtitles most suitable for you.</p>
-		<br>
+        <div class="mui--text-display3"><h1>@model.app</h1></div>
+        <p>Tired of searching for torrents only to find out that the release you found isn't and won't be translated to your favorite language?</p>
+        <p>Tortitle was created as a remedy for such inconvenience - it automatically searches for latest torrent releases and tries to match them with subtitles most suitable for you.</p>
         <div class="mui-dropdown">
-		    <button class="mui-btn mui-btn--primary" data-mui-toggle="dropdown">
-		        @{
-		            var sorts = {
+            <button class="mui-btn mui-btn--primary" data-mui-toggle="dropdown">
+                @{
+                    var sorts = {
                         0: "New first",
                         1: "Date added &darr;",
                         2: "Date added &uarr;",
@@ -23,9 +19,9 @@
                     }
                     var currentSort = sorts[model.sort] || sorts[0];
                 }
-		        @html.raw(currentSort)
-		        <span class="mui-caret"></span>
-		    </button>
+                @html.raw(currentSort)
+                <span class="mui-caret"></span>
+            </button>
             <ul class="mui-dropdown__menu">
                 <li><a href="/0">@html.raw(sorts[0])</a></li>
                 <li><a href="/1">@html.raw(sorts[1])</a></li>
@@ -36,30 +32,33 @@
                 <li><a href="/6">@html.raw(sorts[6])</a></li>
             </ul>
         </div>
-		<table class="mui-table mui-table--bordered flex">
-			@model.movies.forEach(function(msg){
-			<tr>
-                <td class="img">
-                    @if(msg.pictureLink){
-                        <img src="@msg.pictureLink"/>
-                    }
-                    else{
-                        <div></div>
-                    }
-                </td>
-			    <td class="desc">
-			        <h4><small><b>@(msg.isNew ? "NEW" : "")</b></small> <a href="http://imdb.com/title/tt@msg.imdbId">@msg.name</a></h4>
-			        <p class="m-info"><span><b>@(msg.rating == 0 ? 'N/A' : msg.rating)</b></span><span>(@msg.addedAt.toLocaleDateString("en-US"))</span></p>
-			        <p>Torrents: @msg.torrents.length </p>
-                    <small><i>@msg.qualities</i></small>
-			    </td>
-			</tr>
-			})
-        </table>	
-        @if(model.nextPage){
-        <br>
-        <a class="mui-btn mui-btn--primary" href="/@model.sort/@model.nextPage">Show more</a>	
-        <br>
-        }
-    })
+    </div>
+	<table class="mui-table mui-table--bordered flex">
+		@model.movies.forEach(function(msg){
+		<tr>
+            <td class="img">
+                @if(msg.pictureLink){
+                    <img src="@msg.pictureLink"/>
+                }
+                else{
+                    <div></div>
+                }
+            </td>
+			<td class="desc">
+			    <h4><small><b>@(msg.isNew ? "NEW" : "")</b></small> <a href="http://imdb.com/title/tt@msg.imdbId">@msg.name</a></h4>
+			    <p class="m-info"><span><b>@(msg.rating == 0 ? 'N/A' : msg.rating)</b></span><span>(@msg.addedAt.toLocaleDateString("en-US"))</span></p>
+			    <p>Torrents: @msg.torrents.length </p>
+                <small><i>@msg.qualities</i></small>
+			</td>
+		</tr>
+		})
+    </table>	
+    <div class="mui--text-center">
+    @if(model.nextPage){
+    <br>
+    <a class="mui-btn mui-btn--primary" href="/@model.sort/@model.nextPage">Show more</a>	
+    <br>
+    } 
+    </div>
+})
 })

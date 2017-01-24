@@ -71,6 +71,11 @@ footer {
     max-width: 360px;
 }
 
+.flex > tbody > tr > td {
+    padding: 0px;
+    padding-left: 10px;
+}
+
 .flex > tbody > tr > td.img > *{
     width: 110px;
     height: 160px;
