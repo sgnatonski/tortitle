@@ -8,7 +8,8 @@
 		<br>
 		<p>Tired of searching for torrents only to find out that the release you found isn't and won't be translated to your favorite language?</p>
 		<p>Tortitle was created as a remedy for such inconvenience - it automatically searches for latest torrent releases and tries to match them with subtitles most suitable for you.</p>
-		<div class="mui-dropdown">
+		<br>
+        <div class="mui-dropdown">
 		    <button class="mui-btn mui-btn--primary" data-mui-toggle="dropdown">
 		        @{
 		            var sorts = {
@@ -47,19 +48,18 @@
                     }
                 </td>
 			    <td class="desc">
-                    <b>@(msg.isNew ? "NEW" : "")</b>
-			        <h4><a href="http://imdb.com/title/tt@msg.imdbId">@msg.name</a></h4>
-			        <p><b>@(msg.rating == 0 ? 'N/A' : msg.rating)</b> (@msg.addedAt.toLocaleDateString("en-US"))</p>
+			        <h4><small><b>@(msg.isNew ? "NEW" : "")</b></small> <a href="http://imdb.com/title/tt@msg.imdbId">@msg.name</a></h4>
+			        <p class="m-info"><span><b>@(msg.rating == 0 ? 'N/A' : msg.rating)</b></span><span>(@msg.addedAt.toLocaleDateString("en-US"))</span></p>
 			        <p>Torrents: @msg.torrents.length </p>
-                    <p>
-                        <small><i>@msg.qualities</i></small>
-                    </p>
+                    <small><i>@msg.qualities</i></small>
 			    </td>
 			</tr>
 			})
         </table>	
         @if(model.nextPage){
+        <br>
         <a class="mui-btn mui-btn--primary" href="/@model.sort/@model.nextPage">Show more</a>	
+        <br>
         }
     })
 })

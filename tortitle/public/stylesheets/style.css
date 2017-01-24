@@ -60,12 +60,13 @@ footer {
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
+    align-items: stretch;
 }
 
 .flex > tbody > tr{
     flex-grow: 1;
     flex-shrink: 1;
-    align-self: flex-start;
+    align-self: stretch;
     width: 360px;
     max-width: 360px;
 }
@@ -78,4 +79,17 @@ footer {
 
 .flex > tbody > tr > td.desc{
     width: 100%;
+    vertical-align: top;
+}
+
+.flex > tbody > tr > td.desc > h4{
+    margin-top: 0px;
+    margin-bottom: 0px;
+    text-align: left;
+}
+
+p.m-info > span {
+    width: 50%;
+    display: inline-block;
+    text-align: left;
 }
