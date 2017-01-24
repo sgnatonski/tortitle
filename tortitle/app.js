@@ -15,17 +15,24 @@ nconf.argv()
     .env()
     .file({ file: './config.json' });
 var app = express();
+var vash = require("vash");
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(methodOverride());
 app.use(serveFavicon(__dirname + '/public/favicon.ico'));
 app.use(serveStatic(__dirname + '/public'));
-app.use(morgan('dev'));
 app.set('port', (process.env.PORT || 3000));
 app.set('views', path.join(__dirname, '/views'));
 app.set('view engine', 'html');
-app.engine("html", require('vash').__express);
+app.engine("html", vash.__express);
+if (process.env.NODE_ENV === 'production') {
+    app.use(morgan('tiny'));
+    vash.config.debug = false;
+}
+else {
+    app.use(morgan('dev'));
+}
 routes.configure(app);
 Entities_1.Entities.initialize(nconf.get('TORTITLESTORAGENAME'), nconf.get('TORTITLESTORAGEKEY'));
 app.listen(app.get('port'), function () {
