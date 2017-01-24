@@ -57,6 +57,9 @@
 			    </td>
 			</tr>
 			})
-		</table>		
+        </table>	
+        @if(model.nextPage){
+        <a class="mui-btn mui-btn--primary" href="/@model.sort/@model.nextPage">Show more</a>	
+        }
     })
 })

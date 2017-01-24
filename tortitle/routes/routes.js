@@ -5,6 +5,7 @@ var cookie = require("./cookie");
 function configure(app) {
     app.get('/', index.index);
     app.get('/:sort(\\d+)', index.index);
+    app.get('/:sort(\\d+)/:page(\\d+)', index.index);
     app.get('/users', user.list);
     app.use(cookie.lastVisit);
 }
