@@ -19,14 +19,13 @@ function index(req, res) {
         res.render('index', {
             app: 'Tortitle',
             sort: sortType,
-            movies: sortedMovies,
-            cache: true
+            movies: sortedMovies
         });
     });
 }
 exports.index = index;
 ;
-function lastVisit(req, res) {
+function lastVisit(req, res, next) {
     var lastVisitTime = req.cookies[visitCookie];
     var dateLastVisit = lastVisitTime ? new Date(Date.parse(lastVisitTime)) : undefined;
     var oneWeekAgo = new Date();
@@ -35,6 +34,7 @@ function lastVisit(req, res) {
         var options = { maxAge: 1000 * 60 * 60 * 24 * 30, httpOnly: false, secure: false };
         res.cookie(visitCookie, new Date().toISOString(), options);
     }
+    next();
 }
 exports.lastVisit = lastVisit;
 //# sourceMappingURL=index.js.map
