@@ -18,12 +18,12 @@ export interface ITorrentEntity {
 
 export function map(m: ITorrentEntity, date: Date) {
     var added = m.AdddedAt || new Date(2017, 0);
-    return <ITorrent>{
+    return {
         name: m.RowKey,
         imdbId: m.ImdbId,
         quality: m.Quality,
         torrentLink: m.TorrentLink,
         addedAt: added,
         isNew: !date || added > date
-    };
+    } as ITorrent;
 }

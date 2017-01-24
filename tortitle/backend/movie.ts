@@ -24,7 +24,7 @@ export function map(m: IMovieEntity, t: IGroupMapString<ITorrentEntity>, date: D
     var added = m.AdddedAt || new Date(2017, 0);
     var torrents = (t[m.RowKey] || []).map(x => torrentMap(x, date));
     var qualities = torrents.map(x => x.quality).distinct();
-    return <IMovie>{
+    return {
         name: m.MovieName,
         imdbId: m.RowKey,
         pictureLink: m.PictureLink,
@@ -33,5 +33,5 @@ export function map(m: IMovieEntity, t: IGroupMapString<ITorrentEntity>, date: D
         qualities: qualities,
         addedAt: added,
         isNew: !date || added > date
-    };
+    } as IMovie;
 }
