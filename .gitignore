@@ -36,3 +36,4 @@ _ReSharper*/
 config.json
 .vs/tortitle/v14/.suo
 .vs/*/.suo
+*.suo

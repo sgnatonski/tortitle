@@ -9,13 +9,13 @@ var MoviesService;
 (function (MoviesService) {
     function getCachedRecentTopMovies(lastVisit) {
         var movieCacheKey = "movies";
-        var promise = new Promise.Promise(function (resolve, reject) { return movieCache.get(movieCacheKey, function (error, cached) { return error ? reject(error) : resolve(cached); }); });
-        return promise
+        var promise = new Promise.Promise(function (resolve, reject) { return resolve(movieCache.get(movieCacheKey)); })
             .then(function (cached) { return cached ? Promise.Promise.resolve(cached) : getRecentTopMovies(lastVisit); })
             .then(function (movies) {
             movieCache.set(movieCacheKey, movies);
             return movies;
         });
+        return promise;
     }
     MoviesService.getCachedRecentTopMovies = getCachedRecentTopMovies;
     function getRecentTopMovies(lastVisit) {

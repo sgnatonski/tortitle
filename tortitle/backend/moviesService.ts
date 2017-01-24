@@ -10,7 +10,7 @@ const movieCache = new Cache({ stdTTL: 60, checkperiod: 120 });
 export module MoviesService {
     export function getCachedRecentTopMovies(lastVisit: Date) {
         const movieCacheKey = "movies";
-        var promise = new Promise.Promise<IMovie[]>((resolve, reject) => movieCache.get<IMovie[]>(movieCacheKey, (error, cached) => error ? reject(error) : resolve(cached)))
+        var promise = new Promise.Promise<IMovie[]>((resolve, reject) => resolve(movieCache.get<IMovie[]>(movieCacheKey)))
             .then(cached => cached ? Promise.Promise.resolve(cached) : getRecentTopMovies(lastVisit))
             .then(movies => {
                 movieCache.set(movieCacheKey, movies);
