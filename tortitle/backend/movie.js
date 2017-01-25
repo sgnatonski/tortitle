@@ -1,10 +1,9 @@
 "use strict";
 var torrent_1 = require("./torrent");
 var subtitle_1 = require("./subtitle");
-function map(m, t, s, date) {
-    var added = m.AdddedAt || new Date(2017, 0);
-    var torrents = (t[m.RowKey] || []).map(function (x) { return torrent_1.map(x, date); });
-    var subtitles = (s[m.RowKey] || []).map(function (x) { return subtitle_1.map(x); });
+function map(m, t, s) {
+    var torrents = (t[m.RowKey] || []).map(torrent_1.map);
+    var subtitles = (s[m.RowKey] || []).map(subtitle_1.map);
     var qualities = torrents.map(function (x) { return x.quality; }).distinct();
     return {
         name: m.MovieName,
@@ -14,8 +13,7 @@ function map(m, t, s, date) {
         torrents: torrents,
         subtitles: subtitles,
         qualities: qualities,
-        addedAt: added,
-        isNew: !date || added > date
+        addedAt: m.AdddedAt || new Date(2017, 0)
     };
 }
 exports.map = map;

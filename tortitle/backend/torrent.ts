@@ -16,14 +16,12 @@ export interface ITorrentEntity {
     AdddedAt: Date;
 }
 
-export function map(m: ITorrentEntity, date: Date) {
-    var added = m.AdddedAt || new Date(2017, 0);
+export function map(m: ITorrentEntity) {
     return {
         name: m.RowKey,
         imdbId: m.ImdbId,
         quality: m.Quality,
         torrentLink: m.TorrentLink,
-        addedAt: added,
-        isNew: !date || added > date
+        addedAt: m.AdddedAt || new Date(2017, 0)
     } as ITorrent;
 }

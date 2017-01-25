@@ -1,4 +1,5 @@
 "use strict";
+var _ = require("lodash");
 var moviesService_1 = require("../backend/moviesService");
 var visitCookie = 'TortitleLastVisit';
 var languageCookie = 'TortitleLanguage';
@@ -16,17 +17,20 @@ function index(req, res) {
     var language = req.cookies[languageCookie];
     var lastVisitTime = req.cookies[visitCookie];
     var lastVisit = lastVisitTime ? new Date(Date.parse(lastVisitTime)) : undefined;
-    moviesService_1.MoviesService.getCachedRecentTopMovies(language, lastVisit).then(function (movies) {
-        var page = (parseInt(req.params.page) || 0) + 1;
-        var sortType = parseInt(req.params.sort) || 0;
-        var sortedMovies = movies.sortWith(sortMap, sortType);
-        var pagedMovies = sortedMovies.slice(0, (page * pageSize));
+    var page = (parseInt(req.params.page) || 0) + 1;
+    var count = page * pageSize;
+    var sortType = parseInt(req.params.sort) || 0;
+    moviesService_1.MoviesService.getCachedRecentTopMovies(language).then(function (movies) {
+        var sortedMovies = movies
+            .slice(0, count)
+            .map(function (x) { return _.assign(x, { isNew: !lastVisit || x.addedAt > lastVisit }); })
+            .sortWith(sortMap, sortType);
         res.render('index', {
             app: 'Tortitle',
-            nextPage: (page * pageSize) < sortedMovies.length ? page + 1 : undefined,
+            nextPage: count < sortedMovies.length ? page + 1 : undefined,
             sort: sortType,
             lang: language,
-            movies: pagedMovies
+            movies: sortedMovies
         });
     });
 }

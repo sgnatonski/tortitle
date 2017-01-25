@@ -22,10 +22,9 @@ export interface IMovieEntity {
     AdddedAt: Date;
 }
 
-export function map(m: IMovieEntity, t: IGroupMapString<ITorrentEntity>, s: IGroupMapString<ISubtitleEntity>, date: Date) {
-    var added = m.AdddedAt || new Date(2017, 0);
-    var torrents = (t[m.RowKey] || []).map(x => torrentMap(x, date));
-    var subtitles = (s[m.RowKey] || []).map(x => subMap(x));
+export function map(m: IMovieEntity, t: IGroupMapString<ITorrentEntity>, s: IGroupMapString<ISubtitleEntity>) {
+    var torrents = (t[m.RowKey] || []).map(torrentMap);
+    var subtitles = (s[m.RowKey] || []).map(subMap);
     var qualities = torrents.map(x => x.quality).distinct();
     return {
         name: m.MovieName,
@@ -35,7 +34,6 @@ export function map(m: IMovieEntity, t: IGroupMapString<ITorrentEntity>, s: IGro
         torrents: torrents,
         subtitles: subtitles,
         qualities: qualities,
-        addedAt: added,
-        isNew: !date || added > date
+        addedAt: m.AdddedAt || new Date(2017, 0)
     } as IMovie;
 }

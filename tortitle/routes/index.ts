@@ -1,4 +1,5 @@
 ﻿import * as express from "express";
+import * as _ from "lodash";
 import { MoviesService } from "../backend/moviesService";
 import { IMovie } from "../backend/movie";
 
@@ -20,19 +21,22 @@ export function index(req: express.Request, res: express.Response) {
     var language: string = req.cookies[languageCookie];
     var lastVisitTime: string = req.cookies[visitCookie];
     var lastVisit = lastVisitTime ? new Date(Date.parse(lastVisitTime)) : undefined;
+    var page = (parseInt(req.params.page) || 0) + 1;
+    var count = page * pageSize;
+    var sortType = parseInt(req.params.sort) || 0;
 
-    MoviesService.getCachedRecentTopMovies(language, lastVisit).then(movies => {
-        var page = (parseInt(req.params.page) || 0) + 1;
-        var sortType = parseInt(req.params.sort) || 0;
-        var sortedMovies = movies.sortWith(sortMap, sortType);
-        var pagedMovies = sortedMovies.slice(0, (page * pageSize));
+    MoviesService.getCachedRecentTopMovies(language).then(movies => {
+        var sortedMovies = movies
+            .slice(0, count)
+            .map(x => _.assign(x, { isNew: !lastVisit || x.addedAt > lastVisit }))
+            .sortWith(sortMap, sortType);
 
         res.render('index', {
             app: 'Tortitle',
-            nextPage: (page * pageSize) < sortedMovies.length ? page + 1 : undefined,
+            nextPage: count < sortedMovies.length ? page + 1 : undefined,
             sort: sortType,
             lang: language,
-            movies: pagedMovies
+            movies: sortedMovies
         });
     });
 };

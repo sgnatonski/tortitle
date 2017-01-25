@@ -1,6 +1,6 @@
 "use strict";
 var azure = require("azure-storage");
-var Promise = require("es6-promise");
+var es6_promise_1 = require("es6-promise");
 var tableService;
 var Entities;
 (function (Entities) {
@@ -17,7 +17,7 @@ var Entities;
     }
     Entities.initialize = initialize;
     function queryEntities(table, query) {
-        return new Promise.Promise(function (resolve, reject) {
+        return new es6_promise_1.Promise(function (resolve, reject) {
             tableService.queryEntities(table, query, null, function (error, result, response) {
                 if (error) {
                     reject(error);

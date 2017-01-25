@@ -1,5 +1,5 @@
 ﻿import * as azure from "azure-storage";
-import * as Promise from "es6-promise";
+import { Promise } from "es6-promise";
 
 var tableService: azure.TableService;
 
@@ -22,7 +22,7 @@ export module Entities {
     }
 
     export function queryEntities<T>(table: string, query: azure.TableQuery) {
-        return new Promise.Promise<T[]>((resolve, reject) => {
+        return new Promise<T[]>((resolve, reject) => {
             tableService.queryEntities(table, query, null, (error, result, response) => {
                 if (error) {
                     reject(error);
