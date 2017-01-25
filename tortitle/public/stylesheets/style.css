@@ -98,3 +98,8 @@ p.m-info > span {
     display: inline-block;
     text-align: left;
 }
+
+ul.mui-dropdown__menu.mui--is-open {
+    max-height: 370px;
+    overflow-x: auto;
+}
