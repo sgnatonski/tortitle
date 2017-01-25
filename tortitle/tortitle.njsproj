@@ -66,6 +66,7 @@
     <TypeScriptCompile Include="backend\Entities.ts" />
     <TypeScriptCompile Include="backend\movie.ts" />
     <TypeScriptCompile Include="backend\moviesService.ts" />
+    <TypeScriptCompile Include="backend\subtitle.ts" />
     <TypeScriptCompile Include="backend\torrent.ts" />
     <TypeScriptCompile Include="routes\cookie.ts" />
     <TypeScriptCompile Include="routes\index.ts" />

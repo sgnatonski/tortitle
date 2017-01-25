@@ -7,27 +7,32 @@ var movie_1 = require("./movie");
 var movieCache = new Cache({ stdTTL: 60, checkperiod: 120 });
 var MoviesService;
 (function (MoviesService) {
-    function getCachedRecentTopMovies(lastVisit) {
-        var movieCacheKey = "movies";
+    function getCachedRecentTopMovies(language, lastVisit) {
+        var movieCacheKey = "movies-" + language;
         return Promise.Promise.resolve(movieCache.get(movieCacheKey))
             .then(function (cached) { return cached
             ? cached
-            : getRecentTopMovies(lastVisit).then(function (movies) {
+            : getRecentTopMovies(language, lastVisit).then(function (movies) {
                 movieCache.set(movieCacheKey, movies);
                 return movies;
             }); });
     }
     MoviesService.getCachedRecentTopMovies = getCachedRecentTopMovies;
-    function getRecentTopMovies(lastVisit) {
+    function getRecentTopMovies(language, lastVisit) {
         var movieTableName = "imdbentries";
         var torrentTableName = "torrents";
+        var subtitleTableName = "subtitles";
         return Promise.Promise.all([
             Entities_1.Entities.queryEntities(torrentTableName, new azure.TableQuery()),
-            Entities_1.Entities.queryEntities(movieTableName, new azure.TableQuery())
+            Entities_1.Entities.queryEntities(movieTableName, new azure.TableQuery()),
+            Entities_1.Entities.queryEntities(subtitleTableName, new azure.TableQuery().where("Language eq '" + language + "'"))
         ]).then(function (value) {
             var torrentsByImdb = value[0].groupBy(function (x) { return x.ImdbId; });
-            var movies = value[1].map(function (e) { return movie_1.map(e, torrentsByImdb, lastVisit); });
+            var subtitlesByImdb = value[2].groupBy(function (x) { return x.PartitionKey; });
+            var movies = value[1].map(function (e) { return movie_1.map(e, torrentsByImdb, subtitlesByImdb, lastVisit); });
             return movies;
+        }).catch(function (error) {
+            return Promise.Promise.reject(error);
         });
     }
     MoviesService.getRecentTopMovies = getRecentTopMovies;

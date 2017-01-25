@@ -7,6 +7,16 @@
         <p>Tortitle was created as a remedy for such inconvenience - it automatically searches for latest torrent releases and tries to match them with subtitles most suitable for you.</p>
         <div class="mui-dropdown">
             <button class="mui-btn mui-btn--primary" data-mui-toggle="dropdown">
+                Select language
+                <span class="mui-caret"></span>
+            </button>
+            <ul class="mui-dropdown__menu">
+                <li><a href="/0">en</a></li>
+                <li><a href="/1">pl</a></li>
+            </ul>
+        </div>
+        <div class="mui-dropdown">
+            <button class="mui-btn mui-btn--primary" data-mui-toggle="dropdown">
                 @{
                     var sorts = {
                         0: "New first",
@@ -47,7 +57,8 @@
 			<td class="desc">
 			    <h4><small><b>@(msg.isNew ? "NEW" : "")</b></small> <a href="http://imdb.com/title/tt@msg.imdbId">@msg.name</a></h4>
 			    <p class="m-info"><span><b>@(msg.rating == 0 ? 'N/A' : msg.rating)</b></span><span>(@msg.addedAt.toLocaleDateString("en-US"))</span></p>
-			    <p>Torrents: @msg.torrents.length </p>
+                <p>Torrents: @msg.torrents.length </p>
+                <p>Subtitles: @msg.subtitles.length </p>
                 <small><i>@msg.qualities</i></small>
 			</td>
 		</tr>

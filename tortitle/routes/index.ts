@@ -3,6 +3,7 @@ import { MoviesService } from "../backend/moviesService";
 import { IMovie } from "../backend/movie";
 
 const visitCookie = 'TortitleLastVisit';
+const languageCookie = 'TortitleLanguage';
 const pageSize = 100;
 
 const sortMap = (movies: IMovie[]): ISortFuncSelector<IMovie> => ({
@@ -16,10 +17,11 @@ const sortMap = (movies: IMovie[]): ISortFuncSelector<IMovie> => ({
 });
 
 export function index(req: express.Request, res: express.Response) {
+    var language: string = req.cookies[languageCookie];
     var lastVisitTime: string = req.cookies[visitCookie];
     var lastVisit = lastVisitTime ? new Date(Date.parse(lastVisitTime)) : undefined;
 
-    MoviesService.getCachedRecentTopMovies(lastVisit).then(movies => {
+    MoviesService.getCachedRecentTopMovies(language, lastVisit).then(movies => {
         var page = (parseInt(req.params.page) || 0) + 1;
         var sortType = parseInt(req.params.sort) || 0;
         var sortedMovies = movies.sortWith(sortMap, sortType);
