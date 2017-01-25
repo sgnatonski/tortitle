@@ -3,10 +3,10 @@ var visitCookie = 'TortitleLastVisit';
 var languageCookie = 'TortitleLanguage';
 function lastVisit(req, res, next) {
     var lastVisitTime = req.cookies[visitCookie];
-    var dateLastVisit = lastVisitTime ? new Date(Date.parse(lastVisitTime)) : undefined;
+    var dateLastVisit = lastVisitTime ? new Date(Date.parse(lastVisitTime)) : new Date(0);
     var oneWeekAgo = new Date();
     oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
-    if (!dateLastVisit || dateLastVisit < oneWeekAgo) {
+    if (dateLastVisit < oneWeekAgo) {
         var options = { maxAge: 1000 * 60 * 60 * 24 * 30, httpOnly: false, secure: false };
         res.cookie(visitCookie, new Date().toISOString(), options);
     }

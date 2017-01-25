@@ -20,7 +20,7 @@ const sortMap = (movies: IMovie[]): ISortFuncSelector<IMovie> => ({
 export function index(req: express.Request, res: express.Response) {
     var language: string = req.cookies[languageCookie];
     var lastVisitTime: string = req.cookies[visitCookie];
-    var lastVisit = lastVisitTime ? new Date(Date.parse(lastVisitTime)) : undefined;
+    var lastVisit = lastVisitTime ? new Date(Date.parse(lastVisitTime)) : new Date(0);
     var page = (parseInt(req.params.page) || 0) + 1;
     var count = page * pageSize;
     var sortType = parseInt(req.params.sort) || 0;
@@ -28,7 +28,7 @@ export function index(req: express.Request, res: express.Response) {
     MoviesService.getCachedRecentTopMovies(language).then(movies => {
         var sortedMovies = movies
             .slice(0, count)
-            .map(x => _.assign(x, { isNew: !lastVisit || x.addedAt > lastVisit }))
+            .map(x => _.assign(x, { isNew: x.addedAt > lastVisit }))
             .sortWith(sortMap, sortType);
 
         res.render('index', {

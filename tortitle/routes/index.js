@@ -16,14 +16,14 @@ var sortMap = function (movies) { return ({
 function index(req, res) {
     var language = req.cookies[languageCookie];
     var lastVisitTime = req.cookies[visitCookie];
-    var lastVisit = lastVisitTime ? new Date(Date.parse(lastVisitTime)) : undefined;
+    var lastVisit = lastVisitTime ? new Date(Date.parse(lastVisitTime)) : new Date(0);
     var page = (parseInt(req.params.page) || 0) + 1;
     var count = page * pageSize;
     var sortType = parseInt(req.params.sort) || 0;
     moviesService_1.MoviesService.getCachedRecentTopMovies(language).then(function (movies) {
         var sortedMovies = movies
             .slice(0, count)
-            .map(function (x) { return _.assign(x, { isNew: !lastVisit || x.addedAt > lastVisit }); })
+            .map(function (x) { return _.assign(x, { isNew: x.addedAt > lastVisit }); })
             .sortWith(sortMap, sortType);
         res.render('index', {
             app: 'Tortitle',
