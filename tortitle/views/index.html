@@ -11,8 +11,63 @@
                 <span class="mui-caret"></span>
             </button>
             <ul class="mui-dropdown__menu">
-                <li><a href="#" onclick="changeLang('en')">en</a></li>
-                <li><a href="#" onclick="changeLang('pl')">pl</a></li>
+                @{
+                    var langs = [
+                        "ar",
+                        "bg",
+                        "bn",
+                        "bs",
+                        "cs",
+                        "da",
+                        "de",
+                        "el",
+                        "en",
+                        "es",
+                        "et",
+                        "eu",
+                        "fa",
+                        "fi",
+                        "fr",
+                        "gl",
+                        "he",
+                        "hi",
+                        "hr",
+                        "hu",
+                        "id",
+                        "is",
+                        "it",
+                        "ja",
+                        "ko",
+                        "lt",
+                        "lv",
+                        "mk",
+                        "ml",
+                        "ms",
+                        "nl",
+                        "no",
+                        "pb",
+                        "pl",
+                        "pt",
+                        "ro",
+                        "ru",
+                        "si",
+                        "sk",
+                        "sl",
+                        "sq",
+                        "sr",
+                        "sv",
+                        "th",
+                        "tl",
+                        "tr",
+                        "uk",
+                        "vi",
+                        "zh",
+                        "zt"
+                    ]
+                }
+                @langs.forEach(function(l){
+                    <li><a href="#" onclick="changeLang('@l')">@l</a></li>
+                })
             </ul>
         </div>
         <div class="mui-dropdown">
