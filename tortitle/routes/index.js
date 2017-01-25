@@ -12,7 +12,7 @@ var sortMap = function (movies) { return ({
     5: function () { return movies.sortBy(function (x) { return x.name; }); },
     6: function () { return movies.sortByDesc(function (x) { return x.name; }); }
 }); };
-function index(req, res, next) {
+function index(req, res) {
     var language = req.cookies[languageCookie];
     var lastVisitTime = req.cookies[visitCookie];
     var lastVisit = lastVisitTime ? new Date(Date.parse(lastVisitTime)) : undefined;
@@ -25,9 +25,9 @@ function index(req, res, next) {
             app: 'Tortitle',
             nextPage: (page * pageSize) < sortedMovies.length ? page + 1 : undefined,
             sort: sortType,
+            lang: language,
             movies: pagedMovies
         });
-        next();
     });
 }
 exports.index = index;

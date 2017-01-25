@@ -7,12 +7,12 @@
         <p>Tortitle was created as a remedy for such inconvenience - it automatically searches for latest torrent releases and tries to match them with subtitles most suitable for you.</p>
         <div class="mui-dropdown">
             <button class="mui-btn mui-btn--primary" data-mui-toggle="dropdown">
-                Select language
+                Select language (@model.lang)
                 <span class="mui-caret"></span>
             </button>
             <ul class="mui-dropdown__menu">
-                <li><a href="/0">en</a></li>
-                <li><a href="/1">pl</a></li>
+                <li><a href="#" onclick="changeLang('en')">en</a></li>
+                <li><a href="#" onclick="changeLang('pl')">pl</a></li>
             </ul>
         </div>
         <div class="mui-dropdown">
@@ -71,5 +71,19 @@
     <br>
     } 
     </div>
+<script>
+    function setCookie(c_name, value, exdays) {
+        var exdate = new Date();
+        exdate.setDate(exdate.getDate() + exdays);
+        var c_value = escape(value) +
+          ((exdays == null) ? "" : ("; expires=" + exdate.toUTCString()));
+        document.cookie = c_name + "=" + c_value;
+    }
+
+    function changeLang(lang) {
+        setCookie("TortitleLanguage", lang, 30);
+        window.location.reload();
+    }
+</script>
 })
 })

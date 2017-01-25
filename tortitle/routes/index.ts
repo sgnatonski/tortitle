@@ -31,6 +31,7 @@ export function index(req: express.Request, res: express.Response) {
             app: 'Tortitle',
             nextPage: (page * pageSize) < sortedMovies.length ? page + 1 : undefined,
             sort: sortType,
+            lang: language,
             movies: pagedMovies
         });
     });
