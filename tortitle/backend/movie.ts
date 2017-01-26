@@ -8,6 +8,7 @@ export interface IMovie {
     rating: number;
     addedAt: Date;
     isNew: boolean;
+    hasMatch: boolean;
     torrents: ITorrent[];
     subtitles: ISubtitle[];
     qualities: string[];
@@ -26,6 +27,7 @@ export function map(m: IMovieEntity, t: IGroupMapString<ITorrentEntity>, s: IGro
     var torrents = (t[m.RowKey] || []).map(torrentMap);
     var subtitles = (s[m.RowKey] || []).map(subMap);
     var qualities = torrents.map(x => x.quality).distinct();
+    var match = torrents.filter(x => subtitles.filter(s => x.name == s.releaseName).length > 0).length > 0;
     return {
         name: m.MovieName,
         imdbId: m.RowKey,
@@ -34,6 +36,7 @@ export function map(m: IMovieEntity, t: IGroupMapString<ITorrentEntity>, s: IGro
         torrents: torrents,
         subtitles: subtitles,
         qualities: qualities,
-        addedAt: m.AdddedAt || new Date(2017, 0)
+        addedAt: m.AdddedAt || new Date(2017, 0),
+        hasMatch: match
     } as IMovie;
 }

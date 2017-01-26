@@ -8,7 +8,7 @@ const languageCookie = 'TortitleLanguage';
 const pageSize = 100;
 
 const sortMap = (movies: IMovie[]): ISortFuncSelector<IMovie> => ({
-    0: () => movies.sortByDesc(x => x.isNew),
+    0: () => movies.sortByDesc(x => x.hasMatch),
     1: () => movies.sortByDesc(x => x.addedAt),
     2: () => movies.sortBy(x => x.addedAt),
     3: () => movies.sortByDesc(x => x.rating),
@@ -27,9 +27,9 @@ export function index(req: express.Request, res: express.Response) {
 
     MoviesService.getCachedRecentTopMovies(language).then(movies => {
         var sortedMovies = movies
-            .slice(0, count)
             .map(x => _.assign(x, { isNew: x.addedAt > lastVisit }))
-            .sortWith(sortMap, sortType);
+            .sortWith(sortMap, sortType)
+            .slice(0, count);
 
         res.render('index', {
             app: 'Tortitle',

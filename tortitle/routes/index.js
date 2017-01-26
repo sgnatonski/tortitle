@@ -5,7 +5,7 @@ var visitCookie = 'TortitleLastVisit';
 var languageCookie = 'TortitleLanguage';
 var pageSize = 100;
 var sortMap = function (movies) { return ({
-    0: function () { return movies.sortByDesc(function (x) { return x.isNew; }); },
+    0: function () { return movies.sortByDesc(function (x) { return x.hasMatch; }); },
     1: function () { return movies.sortByDesc(function (x) { return x.addedAt; }); },
     2: function () { return movies.sortBy(function (x) { return x.addedAt; }); },
     3: function () { return movies.sortByDesc(function (x) { return x.rating; }); },
@@ -22,9 +22,9 @@ function index(req, res) {
     var sortType = parseInt(req.params.sort) || 0;
     moviesService_1.MoviesService.getCachedRecentTopMovies(language).then(function (movies) {
         var sortedMovies = movies
-            .slice(0, count)
             .map(function (x) { return _.assign(x, { isNew: x.addedAt > lastVisit }); })
-            .sortWith(sortMap, sortType);
+            .sortWith(sortMap, sortType)
+            .slice(0, count);
         res.render('index', {
             app: 'Tortitle',
             nextPage: count < sortedMovies.length ? page + 1 : undefined,

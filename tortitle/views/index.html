@@ -74,7 +74,7 @@
             <button class="mui-btn mui-btn--primary" data-mui-toggle="dropdown">
                 @{
                     var sorts = {
-                        0: "New first",
+                        0: "Matching first",
                         1: "Date added &darr;",
                         2: "Date added &uarr;",
                         3: "Rating &darr;",
@@ -100,7 +100,7 @@
     </div>
 	<table class="mui-table mui-table--bordered flex">
 		@model.movies.forEach(function(msg){
-		<tr>
+		<tr class="@(msg.hasMatch ? 'matching' : '')">
             <td class="img">
                 @if(msg.pictureLink){
                     <img src="@msg.pictureLink"/>
@@ -111,11 +111,10 @@
             </td>
 			<td class="desc">
 			    <h4><small><b>@(msg.isNew ? "NEW" : "")</b></small> <a href="http://imdb.com/title/tt@msg.imdbId">@msg.name</a></h4>
-			    <p class="m-info"><span><b>@(msg.rating == 0 ? 'N/A' : msg.rating)</b></span><span>(@msg.addedAt.toLocaleDateString("en-US"))</span></p>
-                <p>Torrents: @msg.torrents.length </p>
-                <p>Subtitles: @msg.subtitles.length </p>
-                <small><i>@msg.qualities</i></small>
-			</td>
+                <p class="m-info"><span><b>@(msg.rating == 0 ? 'N/A' : msg.rating)</b></span><span>(@msg.addedAt.toLocaleDateString("en-US"))</span></p>
+                <p class="m-info"><span>Torrents: @msg.torrents.length</span><span>Subtitles: @msg.subtitles.length</span></p>
+                <p class="m-info"><span><small><i>@msg.qualities</i></small></span><span><b>@(msg.hasMatch ? "MATCH" : "")</b></span></p>
+            </td>
 		</tr>
 		})
     </table>	
