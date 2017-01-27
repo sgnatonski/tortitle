@@ -6,8 +6,7 @@ declare global {
         sortBy(name: (o: T) => any): T[];
         sortByDesc(name: (o: T) => any): T[];
         sortWith(sortMap: (arr: T[]) => ISortFuncSelector<T>, selector: number, defaultSelector?: number): T[];
-        groupBy(keyGetter: (obj: T) => number): IGroupMapNumber<T>;
-        groupBy(keyGetter: (obj: T) => string): IGroupMapString<T>;
+        groupBy(keyGetter: (obj: T) => string | number): GroupMap<T>;
         distinct(): T[];
         distinctBy(keyGetter: (obj: T) => any): T[];
     }
@@ -16,12 +15,8 @@ declare global {
         [index: number]: () => T[];
     }
 
-    interface IGroupMapString<T> {
-        [index: string]: T[];
-    }
-
-    interface IGroupMapNumber<T> {
-        [index: number]: T[];
+    type GroupMap<T> = {
+        [P in keyof T]: T[P];
     }
 }
 
@@ -51,7 +46,7 @@ Array.prototype["sortWith"] = function <TResult>(sortMap: (arr: TResult[]) => IS
     return sort();
 };
 
-Array.prototype["groupBy"] = function groupBy<TResult>(keyGetter: (obj: TResult) => any) {
+Array.prototype["groupBy"] = function groupBy<TResult>(keyGetter: (obj: TResult) => string | number) {
     return _.groupBy(this, keyGetter);
 }
 

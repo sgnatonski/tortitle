@@ -23,7 +23,7 @@ export interface IMovieEntity {
     AdddedAt: Date;
 }
 
-export function map(m: IMovieEntity, t: IGroupMapString<ITorrentEntity>, s: IGroupMapString<ISubtitleEntity>) {
+export function map(m: IMovieEntity, t: GroupMap<ITorrentEntity>, s: GroupMap<ISubtitleEntity>) {
     var torrents = (t[m.RowKey] || []).map(torrentMap);
     var subtitles = (s[m.RowKey] || []).map(subMap);
     var qualities = torrents.map(x => x.quality).distinct();
