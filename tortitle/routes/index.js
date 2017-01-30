@@ -13,7 +13,7 @@ var sortMap = function (movies) { return ({
     5: function () { return movies.sortBy(function (x) { return x.name; }); },
     6: function () { return movies.sortByDesc(function (x) { return x.name; }); }
 }); };
-function index(req, res) {
+function index(req, res, next) {
     var language = req.cookies[languageCookie];
     var lastVisitTime = req.cookies[visitCookie];
     var lastVisit = lastVisitTime ? new Date(Date.parse(lastVisitTime)) : new Date(0);
@@ -32,7 +32,8 @@ function index(req, res) {
             lang: language,
             movies: sortedMovies
         });
-    });
+    })
+        .catch(function (error) { return next(error); });
 }
 exports.index = index;
 ;

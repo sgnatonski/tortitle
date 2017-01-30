@@ -17,7 +17,7 @@ const sortMap = (movies: IMovie[]): ISortFuncSelector<IMovie> => ({
     6: () => movies.sortByDesc(x => x.name)
 });
 
-export function index(req: express.Request, res: express.Response) {
+export function index(req: express.Request, res: express.Response, next) {
     var language: string = req.cookies[languageCookie];
     var lastVisitTime: string = req.cookies[visitCookie];
     var lastVisit = lastVisitTime ? new Date(Date.parse(lastVisitTime)) : new Date(0);
@@ -38,5 +38,6 @@ export function index(req: express.Request, res: express.Response) {
             lang: language,
             movies: sortedMovies
         });
-    });
+    })
+    .catch(error => next(error));
 };
