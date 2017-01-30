@@ -33,7 +33,7 @@ export function index(req: express.Request, res: express.Response, next) {
 
         res.render('index', {
             app: 'Tortitle',
-            nextPage: count < sortedMovies.length ? page + 1 : undefined,
+            nextPage: count < movies.length ? page + 1 : undefined,
             sort: sortType,
             lang: language,
             movies: sortedMovies

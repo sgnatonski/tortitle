@@ -27,7 +27,7 @@ function index(req, res, next) {
             .slice(0, count);
         res.render('index', {
             app: 'Tortitle',
-            nextPage: count < sortedMovies.length ? page + 1 : undefined,
+            nextPage: count < movies.length ? page + 1 : undefined,
             sort: sortType,
             lang: language,
             movies: sortedMovies
