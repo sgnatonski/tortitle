@@ -1,5 +1,11 @@
-﻿import {ITorrent, ITorrentEntity, map as torrentMap } from "./torrent";
+﻿import { ITorrent, ITorrentEntity, map as torrentMap } from "./torrent";
 import { ISubtitle, ISubtitleEntity, map as subMap } from "./subtitle";
+
+export interface IMatch {
+    torrent: ITorrent;
+    subtitle: ISubtitle;
+}
+
 
 export interface IMovie {
     name: string;
@@ -9,25 +15,26 @@ export interface IMovie {
     addedAt: Date;
     isNew: boolean;
     hasMatch: boolean;
+    match: IMatch[];
     torrents: ITorrent[];
     subtitles: ISubtitle[];
     qualities: string[];
 }
 
 export interface IMovieEntity {
-    PartitionKey: any;
-    RowKey: any;
+    PartitionKey: string;
+    RowKey: string;
     MovieName: string;
     PictureLink: string;
     Rating: number;
     AdddedAt: Date;
 }
 
-export function map(m: IMovieEntity, t: GroupMap<ITorrentEntity>, s: GroupMap<ISubtitleEntity>) {
+export function map(m: IMovieEntity, t: IGroupMapString<ITorrentEntity>, s: IGroupMapString<ISubtitleEntity>) {
     var torrents = (t[m.RowKey] || []).map(torrentMap);
     var subtitles = (s[m.RowKey] || []).map(subMap);
     var qualities = torrents.map(x => x.quality).distinct();
-    var match = torrents.filter(x => subtitles.filter(s => x.name == s.releaseName).length > 0).length > 0;
+    var match = torrents.equijoin(subtitles, t => t.name, s => s.releaseName, (t, s) => { return { torrent: t, subtitle: s } as IMatch; });
     return {
         name: m.MovieName,
         imdbId: m.RowKey,
@@ -37,6 +44,7 @@ export function map(m: IMovieEntity, t: GroupMap<ITorrentEntity>, s: GroupMap<IS
         subtitles: subtitles,
         qualities: qualities,
         addedAt: m.AdddedAt || new Date(2017, 0),
-        hasMatch: match
+        match: match,
+        hasMatch: match.length > 0
     } as IMovie;
 }

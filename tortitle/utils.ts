@@ -6,17 +6,23 @@ declare global {
         sortBy(name: (o: T) => any): T[];
         sortByDesc(name: (o: T) => any): T[];
         sortWith(sortMap: (arr: T[]) => ISortFuncSelector<T>, selector: number, defaultSelector?: number): T[];
-        groupBy(keyGetter: (obj: T) => string | number): GroupMap<T>;
+        groupBy(keyGetter: (obj: T) => number): IGroupMapNumber<T>;
+        groupBy(keyGetter: (obj: T) => string): IGroupMapString<T>;
         distinct(): T[];
         distinctBy(keyGetter: (obj: T) => any): T[];
+        equijoin<TRight, TResult>(foreign: TRight[], primaryKey: (o: T) => any, foreignKey: (o: TRight) => any, select: (left: T, right: TRight) => TResult): TResult[];
     }
 
     interface ISortFuncSelector<T> {
         [index: number]: () => T[];
     }
 
-    type GroupMap<T> = {
-        [P in keyof T]: T[P];
+    interface IGroupMapString<T> {
+        [index: string]: T[];
+    }
+
+    interface IGroupMapNumber<T> {
+        [index: number]: T[];
     }
 }
 
@@ -56,4 +62,25 @@ Array.prototype["distinct"] = function distinct<TResult>() {
 
 Array.prototype["distinctBy"] = function distinctBy<TResult>(keyGetter: (obj: TResult) => any) {
     return _.uniqBy(this, keyGetter);
+}
+
+Array.prototype["equijoin"] = function equijoin<TRight, TResult>(foreign: TRight[], primaryKey: (o) => any, foreignKey: (o: TRight) => any, select: (left, right: TRight) => TResult): TResult[] {
+    var m = this.length, n = foreign.length, index = [], c = [];
+    let variableLeft = getVariableName(primaryKey);
+    let variableRight = getVariableName(foreignKey);
+
+    for (var i = 0; i < m; i++) {
+        var row = this[i];
+        index[row[variableLeft]] = row;
+    }
+
+    for (var j = 0; j < n; j++) {
+        var y = foreign[j];
+        var x = index[y[variableRight]];
+        if (x && y) {
+            c.push(select(x, y));
+        }
+    }
+
+    return c;
 }

@@ -8,8 +8,8 @@
 }
 
 export interface ITorrentEntity {
-    PartitionKey: any;
-    RowKey: any;
+    PartitionKey: string;
+    RowKey: string;
     ImdbId: string;
     Quality: string;
     TorrentLink: string;

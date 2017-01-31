@@ -113,6 +113,18 @@
 			    <h4><small><b>@(msg.isNew ? "NEW" : "")</b></small> <a href="http://imdb.com/title/tt@msg.imdbId">@msg.name</a></h4>
                 <p class="m-info"><span><b>@(msg.rating == 0 ? 'N/A' : msg.rating)</b></span><span>(@msg.addedAt.toLocaleDateString("en-US"))</span></p>
                 <p class="m-info"><span>Torrents: @msg.torrents.length</span><span>Subtitles: @msg.subtitles.length</span></p>
+                @if(msg.hasMatch){
+                <button class="mui-btn mui-btn--primary" onclick="activateModal(this)">Show matches</button>
+                <div class="matchesContainer mui-panel" style="display:none;">
+                    <div>
+                        @msg.match.forEach(function(match){
+                        <p><img src="./images/torrent.svg" /><a href="@match.torrent.torrentLink">@match.torrent.name</a></p>
+                        <p><img src="./images/sub.png" /><a href="@match.subtitle.linkDownload">@match.subtitle.releaseName</a></p>
+                        <hr />
+                        })
+                    </div>                    
+                </div>
+                }
                 <p class="m-info"><span><small><i>@msg.qualities</i></small></span><span><b>@(msg.hasMatch ? "MATCH" : "")</b></span></p>
             </td>
 		</tr>
@@ -137,6 +149,19 @@
     function changeLang(lang) {
         setCookie("TortitleLanguage", lang, 30);
         window.location.reload();
+    }
+
+    function activateModal(el) {
+        // initialize modal element
+        var modalEl = el.parentElement.getElementsByClassName('matchesContainer')[0].cloneNode(true);
+        modalEl.style.display = 'block';
+        modalEl.style.width = '440px';
+        modalEl.style.height = '300px';
+        modalEl.style.margin = '100px auto';
+        modalEl.style.backgroundColor = '#fff';
+
+        // show modal
+        mui.overlay('on', modalEl);
     }
 </script>
 })

@@ -33,4 +33,21 @@ Array.prototype["distinct"] = function distinct() {
 Array.prototype["distinctBy"] = function distinctBy(keyGetter) {
     return _.uniqBy(this, keyGetter);
 };
+Array.prototype["equijoin"] = function equijoin(foreign, primaryKey, foreignKey, select) {
+    var m = this.length, n = foreign.length, index = [], c = [];
+    var variableLeft = getVariableName(primaryKey);
+    var variableRight = getVariableName(foreignKey);
+    for (var i = 0; i < m; i++) {
+        var row = this[i];
+        index[row[variableLeft]] = row;
+    }
+    for (var j = 0; j < n; j++) {
+        var y = foreign[j];
+        var x = index[y[variableRight]];
+        if (x && y) {
+            c.push(select(x, y));
+        }
+    }
+    return c;
+};
 //# sourceMappingURL=utils.js.map
