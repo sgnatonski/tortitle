@@ -1,19 +1,18 @@
 "use strict";
 var azure = require("azure-storage");
 var es6_promise_1 = require("es6-promise");
-var Cache = require("node-cache");
+var cache = require("./cache");
 var Entities_1 = require("./Entities");
 var movie_1 = require("./movie");
-var movieCache = new Cache({ stdTTL: 60, checkperiod: 120 });
 var MoviesService;
 (function (MoviesService) {
     function getCachedRecentTopMovies(language) {
         var movieCacheKey = "movies-" + language;
-        return es6_promise_1.Promise.resolve(movieCache.get(movieCacheKey))
+        return es6_promise_1.Promise.resolve(cache.get(movieCacheKey))
             .then(function (cached) { return cached
             ? cached
             : getRecentTopMovies(language).then(function (movies) {
-                movieCache.set(movieCacheKey, movies);
+                cache.set(movieCacheKey, movies);
                 return movies;
             }); });
     }
@@ -26,12 +25,15 @@ var MoviesService;
             Entities_1.Entities.queryEntities(torrentTableName, new azure.TableQuery()),
             Entities_1.Entities.queryEntities(movieTableName, new azure.TableQuery()),
             Entities_1.Entities.queryEntities(subtitleTableName, new azure.TableQuery().where("Language eq '" + language + "'"))
-        ]).then(function (value) {
-            var torrentsByImdb = value[0].groupBy(function (x) { return x.ImdbId; });
-            var subtitlesByImdb = value[2].groupBy(function (x) { return x.PartitionKey; });
-            var movies = value[1].map(function (e) { return movie_1.map(e, torrentsByImdb, subtitlesByImdb); });
+        ])
+            .then(function (result) { return ({ torrents: result[0], movies: result[1], subtitles: result[2] }); })
+            .then(function (result) {
+            var torrentsByImdb = result.torrents.groupBy(function (x) { return x.ImdbId; });
+            var subtitlesByImdb = result.subtitles.groupBy(function (x) { return x.PartitionKey; });
+            var movies = result.movies.map(function (e) { return movie_1.map(e, torrentsByImdb, subtitlesByImdb); });
             return movies;
-        }).catch(function (error) {
+        })
+            .catch(function (error) {
             return es6_promise_1.Promise.reject(error);
         });
     }

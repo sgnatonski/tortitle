@@ -1,5 +1,7 @@
 "use strict";
 var _ = require("lodash");
+var es6_promise_1 = require("es6-promise");
+var languagesService_1 = require("../backend/languagesService");
 var moviesService_1 = require("../backend/moviesService");
 var visitCookie = 'TortitleLastVisit';
 var languageCookie = 'TortitleLanguage';
@@ -20,16 +22,21 @@ function index(req, res, next) {
     var page = (parseInt(req.params.page) || 0) + 1;
     var count = page * pageSize;
     var sortType = parseInt(req.params.sort) || 0;
-    moviesService_1.MoviesService.getCachedRecentTopMovies(language).then(function (movies) {
-        var sortedMovies = movies
+    var langs = languagesService_1.LanguagesService.getCachedLanguages();
+    var movies = moviesService_1.MoviesService.getCachedRecentTopMovies(language);
+    es6_promise_1.Promise.all([langs, movies])
+        .then(function (result) { return ({ langs: result[0], movies: result[1] }); })
+        .then(function (result) {
+        var sortedMovies = result.movies
             .map(function (x) { return _.assign(x, { isNew: x.addedAt > lastVisit }); })
             .sortWith(sortMap, sortType)
             .slice(0, count);
         res.render('index', {
             app: 'Tortitle',
-            nextPage: count < movies.length ? page + 1 : undefined,
+            nextPage: count < result.movies.length ? page + 1 : undefined,
             sort: sortType,
             lang: language,
+            langs: result.langs,
             movies: sortedMovies
         });
     })

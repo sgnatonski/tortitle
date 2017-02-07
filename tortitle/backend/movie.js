@@ -5,7 +5,7 @@ function map(m, t, s) {
     var torrents = (t[m.RowKey] || []).map(torrent_1.map);
     var subtitles = (s[m.RowKey] || []).map(subtitle_1.map);
     var qualities = torrents.map(function (x) { return x.quality; }).distinct();
-    var match = torrents.equijoin(subtitles, function (t) { return t.name; }, function (s) { return s.releaseName; }, function (t, s) { return { torrent: t, subtitle: s }; });
+    var match = torrents.equijoin(subtitles, function (t) { return t.name; }, function (s) { return s.releaseName; }, function (t, s) { return ({ torrent: t, subtitle: s }); });
     return {
         name: m.MovieName,
         imdbId: m.RowKey,

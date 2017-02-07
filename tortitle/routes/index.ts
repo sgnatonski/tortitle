@@ -1,5 +1,7 @@
 ﻿import * as express from "express";
 import * as _ from "lodash";
+import { Promise } from "es6-promise";
+import { LanguagesService } from "../backend/languagesService";
 import { MoviesService } from "../backend/moviesService";
 import { IMovie } from "../backend/movie";
 
@@ -25,19 +27,26 @@ export function index(req: express.Request, res: express.Response, next) {
     var count = page * pageSize;
     var sortType = parseInt(req.params.sort) || 0;
 
-    MoviesService.getCachedRecentTopMovies(language).then(movies => {
-        var sortedMovies = movies
-            .map(x => _.assign(x, { isNew: x.addedAt > lastVisit }))
-            .sortWith(sortMap, sortType)
-            .slice(0, count);
+    var langs = LanguagesService.getCachedLanguages();
+    var movies = MoviesService.getCachedRecentTopMovies(language);
 
-        res.render('index', {
-            app: 'Tortitle',
-            nextPage: count < movies.length ? page + 1 : undefined,
-            sort: sortType,
-            lang: language,
-            movies: sortedMovies
-        });
-    })
-    .catch(error => next(error));
+    Promise.all([langs, movies])
+        .then(result => ({ langs: result[0], movies: result[1] }))
+        .then(result => {
+            var sortedMovies = result.movies
+                .map(x => _.assign(x, { isNew: x.addedAt > lastVisit }))
+                .sortWith(sortMap, sortType)
+                .slice(0, count);
+
+            res.render('index', {
+                app: 'Tortitle',
+                nextPage: count < result.movies.length ? page + 1 : undefined,
+                sort: sortType,
+                lang: language,
+                langs: result.langs,
+                movies: sortedMovies
+            });
+        })
+        .catch(error => next(error));
 };
+    
