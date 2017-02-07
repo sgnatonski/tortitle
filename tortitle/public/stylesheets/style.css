@@ -86,8 +86,19 @@ footer {
     display: inline-block;
 }
 
-.item > .img > .stats {
-    width: 34px;
+.item > .img > .stats-left {
+    width: 44px;
+    position: absolute;
+    left: -16px;
+    top: -16px;
+    background-color: white;
+    border: 1px solid rgb(230, 230, 230);
+    border-bottom-right-radius: 8px;
+    opacity: 0.8;
+}
+
+.item > .img > .stats-right {
+    width: 44px;
     position: absolute;
     right: -16px;
     top: -16px;
@@ -97,17 +108,31 @@ footer {
     opacity: 0.8;
 }
 
-.item > .img > .stats > .rating {
+.item > .img > .stats-left > .rating {
     font-size: 18px;
-    margin-bottom: 15px;
+    width: 100%;
+    display: inline-block;
+    border-bottom-right-radius: 8px;
+    padding: 8px 0;
 }
 
-.item > .img > .stats > .count {
+.item > .img > .stats-right > .count {
     margin-top: 10px;
+    display: block;
+    cursor: default;
+}
+
+.item > .img > .stats-right > .qualities {
+    font-size: 12px;
+    margin-top: 8px;
+    display: inline-block;
+}
+
+.item > .img > .stats-right > .qualities > i {
     display: block;
 }
 
-.item > .img > .stats > .count > span {
+.item > .img > .stats-right > .count > span {
     margin-left: -10px;
     background-color: white;
     width: 16px;
@@ -121,7 +146,7 @@ footer {
     font-weight: bold;
 }
 
-.item > .img > .stats img{
+.item > .img > .stats-right img{
     width: 22px;
 }
 
@@ -155,4 +180,44 @@ ul.mui-dropdown__menu.mui--is-open {
     height: 48px;
     display: inline-block;
     vertical-align: top;
+}
+
+.color0{
+    background-color: transparent;
+}
+
+.color1{
+    background-color: #E50300;
+}
+
+.color2{
+    background-color: #E03A00;
+}
+
+.color3{
+    background-color: #DB6F00;
+}
+
+.color4{
+    background-color: #D6A100;
+}
+
+.color5{
+    background-color: #D2D100;
+}
+
+.color6{
+    background-color: #9BCD00;
+}
+
+.color7{
+    background-color: #67C800;
+}
+
+.color8{
+    background-color: #34C300;
+}
+
+.color9{
+    background-color: #05BF00;
 }

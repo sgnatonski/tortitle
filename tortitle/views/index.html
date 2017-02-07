@@ -53,10 +53,15 @@
                     else{
                         <span></span>
                     }
-                    <div class="stats">
-                        <span class="rating"><b>@(msg.rating == 0 ? 'N/A' : new Number(msg.rating).toFixed(1))</b></span>
-                        <span class="count"><img src="/images/torrent.svg" /><span>@msg.torrents.length</span></span>
-                        <span class="count"><img src="/images/sub.png" /><span>@msg.subtitles.length</span></span>
+                    <div class="stats-left">
+                        <span class="rating color@(Math.floor(msg.rating))"><b>@(msg.rating == 0 ? 'N/A' : new Number(msg.rating).toFixed(1))</b></span>
+                    </div>
+                    <div class="stats-right">
+                        <span class="count mui--no-user-select"><img src="/images/torrent.svg" /><span>@msg.torrents.length</span></span>
+                        <span class="count mui--no-user-select"><img src="/images/sub.png" /><span>@msg.subtitles.length</span></span>                        
+                        <span class="qualities  mui--no-user-select">
+                            @msg.qualities.forEach(function(q){ <i>@q</i> })
+                        </span>
                     </div>
                 </div>
 			    <div class="desc">
@@ -73,8 +78,9 @@
                         </div>                    
                     </div>
                     }
-			        <small><i>@msg.qualities</i></small>
-                    <small>(@msg.addedAt.toLocaleDateString("en-US"))</small>
+                    <div>
+                        <small>(@msg.addedAt.toLocaleDateString("en-US"))</small>
+                    </div>			        
                 </div>
 		    </div>
 		    })
