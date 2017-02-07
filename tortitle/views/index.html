@@ -45,7 +45,7 @@
         </div>
         <div class="mui-container-fluid items">
 		    @model.movies.forEach(function(msg){
-		    <div class="mui-panel item @(msg.hasMatch ? 'matching' : '')">
+            <div class="mui-panel item @(msg.hasMatch ? 'matching' : '')">
                 <div class="img">
                     @if(msg.pictureLink){
                         <img src="@msg.pictureLink">
@@ -60,7 +60,7 @@
                     </div>
                 </div>
 			    <div class="desc">
-			        <h4><small><b>@(msg.isNew ? "NEW" : "")</b></small> <a href="http://imdb.com/title/tt@msg.imdbId" target="_blank">@msg.name</a></h4>
+			        <h4><small><b>@(msg.isNew ? "NEW" : "")</b></small> <a href="http://imdb.com/title/tt@msg.imdbId" target="_blank" title="@msg.name">@msg.name</a></h4>
                     @if(msg.hasMatch){
                     <button class="mui-btn mui-btn--primary" onclick="activateModal(this)">Show matches</button>
                     <div class="matchesContainer mui-panel" style="display:none;">
