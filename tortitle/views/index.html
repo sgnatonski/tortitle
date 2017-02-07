@@ -43,45 +43,47 @@
                 <li><a href="/6">@html.raw(sorts[6])</a></li>
             </ul>
         </div>
-    </div>
-	<table class="mui-table mui-table--bordered flex">
-		@model.movies.forEach(function(msg){
-		<tr class="@(msg.hasMatch ? 'matching' : '')">
-            <td class="img">
-                @if(msg.pictureLink){
-                    <img src="@msg.pictureLink"/>
-                }
-                else{
-                    <div></div>
-                }
-            </td>
-			<td class="desc">
-			    <h4><small><b>@(msg.isNew ? "NEW" : "")</b></small> <a href="http://imdb.com/title/tt@msg.imdbId" target="_blank">@msg.name</a></h4>
-                <p class="m-info"><span><b>@(msg.rating == 0 ? 'N/A' : msg.rating)</b></span><span>(@msg.addedAt.toLocaleDateString("en-US"))</span></p>
-                <p class="m-info"><span>Torrents: @msg.torrents.length</span><span>Subtitles: @msg.subtitles.length</span></p>
-                @if(msg.hasMatch){
-                <button class="mui-btn mui-btn--primary" onclick="activateModal(this)">Show matches</button>
-                <div class="matchesContainer mui-panel" style="display:none;">
-                    <div>
-                        @msg.match.forEach(function(match){
-                        <p><img src="./images/torrent.svg" /><a href="@match.torrent.torrentLink">@match.torrent.name</a></p>
-                        <p><img src="./images/sub.png" /><a href="@match.subtitle.linkDownload">@match.subtitle.releaseName</a></p>
-                        <hr />
-                        })
-                    </div>                    
+        <div class="mui-container-fluid items">
+		    @model.movies.forEach(function(msg){
+		    <div class="mui-panel item @(msg.hasMatch ? 'matching' : '')">
+                <div class="img">
+                    @if(msg.pictureLink){
+                        <img src="@msg.pictureLink">
+                    }
+                    else{
+                        <span></span>
+                    }
+                    <div class="stats">
+                        <span class="rating"><b>@(msg.rating == 0 ? 'N/A' : new Number(msg.rating).toFixed(1))</b></span>
+                        <span class="count"><img src="/images/torrent.svg" /><span>@msg.torrents.length</span></span>
+                        <span class="count"><img src="/images/sub.png" /><span>@msg.subtitles.length</span></span>
+                    </div>
                 </div>
-                }
-                <p class="m-info"><span><small><i>@msg.qualities</i></small></span><span><b>@(msg.hasMatch ? "MATCH" : "")</b></span></p>
-            </td>
-		</tr>
-		})
-    </table>	
-    <div class="mui--text-center">
-    @if(model.nextPage){
-    <br>
-    <a class="mui-btn mui-btn--primary" href="/@model.sort/@model.nextPage">Show more</a>	
-    <br>
-    } 
+			    <div class="desc">
+			        <h4><small><b>@(msg.isNew ? "NEW" : "")</b></small> <a href="http://imdb.com/title/tt@msg.imdbId" target="_blank">@msg.name</a></h4>
+                    @if(msg.hasMatch){
+                    <button class="mui-btn mui-btn--primary" onclick="activateModal(this)">Show matches</button>
+                    <div class="matchesContainer mui-panel" style="display:none;">
+                        <div>
+                            @msg.match.forEach(function(match){
+                            <p><img src="/images/torrent.svg" /><a href="@match.torrent.torrentLink">@match.torrent.name</a></p>
+                            <p><img src="/images/sub.png" /><a href="@match.subtitle.linkDownload">@match.subtitle.releaseName</a></p>
+                            <hr />
+                            })
+                        </div>                    
+                    </div>
+                    }
+			        <small><i>@msg.qualities</i></small>
+                    <small>(@msg.addedAt.toLocaleDateString("en-US"))</small>
+                </div>
+		    </div>
+		    })
+        </div>	
+        @if(model.nextPage){
+        <br>
+        <a class="mui-btn mui-btn--primary" href="/@model.sort/@model.nextPage">Show more</a>	
+        <br>
+        } 
     </div>
 <script>
     function setCookie(c_name, value, exdays) {
