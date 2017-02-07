@@ -71,6 +71,7 @@
     <TypeScriptCompile Include="backend\subtitle.ts" />
     <TypeScriptCompile Include="backend\torrent.ts" />
     <TypeScriptCompile Include="iso639.ts" />
+    <TypeScriptCompile Include="routes\about.ts" />
     <TypeScriptCompile Include="routes\cookie.ts" />
     <TypeScriptCompile Include="routes\index.ts" />
     <TypeScriptCompile Include="routes\routes.ts" />
@@ -80,6 +81,7 @@
     <Content Include="public\images\torrent.svg" />
     <Content Include="public\stylesheets\style.css" />
     <Content Include="README.md" />
+    <Content Include="views\about.html" />
     <Content Include="views\index.html" />
     <Content Include="views\layout.html" />
     <Content Include="Web.config" />
