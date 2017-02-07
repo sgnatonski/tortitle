@@ -1,4 +1,4 @@
-﻿interface ILanguage {
+﻿export interface ILanguage {
     code: string;
     language: string;
 }

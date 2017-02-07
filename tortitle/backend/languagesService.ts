@@ -3,13 +3,13 @@ import { Promise } from "es6-promise";
 import * as cache from "./cache";
 import { Entities } from "./Entities";
 import { ISubtitleEntity } from "./subtitle";
-import { Iso639 } from "../iso639";
+import { Iso639, ILanguage } from "../iso639";
 
 export module LanguagesService {
     export function getCachedLanguages() {
         const cacheKey = "languages";
         const ttl = 7200;
-        return Promise.resolve(cache.get<string[]>(cacheKey))
+        return Promise.resolve(cache.get<ILanguage[]>(cacheKey))
             .then(cached => cached
                 ? cached
                 : getLanguages().then(langs => {
@@ -27,7 +27,7 @@ export module LanguagesService {
                 return availableLangs;
             })
             .catch(error => {
-                return Promise.reject<string[]>(error);
+                return Promise.reject<ILanguage[]>(error);
             });
     }
 }

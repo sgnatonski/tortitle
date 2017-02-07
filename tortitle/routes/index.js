@@ -35,8 +35,8 @@ function index(req, res, next) {
             app: 'Tortitle',
             nextPage: count < result.movies.length ? page + 1 : undefined,
             sort: sortType,
-            lang: language,
-            langs: result.langs,
+            lang: result.langs.filter(function (x) { return x.code === language; }).map(function (x) { return x.language; })[0],
+            langs: result.langs.sortBy(function (x) { return x.language; }),
             movies: sortedMovies
         });
     })
