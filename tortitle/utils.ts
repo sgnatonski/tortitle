@@ -48,7 +48,7 @@ Array.prototype["sortByDesc"] = function <TResult>(name: (o: TResult) => any): T
 Array.prototype["sortWith"] = function <TResult>(sortMap: (arr: TResult[]) => ISortFuncSelector<TResult>, selector: number, defaultSelector?: number): TResult[] {
     var sortFunc = sortMap(this);
     var sort = sortFunc[selector] || sortFunc[defaultSelector || 0];
-    if (sort == null) throw new Error("sortMap function selector does not contain neither given selector " + selector + " or default one");
+    if (sort == null) throw new Error(`sortMap function selector does not contain neither given selector ${selector} or default one`);
     return sort();
 };
 

@@ -8,7 +8,7 @@ import { ISubtitleEntity } from "./subtitle";
 
 export module MoviesService {
     export function getCachedRecentTopMovies(language: string) {
-        const movieCacheKey = "movies-" + language;
+        const movieCacheKey = `movies-${language}`;
         return Promise.resolve(cache.get<IMovie[]>(movieCacheKey))
             .then(cached => cached
                 ? cached
@@ -26,7 +26,7 @@ export module MoviesService {
         return Promise.all([
             Entities.queryEntities<ITorrentEntity>(torrentTableName, new azure.TableQuery()),
             Entities.queryEntities<IMovieEntity>(movieTableName, new azure.TableQuery()),
-            Entities.queryEntities<ISubtitleEntity>(subtitleTableName, new azure.TableQuery().where("Language eq '" + language + "'"))
+            Entities.queryEntities<ISubtitleEntity>(subtitleTableName, new azure.TableQuery().where(`Language eq '${language}'`))
         ])
             .then(result => ({ torrents: result[0], movies: result[1], subtitles: result[2] }))
             .then(result => {

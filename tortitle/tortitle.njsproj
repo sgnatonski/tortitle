@@ -74,14 +74,12 @@
     <TypeScriptCompile Include="routes\cookie.ts" />
     <TypeScriptCompile Include="routes\index.ts" />
     <TypeScriptCompile Include="routes\routes.ts" />
-    <TypeScriptCompile Include="routes\user.ts" />
     <Content Include="public\favicon.ico" />
     <Content Include="package.json" />
     <Content Include="public\images\sub.png" />
     <Content Include="public\images\torrent.svg" />
     <Content Include="public\stylesheets\style.css" />
     <Content Include="README.md" />
-    <Content Include="views\user.html" />
     <Content Include="views\index.html" />
     <Content Include="views\layout.html" />
     <Content Include="Web.config" />
