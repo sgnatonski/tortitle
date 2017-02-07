@@ -56,6 +56,18 @@ footer {
     padding-top: 15px;
 }
 
+.tortitle-logo{
+    width: 48px;
+}
+
+.title > a > .tortitle-logo{
+    margin-top: 4px;
+}
+
+.title.title-white svg{
+    fill: white;
+}
+
 .items{
     display: flex;
     flex-direction: row;
@@ -123,12 +135,12 @@ footer {
 }
 
 .item > .img > .stats-right > .qualities {
-    font-size: 12px;
+    font-size: 11px;
     margin-top: 8px;
     display: inline-block;
 }
 
-.item > .img > .stats-right > .qualities > i {
+.item > .img > .stats-right > .qualities > span {
     display: block;
 }
 
