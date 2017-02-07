@@ -8,11 +8,12 @@ var MoviesService;
 (function (MoviesService) {
     function getCachedRecentTopMovies(language) {
         var movieCacheKey = "movies-" + language;
+        var ttl = 3600;
         return es6_promise_1.Promise.resolve(cache.get(movieCacheKey))
             .then(function (cached) { return cached
             ? cached
             : getRecentTopMovies(language).then(function (movies) {
-                cache.set(movieCacheKey, movies);
+                cache.set(movieCacheKey, movies, ttl);
                 return movies;
             }); });
     }

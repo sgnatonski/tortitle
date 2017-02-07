@@ -9,11 +9,12 @@ import { ISubtitleEntity } from "./subtitle";
 export module MoviesService {
     export function getCachedRecentTopMovies(language: string) {
         const movieCacheKey = `movies-${language}`;
+        const ttl = 3600;
         return Promise.resolve(cache.get<IMovie[]>(movieCacheKey))
             .then(cached => cached
                 ? cached
                 : getRecentTopMovies(language).then(movies => {
-                    cache.set(movieCacheKey, movies);
+                    cache.set(movieCacheKey, movies, ttl);
                     return movies;
                 }));
     }
