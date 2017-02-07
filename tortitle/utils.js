@@ -33,6 +33,9 @@ Array.prototype["distinct"] = function distinct() {
 Array.prototype["distinctBy"] = function distinctBy(keyGetter) {
     return _.uniqBy(this, keyGetter);
 };
+Array.prototype["first"] = function first() {
+    return _.first(this);
+};
 Array.prototype["equijoin"] = function equijoin(foreign, primaryKey, foreignKey, select) {
     var m = this.length, n = foreign.length, index = [], c = [];
     var variableLeft = getVariableName(primaryKey);

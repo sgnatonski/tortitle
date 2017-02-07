@@ -8,6 +8,7 @@ declare global {
         sortWith(sortMap: (arr: T[]) => ISortFuncSelector<T>, selector: number, defaultSelector?: number): T[];
         groupBy(keyGetter: (obj: T) => number): IGroupMapNumber<T>;
         groupBy(keyGetter: (obj: T) => string): IGroupMapString<T>;
+        first(): T;
         distinct(): T[];
         distinctBy(keyGetter: (obj: T) => any): T[];
         equijoin<TRight, TResult>(foreign: TRight[], primaryKey: (o: T) => any, foreignKey: (o: TRight) => any, select: (left: T, right: TRight) => TResult): TResult[];
@@ -62,6 +63,10 @@ Array.prototype["distinct"] = function distinct<TResult>() {
 
 Array.prototype["distinctBy"] = function distinctBy<TResult>(keyGetter: (obj: TResult) => any) {
     return _.uniqBy(this, keyGetter);
+}
+
+Array.prototype["first"] = function first<TResult>() {
+    return _.first(this);
 }
 
 Array.prototype["equijoin"] = function equijoin<TRight, TResult>(foreign: TRight[], primaryKey: (o) => any, foreignKey: (o: TRight) => any, select: (left, right: TRight) => TResult): TResult[] {
