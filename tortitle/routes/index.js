@@ -1,5 +1,4 @@
 "use strict";
-var _ = require("lodash");
 var es6_promise_1 = require("es6-promise");
 var languagesService_1 = require("../backend/languagesService");
 var moviesService_1 = require("../backend/moviesService");
@@ -28,7 +27,7 @@ function index(req, res, next) {
         .then(function (result) { return ({ langs: result[0], movies: result[1] }); })
         .then(function (result) {
         var sortedMovies = result.movies
-            .map(function (x) { return _.assign(x, { isNew: x.addedAt > lastVisit }); })
+            .mapAssign(function (x) { return ({ isNew: x.addedAt > lastVisit }); })
             .sortWith(sortMap, sortType)
             .slice(0, count);
         res.render('index', {

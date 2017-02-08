@@ -12,6 +12,7 @@ declare global {
         distinct(): T[];
         distinctBy(keyGetter: (obj: T) => any): T[];
         equijoin<TRight, TResult>(foreign: TRight[], primaryKey: (o: T) => any, foreignKey: (o: TRight) => any, select: (left: T, right: TRight) => TResult): TResult[];
+        mapAssign(assign: (obj: T) => Partial<T>):  T[];
     }
 
     interface ISortFuncSelector<T> {
@@ -88,4 +89,8 @@ Array.prototype["equijoin"] = function equijoin<TRight, TResult>(foreign: TRight
     }
 
     return c;
+}
+
+Array.prototype["mapAssign"] = function mapAssign<TResult>(keyGetter: (obj: TResult) => Partial<TResult>): TResult[] {
+    return this.map(x => _.assign(x as TResult, keyGetter(x) as TResult));
 }

@@ -53,4 +53,7 @@ Array.prototype["equijoin"] = function equijoin(foreign, primaryKey, foreignKey,
     }
     return c;
 };
+Array.prototype["mapAssign"] = function mapAssign(keyGetter) {
+    return this.map(function (x) { return _.assign(x, keyGetter(x)); });
+};
 //# sourceMappingURL=utils.js.map

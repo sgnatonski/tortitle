@@ -1,5 +1,4 @@
 ﻿import * as express from "express";
-import * as _ from "lodash";
 import { Promise } from "es6-promise";
 import { LanguagesService } from "../backend/languagesService";
 import { MoviesService } from "../backend/moviesService";
@@ -34,7 +33,7 @@ export function index(req: express.Request, res: express.Response, next) {
         .then(result => ({ langs: result[0], movies: result[1] }))
         .then(result => {
             var sortedMovies = result.movies
-                .map(x => _.assign(x, { isNew: x.addedAt > lastVisit }))
+                .mapAssign(x => ({ isNew: x.addedAt > lastVisit }))
                 .sortWith(sortMap, sortType)
                 .slice(0, count);
 
