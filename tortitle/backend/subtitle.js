@@ -5,7 +5,8 @@ function map(m) {
         subId: m.RowKey,
         linkDownload: m.LinkDownload,
         language: m.Language,
-        releaseName: m.ReleaseName
+        releaseName: m.ReleaseName,
+        otherReleases: m.OtherReleases ? m.OtherReleases.split("|") : ""
     };
 }
 exports.map = map;

@@ -4,6 +4,7 @@
     linkDownload: string,
     language: string,
     releaseName: string;
+    otherReleases: string[];
 }
 
 export interface ISubtitleEntity {
@@ -12,6 +13,7 @@ export interface ISubtitleEntity {
     LinkDownload: string;
     Language: string;
     ReleaseName: string;
+    OtherReleases: string;
 }
 
 export function map(m: ISubtitleEntity) {
@@ -20,6 +22,7 @@ export function map(m: ISubtitleEntity) {
         subId: m.RowKey,
         linkDownload: m.LinkDownload,
         language: m.Language,
-        releaseName: m.ReleaseName
+        releaseName: m.ReleaseName,
+        otherReleases: m.OtherReleases ? m.OtherReleases.split("|") : ""
     } as ISubtitle;
 }
