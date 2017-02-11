@@ -8,7 +8,7 @@ using AngleSharp.Dom;
 using AngleSharp.Network;
 using System.Diagnostics;
 
-public static async Task Run(TimerInfo timer, CloudTable imdbTable, CloudTable torrentsTable, TraceWriter log)
+public static async Task Run(TimerInfo timer, CloudTable imdbTable, CloudTable torrentsTable, CloudTable torrentMarksTable, TraceWriter log)
 {
     var token = new CancellationToken();
     var pb = new
@@ -38,7 +38,7 @@ public static async Task Run(TimerInfo timer, CloudTable imdbTable, CloudTable t
         log.Info($"Fetched: {entry.TorrentPage}");
         var links = entryDoc.QuerySelectorAll("a");
         var tmp = links.Select(x => x.GetAttribute("href")?.Trim('\r', '\n')).ToList();
-        var imdbLink = tmp.FirstOrDefault(x => x != null && x.StartsWith("http://www.imdb.com/title/"));
+        var imdbLink = tmp.FirstOrDefault(x => x?.StartsWith("http://www.imdb.com/title/") ?? false);
 
         if (!string.IsNullOrEmpty(imdbLink))
         {
@@ -97,8 +97,10 @@ public static async Task Run(TimerInfo timer, CloudTable imdbTable, CloudTable t
     distImdbs.ForEach(x =>
     {
         var entity = new ImdbMovie { PartitionKey = "0", RowKey = x.ImdbId, MovieName = x.MovieName, Rating = x.Rating, PictureLink = x.PictureLink, AdddedAt = DateTimeOffset.UtcNow };
-        TableOperation operation = TableOperation.InsertOrReplace(entity);
-        TableResult result = imdbTable.Execute(operation);
+        imdbTable.Execute(TableOperation.InsertOrReplace(entity));
+
+        var mark = new TorrentMark { PartitionKey = "0", RowKey = x.ImdbId };
+        torrentMarksTable.Execute(TableOperation.InsertOrReplace(mark));
     });
 
     log.Info($"C# Timer trigger function executed at: {DateTime.Now}");
@@ -189,6 +191,10 @@ public class Torrent : TableEntity
     public string Quality { get; set; }
     public string TorrentLink { get; set; }
     public DateTimeOffset AdddedAt { get; set; }
+}
+
+public class TorrentMark : TableEntity
+{
 }
 
 public class TempEntry
