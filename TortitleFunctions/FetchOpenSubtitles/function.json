@@ -4,13 +4,13 @@
       "name": "timer",
       "type": "timerTrigger",
       "direction": "in",
-      "schedule": "0 0 */1 * * *",
+      "schedule": "0 */5 * * * *",
       "runOnStartup": true
     },
     {
-      "name": "imdbTable",
+      "name": "torrentsMarksTable",
       "type": "table",
-      "tableName": "imdbentries",
+      "tableName": "torrentmarks",
       "connection": "AzureWebJobsStorage",
       "direction": "inout"
     },

@@ -2,6 +2,7 @@
 #r "Microsoft.WindowsAzure.Storage" 
 using Microsoft.WindowsAzure.Storage.Table;
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Net;
@@ -9,56 +10,120 @@ using System.Xml;
 using System.Xml.Linq;
 using System.Xml.XPath;
 
-public static async Task Run(TimerInfo timer, CloudTable imdbTable, CloudTable subtitlesTable, TraceWriter log)
+public static async Task Run(TimerInfo timer, CloudTable torrentsMarksTable, CloudTable subtitlesTable, TraceWriter log)
 {
-    var query = imdbTable.CreateQuery<ImdbMovie>().Where(d => d.AdddedAt >= DateTime.Now.AddHours(-2).AddMinutes(-30));
-    foreach (var entity in query.ToList())
+    var query = torrentsMarksTable.CreateQuery<TorrentMark>().AsQueryable().Take(1);
+    var list = query.ToList();
+    foreach (var entity in list)
     {
-        log.Info($"Requesting http://www.opensubtitles.org/en/search/imdbid-{entity.RowKey}/xml");
-        var subs = await GetSubs(entity.RowKey);
+        var subs = await GetSubs(entity.RowKey, log);
         subs.ForEach(x =>
         {
             TableOperation operation = TableOperation.InsertOrReplace(x);
             TableResult result = subtitlesTable.Execute(operation);
         });
+        torrentsMarksTable.Execute(TableOperation.Delete(entity));
     }
 }
 
-public static async Task<List<Subtitle>> GetSubs(string imdbId)
+public static XDocument GetXml(HttpWebResponse response)
 {
-    var rq = (HttpWebRequest)WebRequest.Create($"http://www.opensubtitles.org/en/search/imdbid-{imdbId}/xml");
+    using (Stream stream = response.GetResponseStream())
+    {
+        StreamReader reader = new StreamReader(stream, System.Text.Encoding.UTF8);
+        string _byteOrderMarkUtf8 = System.Text.Encoding.UTF8.GetString(System.Text.Encoding.UTF8.GetPreamble());
+        var xml = reader.ReadToEnd();
+        if (xml.StartsWith(_byteOrderMarkUtf8))
+        {
+            var lastIndexOfUtf8 = _byteOrderMarkUtf8.Length - 1;
+            xml = xml.Remove(0, lastIndexOfUtf8);
+        }
+        return XDocument.Parse(xml, LoadOptions.None);
+    }
+}
+
+public static async Task<List<Subtitle>> GetSubs(string imdbId, TraceWriter log)
+{
+    log.Info($"Requesting https://www.opensubtitles.org/en/search/imdbid-{imdbId}/xml");
+    var rq = (HttpWebRequest)WebRequest.Create($"https://www.opensubtitles.org/en/search/imdbid-{imdbId}/xml");
     rq.Timeout = 1000;
     rq.ReadWriteTimeout = 10000;
 
     var response = await rq.GetResponseAsync() as HttpWebResponse;
 
-    using (var responseStream = response.GetResponseStream())
+    var osXml = GetXml(response);
+    var subs = osXml.XPathSelectElements("//opensubtitles/search/results/subtitle").Select(x => new SubtitleTemp
     {
-        XmlTextReader reader = new XmlTextReader(responseStream);
-        var osXml = XDocument.Load(reader, LoadOptions.None);
-        var subs = osXml.XPathSelectElements("//opensubtitles/search/results/subtitle").Select(x => new Subtitle
+        PartitionKey = imdbId,
+        RowKey = x.Element("IDSubtitle")?.Value,
+        Link = x.Element("IDSubtitle")?.Attribute("Link")?.Value,
+        LinkDownload = x.Element("IDSubtitle")?.Attribute("LinkDownload")?.Value,
+        Language = x.Element("ISO639")?.Value,
+        ReleaseName = x.Element("MovieReleaseName")?.Value,
+        OtherReleases = string.Empty
+    }).Where(x => x.RowKey != null).ToList();
+
+    var allSubs = new List<SubtitleTemp>();
+    
+    subs.ForEach(sub =>
+    {
+        log.Info($"Requesting https://www.opensubtitles.org{sub.Link}/xml");
+        var subrq = (HttpWebRequest)WebRequest.Create($"https://www.opensubtitles.org{sub.Link}/xml");
+        subrq.Timeout = 1000;
+        subrq.ReadWriteTimeout = 10000;
+
+        var subresp = subrq.GetResponse() as HttpWebResponse;
+
+        var subXml = GetXml(subresp);
+        var otherSubs = subXml.XPathSelectElements("//opensubtitles/SubBrowse/Subtitle/OtherSubtitles").Select(x => new SubtitleTemp
         {
             PartitionKey = imdbId,
-            RowKey = x.Element("IDSubtitle")?.Value,
-            LinkDownload = x.Element("IDSubtitle")?.Attribute("LinkDownload")?.Value,
-            Language = x.Element("ISO639")?.Value,
-            ReleaseName = x.Element("MovieReleaseName")?.Value
+            RowKey = x.Element("Subtitle")?.Attribute("LinkDownload")?.Value?.Split('/').Last(),
+            Link = x.Element("Subtitle")?.Attribute("Link")?.Value,
+            LinkDownload = x.Element("Subtitle")?.Attribute("LinkDownload")?.Value,
+            Language = sub.Language,
+            ReleaseName = x.Element("Subtitle")?.Element("MovieReleaseName")?.Value
         }).Where(x => x.PartitionKey != null && x.RowKey != null).ToList();
-        return subs;
-    }
+
+        var subfiles = subXml.XPathSelectElements("//opensubtitles/SubBrowse/Subtitle/SubtitleFile/Item/CommonMovieFileName")
+            .Select(x => x?.Value)
+            .Where(x => x != null)
+            .DefaultIfEmpty();
+        sub.OtherReleases = string.Join("|", subfiles);
+
+        allSubs.Add(sub);
+        allSubs.AddRange(otherSubs);
+    });
+
+    return allSubs.Select(x => new Subtitle
+    {
+        PartitionKey = x.PartitionKey,
+        RowKey = x.RowKey,
+        LinkDownload = x.LinkDownload,
+        Language = x.Language,
+        ReleaseName = x.ReleaseName,
+        OtherReleases = x.OtherReleases ?? string.Empty
+    }).ToList();
 }
 
+public class SubtitleTemp
+{
+    public string PartitionKey { get; set; }
+    public string RowKey { get; set; }
+    public string Link { get; set; }
+    public string LinkDownload { get; set; }
+    public string Language { get; set; }
+    public string ReleaseName { get; set; }
+    public string OtherReleases { get; set; }
+}
 public class Subtitle : TableEntity
 {
     public string LinkDownload { get; set; }
     public string Language { get; set; }
     public string ReleaseName { get; set; }
+    public string OtherReleases { get; set; }
 }
 
-public class ImdbMovie : TableEntity
+public class TorrentMark : TableEntity
 {
-    public string MovieName { get; set; }
-    public double Rating { get; set; }
-    public string PictureLink { get; set; }
-    public DateTimeOffset AdddedAt { get; set; }
 }
