@@ -26,32 +26,19 @@ public static async Task Run(TimerInfo timer, CloudTable torrentsMarksTable, Clo
     }
 }
 
-public static XDocument GetXml(HttpWebResponse response)
-{
-    using (Stream stream = response.GetResponseStream())
-    {
-        StreamReader reader = new StreamReader(stream, System.Text.Encoding.UTF8);
-        string _byteOrderMarkUtf8 = System.Text.Encoding.UTF8.GetString(System.Text.Encoding.UTF8.GetPreamble());
-        var xml = reader.ReadToEnd();
-        if (xml.StartsWith(_byteOrderMarkUtf8))
-        {
-            var lastIndexOfUtf8 = _byteOrderMarkUtf8.Length - 1;
-            xml = xml.Remove(0, lastIndexOfUtf8);
-        }
-        return XDocument.Parse(xml, LoadOptions.None);
-    }
-}
-
 public static async Task<List<Subtitle>> GetSubs(string imdbId, TraceWriter log)
 {
-    log.Info($"Requesting https://www.opensubtitles.org/en/search/imdbid-{imdbId}/xml");
-    var rq = (HttpWebRequest)WebRequest.Create($"https://www.opensubtitles.org/en/search/imdbid-{imdbId}/xml");
-    rq.Timeout = 1000;
-    rq.ReadWriteTimeout = 10000;
+    log.Info($"Requesting http://www.opensubtitles.org/en/search/imdbid-{imdbId}/xml");
+    var rq = (HttpWebRequest)WebRequest.Create($"http://www.opensubtitles.org/en/search/imdbid-{imdbId}/xml");
+    rq.Timeout = 60000;
+    rq.ReadWriteTimeout = 60000;
+    rq.KeepAlive = false;
 
     var response = await rq.GetResponseAsync() as HttpWebResponse;
 
     var osXml = GetXml(response);
+    response.Dispose();
+
     var subs = osXml.XPathSelectElements("//opensubtitles/search/results/subtitle").Select(x => new SubtitleTemp
     {
         PartitionKey = imdbId,
@@ -64,17 +51,20 @@ public static async Task<List<Subtitle>> GetSubs(string imdbId, TraceWriter log)
     }).Where(x => x.RowKey != null).ToList();
 
     var allSubs = new List<SubtitleTemp>();
-    
+
     subs.ForEach(sub =>
     {
-        log.Info($"Requesting https://www.opensubtitles.org{sub.Link}/xml");
-        var subrq = (HttpWebRequest)WebRequest.Create($"https://www.opensubtitles.org{sub.Link}/xml");
-        subrq.Timeout = 1000;
-        subrq.ReadWriteTimeout = 10000;
+        log.Info($"Requesting http://www.opensubtitles.org{sub.Link}/xml");
+        var subrq = (HttpWebRequest)WebRequest.Create($"http://www.opensubtitles.org{sub.Link}/xml");
+        subrq.Timeout = 60000;
+        subrq.ReadWriteTimeout = 60000;
+        subrq.KeepAlive = false;
 
         var subresp = subrq.GetResponse() as HttpWebResponse;
 
         var subXml = GetXml(subresp);
+        subresp.Dispose();
+
         var otherSubs = subXml.XPathSelectElements("//opensubtitles/SubBrowse/Subtitle/OtherSubtitles").Select(x => new SubtitleTemp
         {
             PartitionKey = imdbId,
@@ -104,6 +94,22 @@ public static async Task<List<Subtitle>> GetSubs(string imdbId, TraceWriter log)
         ReleaseName = x.ReleaseName,
         OtherReleases = x.OtherReleases ?? string.Empty
     }).ToList();
+}
+
+public static XDocument GetXml(HttpWebResponse response)
+{
+    using (Stream stream = response.GetResponseStream())
+    {
+        StreamReader reader = new StreamReader(stream, System.Text.Encoding.UTF8);
+        string _byteOrderMarkUtf8 = System.Text.Encoding.UTF8.GetString(System.Text.Encoding.UTF8.GetPreamble());
+        var xml = reader.ReadToEnd();
+        if (xml.StartsWith(_byteOrderMarkUtf8))
+        {
+            var lastIndexOfUtf8 = _byteOrderMarkUtf8.Length - 1;
+            xml = xml.Remove(0, lastIndexOfUtf8);
+        }
+        return XDocument.Parse(xml, LoadOptions.None);
+    }
 }
 
 public class SubtitleTemp

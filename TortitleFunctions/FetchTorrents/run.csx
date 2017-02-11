@@ -66,6 +66,9 @@ public static async Task Run(TimerInfo timer, CloudTable imdbTable, CloudTable t
                 };
             }
 
+            var mark = new TorrentMark { PartitionKey = "0", RowKey = imdbId };
+            torrentMarksTable.Execute(TableOperation.InsertOrReplace(mark));
+
             var imdbPage = TortitleRequest.Open(new Uri($"http://www.imdb.com/title/tt{imdbId}/"), token);
 
             var originalTitle = imdbPage.QuerySelector(ImdbQueryProvider.OriginalTitleQuery)?.TextContent.Replace("(original title)", "");
@@ -97,10 +100,7 @@ public static async Task Run(TimerInfo timer, CloudTable imdbTable, CloudTable t
     distImdbs.ForEach(x =>
     {
         var entity = new ImdbMovie { PartitionKey = "0", RowKey = x.ImdbId, MovieName = x.MovieName, Rating = x.Rating, PictureLink = x.PictureLink, AdddedAt = DateTimeOffset.UtcNow };
-        imdbTable.Execute(TableOperation.InsertOrReplace(entity));
-
-        var mark = new TorrentMark { PartitionKey = "0", RowKey = x.ImdbId };
-        torrentMarksTable.Execute(TableOperation.InsertOrReplace(mark));
+        imdbTable.Execute(TableOperation.InsertOrReplace(entity));        
     });
 
     log.Info($"C# Timer trigger function executed at: {DateTime.Now}");
