@@ -31,9 +31,11 @@ app.set('views', path.join(__dirname, '/views'));
 app.engine('html', gaikan);
 app.set('view engine', '.html');
 
-var accessLogStream = fs.createWriteStream(path.join(__dirname, 'access.log'), { flags: 'a' });
-app.use(morgan('short', { stream: accessLogStream }));
-if (process.env.NODE_ENV !== 'production') {
+if (process.env.NODE_ENV === 'production') {
+    //var accessLogStream = fs.createWriteStream(path.join(__dirname, 'access.log'), { flags: 'a' });
+    app.use(morgan('short'/*, { stream: accessLogStream }*/));
+}
+else {
     app.use(morgan('dev'));
 }
 

@@ -2,7 +2,6 @@
 var express = require("express");
 var routes = require("./routes/routes");
 var path = require("path");
-var fs = require("fs");
 var bodyParser = require("body-parser");
 var cookieParser = require("cookie-parser");
 var methodOverride = require("method-override");
@@ -28,9 +27,12 @@ app.set('port', (process.env.PORT || 3000));
 app.set('views', path.join(__dirname, '/views'));
 app.engine('html', gaikan);
 app.set('view engine', '.html');
-var accessLogStream = fs.createWriteStream(path.join(__dirname, 'access.log'), { flags: 'a' });
-app.use(morgan('short', { stream: accessLogStream }));
-app.use(morgan('dev'));
+if (process.env.NODE_ENV === 'production') {
+    app.use(morgan('short'));
+}
+else {
+    app.use(morgan('dev'));
+}
 routes.configure(app);
 Entities_1.Entities.initialize(nconf.get('TORTITLESTORAGENAME'), nconf.get('TORTITLESTORAGEKEY'));
 app.listen(app.get('port'), function () {
