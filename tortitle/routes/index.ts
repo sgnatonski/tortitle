@@ -1,9 +1,9 @@
 ﻿import * as express from "express";
+import * as cache from "../backend/cache";
 import { Promise } from "es6-promise";
 import { LanguagesService } from "../backend/languagesService";
 import { MoviesService } from "../backend/moviesService";
 import { IMovie } from "../backend/movie";
-import * as cache from "../backend/cache";
 
 const visitCookie = 'TortitleLastVisit';
 const languageCookie = 'TortitleLanguage';
@@ -19,7 +19,7 @@ const sortMap = (movies: IMovie[]): ISortFuncSelector<IMovie> => ({
     6: () => movies.sortByDesc(x => x.name)
 });
 
-var sorts = {
+const sorts = {
     0: "Matching first",
     1: "Date added &darr;",
     2: "Date added &uarr;",
@@ -27,6 +27,17 @@ var sorts = {
     4: "Rating &uarr;",
     5: "Title (A-Z)",
     6: "Title (Z-A)"
+}
+
+interface IIndexModel {
+    app: string;
+    nextPage: number;
+    sorts: any;
+    sort: number;
+    currentSort: string;
+    lang: string;
+    langs: any;
+    movies: IMovie[];
 }
 
 export function index(req: express.Request, res: express.Response, next) {
@@ -38,7 +49,7 @@ export function index(req: express.Request, res: express.Response, next) {
     var sortType = parseInt(req.params.sort) || 0;
 
     const cacheKey = `index-model-${page}-${count}-${sortType}-${language}`;
-    Promise.resolve(cache.get(cacheKey)).then(cached => {
+    Promise.resolve(cache.get<IIndexModel>(cacheKey)).then(cached => {
         if (cached) return cached;
 
         var langs = LanguagesService.getCachedLanguages();
@@ -47,28 +58,23 @@ export function index(req: express.Request, res: express.Response, next) {
         return Promise.all([langs, movies])
             .then(result => ({ langs: result[0], movies: result[1] }))
             .then(result => {
-                var sortedMovies = result.movies
-                    .mapAssign(x => ({ isNew: x.addedAt > lastVisit }))
-                    .sortWith(sortMap, sortType)
-                    .slice(0, count);
-
-                var currentSort = sorts[sortType] || sorts[0];
-
+                var sortedMovies = result.movies.sortWith(sortMap, sortType).slice(0, count);
                 var model = {
                     app: 'Tortitle',
                     nextPage: count < result.movies.length ? page + 1 : undefined,
                     sorts: sorts,
                     sort: sortType,
-                    currentSort: currentSort,
+                    currentSort: sorts[sortType] || sorts[0],
                     lang: result.langs.filter(x => x.code === language).map(x => x.language).first(),
                     langs: result.langs,
                     movies: sortedMovies
-                };
+                } as IIndexModel;
                 cache.set(cacheKey, model, 300);
                 return model;
             })
             .catch(error => next(error));
     }).then(result => {
+        result.movies = result.movies.mapAssign(x => ({ isNew: x.addedAt > lastVisit }));
         res.render('index', result);
     });
 };

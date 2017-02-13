@@ -1,8 +1,8 @@
 "use strict";
+var cache = require("../backend/cache");
 var es6_promise_1 = require("es6-promise");
 var languagesService_1 = require("../backend/languagesService");
 var moviesService_1 = require("../backend/moviesService");
-var cache = require("../backend/cache");
 var visitCookie = 'TortitleLastVisit';
 var languageCookie = 'TortitleLanguage';
 var pageSize = 100;
@@ -40,17 +40,13 @@ function index(req, res, next) {
         return es6_promise_1.Promise.all([langs, movies])
             .then(function (result) { return ({ langs: result[0], movies: result[1] }); })
             .then(function (result) {
-            var sortedMovies = result.movies
-                .mapAssign(function (x) { return ({ isNew: x.addedAt > lastVisit }); })
-                .sortWith(sortMap, sortType)
-                .slice(0, count);
-            var currentSort = sorts[sortType] || sorts[0];
+            var sortedMovies = result.movies.sortWith(sortMap, sortType).slice(0, count);
             var model = {
                 app: 'Tortitle',
                 nextPage: count < result.movies.length ? page + 1 : undefined,
                 sorts: sorts,
                 sort: sortType,
-                currentSort: currentSort,
+                currentSort: sorts[sortType] || sorts[0],
                 lang: result.langs.filter(function (x) { return x.code === language; }).map(function (x) { return x.language; }).first(),
                 langs: result.langs,
                 movies: sortedMovies
@@ -60,6 +56,7 @@ function index(req, res, next) {
         })
             .catch(function (error) { return next(error); });
     }).then(function (result) {
+        result.movies = result.movies.mapAssign(function (x) { return ({ isNew: x.addedAt > lastVisit }); });
         res.render('index', result);
     });
 }
