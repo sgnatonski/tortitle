@@ -19,6 +19,9 @@ nconf.argv()
 var app = express();
 var gaikan = require('gaikan');
 gaikan.options.layout = 'layout';
+gaikan.options.directories = ['views'];
+gaikan.options.extensions = ['html'];
+gaikan.options.rootDir = __dirname;
 
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -27,9 +30,9 @@ app.use(methodOverride());
 app.use(serveFavicon(__dirname + '/public/favicon.ico'));
 app.use(serveStatic(__dirname + '/public'));
 app.set('port', (process.env.PORT || 3000));
-app.set('views', path.join(__dirname, '/views'));
+app.set('views', __dirname + '/views');
+app.set('view engine', 'html');
 app.engine('html', gaikan);
-app.set('view engine', '.html');
 
 if (process.env.NODE_ENV === 'production') {
     //var accessLogStream = fs.createWriteStream(path.join(__dirname, 'access.log'), { flags: 'a' });
