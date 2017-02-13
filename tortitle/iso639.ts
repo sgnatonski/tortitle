@@ -6,12 +6,12 @@
 export module Iso639 {
     export var languages = [
         {
-            "code": "aa",
-            "language": "Afar"
-        },
-        {
             "code": "ab",
             "language": "Abkhazian"
+        },
+        {
+            "code": "aa",
+            "language": "Afar"
         },
         {
             "code": "af",
@@ -22,16 +22,16 @@ export module Iso639 {
             "language": "Akan"
         },
         {
+            "code": "sq",
+            "language": "Albanian"
+        },
+        {
             "code": "als",
             "language": "Alemannic"
         },
         {
             "code": "am",
             "language": "Amharic"
-        },
-        {
-            "code": "an",
-            "language": "Aragonese"
         },
         {
             "code": "ang",
@@ -42,11 +42,27 @@ export module Iso639 {
             "language": "Arabic"
         },
         {
+            "code": "an",
+            "language": "Aragonese"
+        },
+        {
             "code": "arc",
             "language": "Aramaic"
         },
         {
-            "code": "as",
+            "code": "hy",
+            "language": "Armenian"
+        },
+        {
+            "code": "roa-rup",
+            "language": "Aromanian"
+        },
+        {
+            "code": "frp",
+            "language": "Arpitan / Franco - ProvenÃ§al"
+        },
+        {
+            "code": "as ",
             "language": "Assamese"
         },
         {
@@ -66,80 +82,80 @@ export module Iso639 {
             "language": "Azerbaijani"
         },
         {
+            "code": "bm",
+            "language": "Bambara"
+        },
+        {
+            "code": "map- bms",
+            "language": "Banyumasan"
+        },
+        {
             "code": "ba",
             "language": "Bashkir"
+        },
+        {
+            "code": "eu",
+            "language": "Basque"
         },
         {
             "code": "bar",
             "language": "Bavarian"
         },
         {
-            "code": "bat-smg",
-            "language": "Samogitian"
-        },
-        {
-            "code": "bcl",
-            "language": "Bikol"
-        },
-        {
             "code": "be",
             "language": "Belarusian"
-        },
-        {
-            "code": "bg",
-            "language": "Bulgarian"
-        },
-        {
-            "code": "bh",
-            "language": "Bihari"
-        },
-        {
-            "code": "bi",
-            "language": "Bislama"
-        },
-        {
-            "code": "bm",
-            "language": "Bambara"
         },
         {
             "code": "bn",
             "language": "Bengali"
         },
         {
-            "code": "bo",
-            "language": "Tibetan"
+            "code": "bh",
+            "language": "Bihari"
+        },
+        {
+            "code": "bcl",
+            "language": "Bikol"
         },
         {
             "code": "bpy",
             "language": "Bishnupriya Manipuri"
         },
         {
-            "code": "br",
-            "language": "Breton"
+            "code": "bi",
+            "language": "Bislama"
         },
         {
             "code": "bs",
             "language": "Bosnian"
         },
         {
+            "code": "br",
+            "language": "Breton"
+        },
+        {
             "code": "bug",
             "language": "Buginese"
+        },
+        {
+            "code": "bg",
+            "language": "Bulgarian"
         },
         {
             "code": "bxr",
             "language": "Buriat (Russia)"
         },
         {
+            "code": "my",
+            "language": "Burmese"
+        },
+        {
+            "code": "km",
+            "language": "Cambodian"
+        },
+        {
             "code": "ca",
             "language": "Catalan"
-        },
-        {
-            "code": "cdo",
-            "language": "Min Dong Chinese"
-        },
-        {
-            "code": "ce",
-            "language": "Chechen"
         },
         {
             "code": "ceb",
@@ -150,8 +166,8 @@ export module Iso639 {
             "language": "Chamorro"
         },
         {
-            "code": "cho",
-            "language": "Choctaw"
+            "code": "ce",
+            "language": "Chechen"
         },
         {
             "code": "chr",
@@ -162,6 +178,26 @@ export module Iso639 {
             "language": "Cheyenne"
         },
         {
+            "code": "ny",
+            "language": "Chichewa"
+        },
+        {
+            "code": "zh",
+            "language": "Chinese"
+        },
+        {
+            "code": "cho",
+            "language": "Choctaw"
+        },
+        {
+            "code": "cv",
+            "language": "Chuvash"
+        },
+        {
+            "code": "kw",
+            "language": "Cornish"
+        },
+        {
             "code": "co",
             "language": "Corsican"
         },
@@ -170,60 +206,40 @@ export module Iso639 {
             "language": "Cree"
         },
         {
+            "code": "mus",
+            "language": "Creek / Muskogee"
+        },
+        {
+            "code": "hr",
+            "language": "Croatian"
+        },
+        {
             "code": "cs",
             "language": "Czech"
-        },
-        {
-            "code": "csb",
-            "language": "Kashubian"
-        },
-        {
-            "code": "cu",
-            "language": "Old Church Slavonic / Old Bulgarian"
-        },
-        {
-            "code": "cv",
-            "language": "Chuvash"
-        },
-        {
-            "code": "cy",
-            "language": "Welsh"
         },
         {
             "code": "da",
             "language": "Danish"
         },
         {
-            "code": "de",
-            "language": "German"
-        },
-        {
             "code": "diq",
             "language": "Dimli"
-        },
-        {
-            "code": "dsb",
-            "language": "Lower Sorbian"
         },
         {
             "code": "dv",
             "language": "Divehi"
         },
         {
+            "code": "nl",
+            "language": "Dutch"
+        },
+        {
+            "code": "nds- nl",
+            "language": "Dutch Low Saxon"
+        },
+        {
             "code": "dz",
             "language": "Dzongkha"
-        },
-        {
-            "code": "ee",
-            "language": "Ewe"
-        },
-        {
-            "code": "far",
-            "language": "Farsi"
-        },
-        {
-            "code": "el",
-            "language": "Greek"
         },
         {
             "code": "en",
@@ -234,104 +250,100 @@ export module Iso639 {
             "language": "Esperanto"
         },
         {
-            "code": "es",
-            "language": "Spanish"
-        },
-        {
             "code": "et",
             "language": "Estonian"
         },
         {
-            "code": "eu",
-            "language": "Basque"
+            "code": "ee",
+            "language": "Ewe"
         },
         {
             "code": "ext",
             "language": "Extremaduran"
         },
         {
-            "code": "ff",
-            "language": "Peul"
+            "code": "fo",
+            "language": "Faroese"
         },
         {
-            "code": "fi",
-            "language": "Finnish"
-        },
-        {
-            "code": "fiu-vro",
-            "language": "VÃµro"
+            "code": "far",
+            "language": "Farsi"
         },
         {
             "code": "fj",
             "language": "Fijian"
         },
         {
-            "code": "fo",
-            "language": "Faroese"
+            "code": "fi",
+            "language": "Finnish"
         },
         {
             "code": "fr",
             "language": "French"
         },
         {
-            "code": "frp",
-            "language": "Arpitan / Franco-ProvenÃ§al"
-        },
-        {
             "code": "fur",
             "language": "Friulian"
-        },
-        {
-            "code": "fy",
-            "language": "West Frisian"
-        },
-        {
-            "code": "ga",
-            "language": "Irish"
-        },
-        {
-            "code": "gan",
-            "language": "Gan Chinese"
-        },
-        {
-            "code": "gbm",
-            "language": "Garhwali"
-        },
-        {
-            "code": "gd",
-            "language": "Scottish Gaelic"
-        },
-        {
-            "code": "gil",
-            "language": "Gilbertese"
         },
         {
             "code": "gl",
             "language": "Galician"
         },
         {
-            "code": "gn",
-            "language": "Guarani"
+            "code": "gan",
+            "language": "Gan Chinese"
+        },
+        {
+            "code": "lg",
+            "language": "Ganda"
+        },
+        {
+            "code": "gbm",
+            "language": "Garhwali"
+        },
+        {
+            "code": "ka",
+            "language": "Georgian"
+        },
+        {
+            "code": "de",
+            "language": "German"
+        },
+        {
+            "code": "gil",
+            "language": "Gilbertese"
         },
         {
             "code": "got",
             "language": "Gothic"
         },
         {
+            "code": "el",
+            "language": "Greek"
+        },
+        {
+            "code": "kl",
+            "language": "Greenlandic"
+        },
+        {
+            "code": "gn",
+            "language": "Guarani"
+        },
+        {
             "code": "gu",
             "language": "Gujarati"
         },
         {
-            "code": "gv",
-            "language": "Manx"
-        },
-        {
-            "code": "ha",
-            "language": "Hausa"
+            "code": "ht",
+            "language": "Haitian"
         },
         {
             "code": "hak",
             "language": "Hakka Chinese"
+        },
+        {
+            "code": "ha",
+            "language": "Hausa"
         },
         {
             "code": "haw",
@@ -342,6 +354,10 @@ export module Iso639 {
             "language": "Hebrew"
         },
         {
+            "code": "hz",
+            "language": "Herero"
+        },
+        {
             "code": "hi",
             "language": "Hindi"
         },
@@ -350,280 +366,260 @@ export module Iso639 {
             "language": "Hiri Motu"
         },
         {
-            "code": "hr",
-            "language": "Croatian"
-        },
-        {
-            "code": "ht",
-            "language": "Haitian"
-        },
-        {
             "code": "hu",
             "language": "Hungarian"
-        },
-        {
-            "code": "hy",
-            "language": "Armenian"
-        },
-        {
-            "code": "hz",
-            "language": "Herero"
-        },
-        {
-            "code": "ia",
-            "language": "Interlingua"
-        },
-        {
-            "code": "id",
-            "language": "Indonesian"
-        },
-        {
-            "code": "ie",
-            "language": "Interlingue"
-        },
-        {
-            "code": "ig",
-            "language": "Igbo"
-        },
-        {
-            "code": "ii",
-            "language": "Sichuan Yi"
-        },
-        {
-            "code": "ik",
-            "language": "Inupiak"
-        },
-        {
-            "code": "ilo",
-            "language": "Ilokano"
-        },
-        {
-            "code": "io",
-            "language": "Ido"
         },
         {
             "code": "is",
             "language": "Icelandic"
         },
         {
-            "code": "it",
-            "language": "Italian"
+            "code": "io",
+            "language": "Ido"
+        },
+        {
+            "code": "ig",
+            "language": "Igbo"
+        },
+        {
+            "code": "ilo",
+            "language": "Ilokano"
+        },
+        {
+            "code": "id",
+            "language": "Indonesian"
+        },
+        {
+            "code": "ia",
+            "language": "Interlingua"
+        },
+        {
+            "code": "ie",
+            "language": "Interlingue"
         },
         {
             "code": "iu",
             "language": "Inuktitut"
         },
         {
-            "code": "ja",
-            "language": "Japanese"
+            "code": "ik",
+            "language": "Inupiak"
         },
         {
-            "code": "jbo",
-            "language": "Lojban"
+            "code": "ga",
+            "language": "Irish"
+        },
+        {
+            "code": "it",
+            "language": "Italian"
+        },
+        {
+            "code": "ja",
+            "language": "Japanese"
         },
         {
             "code": "jv",
             "language": "Javanese"
         },
         {
-            "code": "ka",
-            "language": "Georgian"
-        },
-        {
-            "code": "kg",
-            "language": "Kongo"
-        },
-        {
-            "code": "ki",
-            "language": "Kikuyu"
-        },
-        {
-            "code": "kj",
-            "language": "Kuanyama"
-        },
-        {
-            "code": "kk",
-            "language": "Kazakh"
-        },
-        {
-            "code": "kl",
-            "language": "Greenlandic"
-        },
-        {
-            "code": "km",
-            "language": "Cambodian"
+            "code": "xal",
+            "language": "Kalmyk"
         },
         {
             "code": "kn",
             "language": "Kannada"
         },
         {
-            "code": "khw",
-            "language": "Khowar"
-        },
-        {
-            "code": "ko",
-            "language": "Korean"
-        },
-        {
             "code": "kr",
             "language": "Kanuri"
+        },
+        {
+            "code": "pam",
+            "language": "Kapampangan"
         },
         {
             "code": "ks",
             "language": "Kashmiri"
         },
         {
-            "code": "ksh",
-            "language": "Ripuarian"
+            "code": "csb",
+            "language": "Kashubian"
         },
         {
-            "code": "ku",
-            "language": "Kurdish"
+            "code": "kk",
+            "language": "Kazakh"
         },
         {
-            "code": "kv",
-            "language": "Komi"
+            "code": "khw",
+            "language": "Khowar"
         },
         {
-            "code": "kw",
-            "language": "Cornish"
+            "code": "ki",
+            "language": "Kikuyu"
         },
         {
             "code": "ky",
             "language": "Kirghiz"
         },
         {
-            "code": "la",
-            "language": "Latin"
+            "code": "rn",
+            "language": "Kirundi"
+        },
+        {
+            "code": "tlh",
+            "language": "Klingon"
+        },
+        {
+            "code": "kv",
+            "language": "Komi"
+        },
+        {
+            "code": "kg",
+            "language": "Kongo"
+        },
+        {
+            "code": "ko",
+            "language": "Korean"
+        },
+        {
+            "code": "kj",
+            "language": "Kuanyama"
+        },
+        {
+            "code": "ku",
+            "language": "Kurdish"
         },
         {
             "code": "lad",
-            "language": "Ladino / Judeo-Spanish"
+            "language": "Ladino / Judeo - Spanish"
         },
         {
             "code": "lan",
             "language": "Lango"
         },
         {
-            "code": "lb",
-            "language": "Luxembourgish"
-        },
-        {
-            "code": "lg",
-            "language": "Ganda"
-        },
-        {
-            "code": "li",
-            "language": "Limburgian"
-        },
-        {
-            "code": "lij",
-            "language": "Ligurian"
-        },
-        {
-            "code": "lmo",
-            "language": "Lombard"
-        },
-        {
-            "code": "ln",
-            "language": "Lingala"
-        },
-        {
             "code": "lo",
             "language": "Laotian"
         },
         {
-            "code": "lt",
-            "language": "Lithuanian"
+            "code": "la",
+            "language": "Latin"
         },
         {
             "code": "lv",
             "language": "Latvian"
         },
         {
-            "code": "map-bms",
-            "language": "Banyumasan"
+            "code": "lij",
+            "language": "Ligurian"
         },
         {
-            "code": "mg",
-            "language": "Malagasy"
+            "code": "li",
+            "language": "Limburgian"
         },
         {
-            "code": "man",
-            "language": "Mandarin"
+            "code": "ln",
+            "language": "Lingala"
         },
         {
-            "code": "mh",
-            "language": "Marshallese"
+            "code": "lt",
+            "language": "Lithuanian"
         },
         {
-            "code": "mi",
-            "language": "Maori"
+            "code": "jbo",
+            "language": "Lojban"
         },
         {
-            "code": "min",
-            "language": "Minangkabau"
-        },
-        {
-            "code": "mk",
-            "language": "Macedonian"
-        },
-        {
-            "code": "ml",
-            "language": "Malayalam"
-        },
-        {
-            "code": "mn",
-            "language": "Mongolian"
-        },
-        {
-            "code": "mo",
-            "language": "Moldovan"
-        },
-        {
-            "code": "mr",
-            "language": "Marathi"
-        },
-        {
-            "code": "ms",
-            "language": "Malay"
-        },
-        {
-            "code": "mt",
-            "language": "Maltese"
-        },
-        {
-            "code": "mus",
-            "language": "Creek / Muskogee"
-        },
-        {
-            "code": "my",
-            "language": "Burmese"
-        },
-        {
-            "code": "na",
-            "language": "Nauruan"
-        },
-        {
-            "code": "nah",
-            "language": "Nahuatl"
-        },
-        {
-            "code": "nap",
-            "language": "Neapolitan"
-        },
-        {
-            "code": "nd",
-            "language": "North Ndebele"
+            "code": "lmo",
+            "language": "Lombard"
         },
         {
             "code": "nds",
             "language": "Low German / Low Saxon"
         },
         {
-            "code": "nds-nl",
-            "language": "Dutch Low Saxon"
+            "code": "dsb",
+            "language": "Lower Sorbian"
+        },
+        {
+            "code": "lb",
+            "language": "Luxembourgish"
+        },
+        {
+            "code": "mk",
+            "language": "Macedonian"
+        },
+        {
+            "code": "mg",
+            "language": "Malagasy"
+        },
+        {
+            "code": "ms",
+            "language": "Malay"
+        },
+        {
+            "code": "ml",
+            "language": "Malayalam"
+        },
+        {
+            "code": "mt",
+            "language": "Maltese"
+        },
+        {
+            "code": "man",
+            "language": "Mandarin"
+        },
+        {
+            "code": "gv",
+            "language": "Manx"
+        },
+        {
+            "code": "mi",
+            "language": "Maori"
+        },
+        {
+            "code": "mr",
+            "language": "Marathi"
+        },
+        {
+            "code": "mh",
+            "language": "Marshallese"
+        },
+        {
+            "code": "cdo",
+            "language": "Min Dong Chinese"
+        },
+        {
+            "code": "min",
+            "language": "Minangkabau"
+        },
+        {
+            "code": "mo",
+            "language": "Moldovan"
+        },
+        {
+            "code": "mn",
+            "language": "Mongolian"
+        },
+        {
+            "code": "nah",
+            "language": "Nahuatl"
+        },
+        {
+            "code": "na",
+            "language": "Nauruan"
+        },
+        {
+            "code": "nv",
+            "language": "Navajo"
+        },
+        {
+            "code": "ng",
+            "language": "Ndonga"
+        },
+        {
+            "code": "nap",
+            "language": "Neapolitan"
         },
         {
             "code": "ne",
@@ -634,40 +630,32 @@ export module Iso639 {
             "language": "Newar"
         },
         {
-            "code": "ng",
-            "language": "Ndonga"
-        },
-        {
-            "code": "nl",
-            "language": "Dutch"
-        },
-        {
-            "code": "nn",
-            "language": "Norwegian Nynorsk"
-        },
-        {
-            "code": "no",
-            "language": "Norwegian"
-        },
-        {
-            "code": "nr",
-            "language": "South Ndebele"
-        },
-        {
-            "code": "nso",
-            "language": "Northern Sotho"
+            "code": "pih",
+            "language": "Norfolk"
         },
         {
             "code": "nrm",
             "language": "Norman"
         },
         {
-            "code": "nv",
-            "language": "Navajo"
+            "code": "nd",
+            "language": "North Ndebele"
         },
         {
-            "code": "ny",
-            "language": "Chichewa"
+            "code": "se",
+            "language": "Northern Sami"
+        },
+        {
+            "code": "nso",
+            "language": "Northern Sotho"
+        },
+        {
+            "code": "no",
+            "language": "Norwegian"
+        },
+        {
+            "code": "nn",
+            "language": "Norwegian Nynorsk"
         },
         {
             "code": "oc",
@@ -678,56 +666,56 @@ export module Iso639 {
             "language": "Ojibwa"
         },
         {
-            "code": "om",
-            "language": "Oromo"
+            "code": "cu",
+            "language": "Old Church Slavonic / Old Bulgarian"
         },
         {
             "code": "or",
             "language": "Oriya"
         },
         {
+            "code": "om",
+            "language": "Oromo"
+        },
+        {
             "code": "os",
             "language": "Ossetian / Ossetic"
-        },
-        {
-            "code": "pa",
-            "language": "Panjabi / Punjabi"
-        },
-        {
-            "code": "pag",
-            "language": "Pangasinan"
-        },
-        {
-            "code": "pam",
-            "language": "Kapampangan"
-        },
-        {
-            "code": "pap",
-            "language": "Papiamentu"
-        },
-        {
-            "code": "pdc",
-            "language": "Pennsylvania German"
         },
         {
             "code": "pi",
             "language": "Pali"
         },
         {
-            "code": "pih",
-            "language": "Norfolk"
+            "code": "pag",
+            "language": "Pangasinan"
         },
         {
-            "code": "pl",
-            "language": "Polish"
+            "code": "pa",
+            "language": "Panjabi / Punjabi"
+        },
+        {
+            "code": "pap",
+            "language": "Papiamentu"
+        },
+        {
+            "code": "ps",
+            "language": "Pashto"
+        },
+        {
+            "code": "pdc",
+            "language": "Pennsylvania German"
+        },
+        {
+            "code": "ff",
+            "language": "Peul"
         },
         {
             "code": "pms",
             "language": "Piedmontese"
         },
         {
-            "code": "ps",
-            "language": "Pashto"
+            "code": "pl",
+            "language": "Polish"
         },
         {
             "code": "pt",
@@ -742,20 +730,16 @@ export module Iso639 {
             "language": "Raeto Romance"
         },
         {
+            "code": "ksh",
+            "language": "Ripuarian"
+        },
+        {
             "code": "rmy",
             "language": "Romani"
         },
         {
-            "code": "rn",
-            "language": "Kirundi"
-        },
-        {
             "code": "ro",
             "language": "Romanian"
-        },
-        {
-            "code": "roa-rup",
-            "language": "Aromanian"
         },
         {
             "code": "ru",
@@ -766,6 +750,18 @@ export module Iso639 {
             "language": "Rwandi"
         },
         {
+            "code": "sm",
+            "language": "Samoan"
+        },
+        {
+            "code": "bat- smg",
+            "language": "Samogitian"
+        },
+        {
+            "code": "sg",
+            "language": "Sango"
+        },
+        {
             "code": "sa",
             "language": "Sanskrit"
         },
@@ -774,28 +770,36 @@ export module Iso639 {
             "language": "Sardinian"
         },
         {
-            "code": "scn",
-            "language": "Sicilian"
-        },
-        {
             "code": "sco",
             "language": "Scots"
         },
         {
-            "code": "sd",
-            "language": "Sindhi"
+            "code": "gd",
+            "language": "Scottish Gaelic"
         },
         {
-            "code": "se",
-            "language": "Northern Sami"
-        },
-        {
-            "code": "sg",
-            "language": "Sango"
+            "code": "sr",
+            "language": "Serbian"
         },
         {
             "code": "sh",
-            "language": "Serbo-Croatian"
+            "language": "Serbo- Croatian"
+        },
+        {
+            "code": "sn",
+            "language": "Shona"
+        },
+        {
+            "code": "ii",
+            "language": "Sichuan Yi"
+        },
+        {
+            "code": "scn",
+            "language": "Sicilian"
+        },
+        {
+            "code": "sd",
+            "language": "Sindhi"
         },
         {
             "code": "si",
@@ -810,48 +814,56 @@ export module Iso639 {
             "language": "Slovenian"
         },
         {
-            "code": "sm",
-            "language": "Samoan"
-        },
-        {
-            "code": "sn",
-            "language": "Shona"
-        },
-        {
             "code": "so",
             "language": "Somalia"
         },
         {
-            "code": "sq",
-            "language": "Albanian"
-        },
-        {
-            "code": "sr",
-            "language": "Serbian"
-        },
-        {
-            "code": "ss",
-            "language": "Swati"
+            "code": "nr",
+            "language": "South Ndebele"
         },
         {
             "code": "st",
             "language": "Southern Sotho"
         },
         {
-            "code": "su",
-            "language": "Sundanese"
+            "code": "es",
+            "language": "Spanish"
         },
         {
-            "code": "sv",
-            "language": "Swedish"
+            "code": "su",
+            "language": "Sundanese"
         },
         {
             "code": "sw",
             "language": "Swahili"
         },
         {
+            "code": "ss",
+            "language": "Swati"
+        },
+        {
+            "code": "sv",
+            "language": "Swedish"
+        },
+        {
+            "code": "tl",
+            "language": "Tagalog"
+        },
+        {
+            "code": "ty",
+            "language": "Tahitian"
+        },
+        {
+            "code": "tg",
+            "language": "Tajik"
+        },
+        {
             "code": "ta",
             "language": "Tamil"
+        },
+        {
+            "code": "tt",
+            "language": "Tatar"
         },
         {
             "code": "te",
@@ -862,72 +874,52 @@ export module Iso639 {
             "language": "Tetum"
         },
         {
-            "code": "tg",
-            "language": "Tajik"
-        },
-        {
             "code": "th",
             "language": "Thai"
+        },
+        {
+            "code": "bo",
+            "language": "Tibetan"
         },
         {
             "code": "ti",
             "language": "Tigrinya"
         },
         {
-            "code": "tk",
-            "language": "Turkmen"
-        },
-        {
-            "code": "tl",
-            "language": "Tagalog"
-        },
-        {
-            "code": "tlh",
-            "language": "Klingon"
-        },
-        {
-            "code": "tn",
-            "language": "Tswana"
+            "code": "tpi",
+            "language": "Tok Pisin"
         },
         {
             "code": "to",
             "language": "Tonga"
         },
         {
-            "code": "tpi",
-            "language": "Tok Pisin"
-        },
-        {
-            "code": "tr",
-            "language": "Turkish"
-        },
-        {
             "code": "ts",
             "language": "Tsonga"
         },
         {
-            "code": "tt",
-            "language": "Tatar"
+            "code": "tn",
+            "language": "Tswana"
         },
         {
             "code": "tum",
             "language": "Tumbuka"
         },
         {
+            "code": "tr",
+            "language": "Turkish"
+        },
+        {
+            "code": "tk",
+            "language": "Turkmen"
+        },
+        {
             "code": "tw",
             "language": "Twi"
         },
         {
-            "code": "ty",
-            "language": "Tahitian"
-        },
-        {
             "code": "udm",
             "language": "Udmurt"
-        },
-        {
-            "code": "ug",
-            "language": "Uyghur"
         },
         {
             "code": "uk",
@@ -938,6 +930,10 @@ export module Iso639 {
             "language": "Urdu"
         },
         {
+            "code": "ug",
+            "language": "Uyghur"
+        },
+        {
             "code": "uz",
             "language": "Uzbek"
         },
@@ -946,20 +942,20 @@ export module Iso639 {
             "language": "Venda"
         },
         {
-            "code": "vi",
-            "language": "Vietnamese"
-        },
-        {
             "code": "vec",
             "language": "Venetian"
         },
         {
-            "code": "vls",
-            "language": "West Flemish"
+            "code": "vi",
+            "language": "Vietnamese"
         },
         {
             "code": "vo",
             "language": "VolapÃ¼k"
+        },
+        {
+            "code": "fiu- vro",
+            "language": "VÃµro"
         },
         {
             "code": "wa",
@@ -967,15 +963,23 @@ export module Iso639 {
         },
         {
             "code": "war",
-            "language": "Waray / Samar-Leyte Visayan"
+            "language": "Waray / Samar - Leyte Visayan"
+        },
+        {
+            "code": "cy",
+            "language": "Welsh"
+        },
+        {
+            "code": "vls",
+            "language": "West Flemish"
+        },
+        {
+            "code": "fy",
+            "language": "West Frisian"
         },
         {
             "code": "wo",
             "language": "Wolof"
-        },
-        {
-            "code": "xal",
-            "language": "Kalmyk"
         },
         {
             "code": "xh",
@@ -992,10 +996,6 @@ export module Iso639 {
         {
             "code": "za",
             "language": "Zhuang"
-        },
-        {
-            "code": "zh",
-            "language": "Chinese"
         }
     ] as ILanguage[];
 }

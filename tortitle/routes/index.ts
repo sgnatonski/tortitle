@@ -42,7 +42,7 @@ export function index(req: express.Request, res: express.Response, next) {
                 nextPage: count < result.movies.length ? page + 1 : undefined,
                 sort: sortType,
                 lang: result.langs.filter(x => x.code === language).map(x => x.language).first(),
-                langs: result.langs.sortBy(x => x.language),
+                langs: result.langs,
                 movies: sortedMovies
             });
         })

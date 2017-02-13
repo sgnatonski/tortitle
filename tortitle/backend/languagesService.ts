@@ -22,8 +22,11 @@ export module LanguagesService {
         const subtitleTableName = "subtitles";
         return Entities.queryEntities<ISubtitleEntity>(subtitleTableName, new azure.TableQuery())
             .then(subs => {
-                var langs = subs.map(x => x.Language).distinct();
-                var availableLangs = Iso639.languages.filter(x => langs.indexOf(x.code) >= 0);
+                var langs = subs.reduce(function (map, obj) {
+                    map[obj.Language] = 1;
+                    return map;
+                }, {});
+                var availableLangs = Iso639.languages.filter(x => langs[x.code]);
                 return availableLangs;
             })
             .catch(error => {

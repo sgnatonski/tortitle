@@ -35,7 +35,7 @@ function index(req, res, next) {
             nextPage: count < result.movies.length ? page + 1 : undefined,
             sort: sortType,
             lang: result.langs.filter(function (x) { return x.code === language; }).map(function (x) { return x.language; }).first(),
-            langs: result.langs.sortBy(function (x) { return x.language; }),
+            langs: result.langs,
             movies: sortedMovies
         });
     })

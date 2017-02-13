@@ -22,8 +22,11 @@ var LanguagesService;
         var subtitleTableName = "subtitles";
         return Entities_1.Entities.queryEntities(subtitleTableName, new azure.TableQuery())
             .then(function (subs) {
-            var langs = subs.map(function (x) { return x.Language; }).distinct();
-            var availableLangs = iso639_1.Iso639.languages.filter(function (x) { return langs.indexOf(x.code) >= 0; });
+            var langs = subs.reduce(function (map, obj) {
+                map[obj.Language] = 1;
+                return map;
+            }, {});
+            var availableLangs = iso639_1.Iso639.languages.filter(function (x) { return langs[x.code]; });
             return availableLangs;
         })
             .catch(function (error) {
