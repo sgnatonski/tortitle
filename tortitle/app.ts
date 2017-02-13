@@ -1,6 +1,7 @@
 ﻿import * as express from 'express';
 import * as routes from './routes/routes';
 import * as path from 'path';
+import * as fs from 'fs';
 import * as bodyParser from 'body-parser';
 import * as cookieParser from 'cookie-parser';
 import * as methodOverride from 'method-override';
@@ -30,9 +31,9 @@ app.set('views', path.join(__dirname, '/views'));
 app.engine('html', gaikan);
 app.set('view engine', '.html');
 
-if (process.env.NODE_ENV === 'production') {
-    app.use(morgan('dev'));
-} else {
+var accessLogStream = fs.createWriteStream(path.join(__dirname, 'access.log'), { flags: 'a' });
+app.use(morgan('short', { stream: accessLogStream }));
+if (process.env.NODE_ENV !== 'production') {
     app.use(morgan('dev'));
 }
 
