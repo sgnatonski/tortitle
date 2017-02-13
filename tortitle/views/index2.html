@@ -1,0 +1,120 @@
+﻿@html.extend('layout', function(model){
+@html.block('content', function(model){       
+    <div class="mui--text-center">
+        <div class="mui--appbar-height"></div>
+        <div class="mui-panel">
+            <div class="mui-dropdown">
+                <button class="mui-btn mui-btn--primary" data-mui-toggle="dropdown">
+                    @(model.lang || "Select language")
+                    <span class="mui-caret"></span>
+                </button>
+                <ul class="mui-dropdown__menu">
+                    @model.langs.forEach(function(l){
+                    <li><a href="#" onclick="changeLang('@l.code')">@l.language</a></li>
+                    })
+                </ul>
+            </div>
+            <div class="mui-dropdown">
+                <button class="mui-btn mui-btn--primary" data-mui-toggle="dropdown">
+                    @{
+                    var sorts = {
+                    0: "Matching first",
+                    1: "Date added &darr;",
+                    2: "Date added &uarr;",
+                    3: "Rating &darr;",
+                    4: "Rating &uarr;",
+                    5: "Title (A-Z)",
+                    6: "Title (Z-A)",
+                    }
+                    var currentSort = sorts[model.sort] || sorts[0];
+                    }
+                    @html.raw(currentSort)
+                    <span class="mui-caret"></span>
+                </button>
+                <ul class="mui-dropdown__menu">
+                    <li><a href="/0">@html.raw(sorts[0])</a></li>
+                    <li><a href="/1">@html.raw(sorts[1])</a></li>
+                    <li><a href="/2">@html.raw(sorts[2])</a></li>
+                    <li><a href="/3">@html.raw(sorts[3])</a></li>
+                    <li><a href="/4">@html.raw(sorts[4])</a></li>
+                    <li><a href="/5">@html.raw(sorts[5])</a></li>
+                    <li><a href="/6">@html.raw(sorts[6])</a></li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="mui-container-fluid items">
+		    @model.movies.forEach(function(msg){
+            <div class="mui-panel item @(msg.hasMatch ? 'matching' : '')">
+                <div class="img">
+                    @if(msg.pictureLink){
+                        <img src="@msg.pictureLink">
+                    }
+                    else{
+                        <span></span>
+                    }
+                    <div class="stats-left">
+                        <span class="rating color@(Math.floor(msg.rating))"><b>@(msg.rating == 0 ? 'N/A' : new Number(msg.rating).toFixed(1))</b></span>
+                    </div>
+                    <div class="stats-right">
+                        <span class="count mui--no-user-select"><img src="/images/torrent.svg" /><span>@msg.torrents.length</span></span>
+                        <span class="count mui--no-user-select"><img src="/images/sub.png" /><span>@msg.subtitles.length</span></span>                        
+                        <span class="qualities  mui--no-user-select">
+                            @msg.qualities.forEach(function(q){ <span>@q</span> })
+                        </span>
+                    </div>
+                </div>
+			    <div class="desc">
+			        <h4><small><b>@(msg.isNew ? "NEW" : "")</b></small> <a href="http://imdb.com/title/tt@msg.imdbId" target="_blank" title="@msg.name">@msg.name</a></h4>
+                    @if(msg.hasMatch){
+                    <button class="mui-btn mui-btn--primary" onclick="activateModal(this)">Show matches</button>
+                    <div class="matchesContainer mui-panel" style="display:none;">
+                        <div>
+                            @msg.match.forEach(function(match){
+                            <p><img src="/images/torrent.svg" /><a href="@match.torrent.torrentLink">@match.torrent.name</a></p>
+                            <p><img src="/images/sub.png" /><a href="@match.subtitle.linkDownload">@match.subtitle.releaseName</a></p>
+                            <hr />
+                            })
+                        </div>                    
+                    </div>
+                    }
+                    <div>
+                        <small>(@msg.addedAt.toLocaleDateString("en-US"))</small>
+                    </div>			        
+                </div>
+		    </div>
+		    })
+        </div>	
+        @if(model.nextPage){
+        <a class="mui-btn mui-btn--primary" href="/@model.sort/@model.nextPage">Show more</a>
+        } 
+    </div>
+<script>
+    function setCookie(c_name, value, exdays) {
+        var exdate = new Date();
+        exdate.setDate(exdate.getDate() + exdays);
+        var c_value = escape(value) +
+          ((exdays == null) ? "" : ("; expires=" + exdate.toUTCString()));
+        document.cookie = c_name + "=" + c_value;
+    }
+
+    function changeLang(lang) {
+        setCookie("TortitleLanguage", lang, 30);
+        window.location.reload();
+    }
+
+    function activateModal(el) {
+        // initialize modal element
+        var modalEl = el.parentElement.getElementsByClassName('matchesContainer')[0].cloneNode(true);
+        modalEl.style.display = 'block';
+        modalEl.style.width = '440px';
+        modalEl.style.height = '300px';
+        modalEl.style.margin = '100px auto';
+        modalEl.style.backgroundColor = '#fff';
+
+        // show modal
+        mui.overlay('on', modalEl);
+    }
+</script>
+})
+})

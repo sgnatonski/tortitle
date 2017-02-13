@@ -2,7 +2,7 @@
 <html lang="en">
 	<head>
 		<meta charset="utf-8">
-		<title>@model.app</title>
+		<title>#{root.app}</title>
         <link href="//cdn.muicss.com/mui-0.9.9-rc2/css/mui.min.css" rel="stylesheet" type="text/css" />
         <link rel="stylesheet" href="/stylesheets/style.css" type="text/css" media="screen">
         <link rel="icon" type="image/png" href="favicon-32x32.png" sizes="32x32" />
@@ -28,11 +28,9 @@
             </table>
           </div>
         </header>
-        <div id="content-wrapper">
-          @html.block('content')
+        <div id="content-wrapper" data-fragment="content">
         </div>
         <footer>
-            @html.block('footer')	
             <div class="mui-container mui--text-center mui--text-bottom">
                 Made with ♥ by <a href="https://www.muicss.com">MUICSS</a>
             </div>			

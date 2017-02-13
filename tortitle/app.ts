@@ -16,7 +16,8 @@ nconf.argv()
     .file({ file: './config.json' });
 
 var app = express();
-var vash = require("vash");
+var gaikan = require('gaikan');
+gaikan.options.layout = 'layout';
 
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -26,12 +27,11 @@ app.use(serveFavicon(__dirname + '/public/favicon.ico'));
 app.use(serveStatic(__dirname + '/public'));
 app.set('port', (process.env.PORT || 3000));
 app.set('views', path.join(__dirname, '/views'));
-app.set('view engine', 'html');
-app.engine("html", vash.__express);
+app.engine('html', gaikan);
+app.set('view engine', '.html');
 
 if (process.env.NODE_ENV === 'production') {
-    app.use(morgan('tiny'));
-    vash.config.debug = false;
+    app.use(morgan('dev'));
 } else {
     app.use(morgan('dev'));
 }
