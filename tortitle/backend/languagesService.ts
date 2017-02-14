@@ -20,10 +20,10 @@ export module LanguagesService {
 
     export function getLanguages() {
         const subtitleTableName = "subtitles";
-        return Entities.queryEntities<ISubtitleEntity>(subtitleTableName, new azure.TableQuery())
+        return Entities.queryEntities<ISubtitleEntity>(subtitleTableName, new azure.TableQuery().select('PartitionKey'))
             .then(subs => {
-                var langs = subs.reduce(function (map, obj) {
-                    map[obj.Language] = 1;
+                var langs = subs.reduce((map, obj) => {
+                    map[obj.PartitionKey] = 1;
                     return map;
                 }, {});
                 var availableLangs = Iso639.languages.filter(x => langs[x.code]);

@@ -25,7 +25,7 @@ var MoviesService;
         return es6_promise_1.Promise.all([
             Entities_1.Entities.queryEntities(torrentTableName, new azure.TableQuery()),
             Entities_1.Entities.queryEntities(movieTableName, new azure.TableQuery()),
-            Entities_1.Entities.queryEntities(subtitleTableName, new azure.TableQuery().where("Language eq '" + language + "'"))
+            Entities_1.Entities.queryEntities(subtitleTableName, new azure.TableQuery().where("PartitionKey eq '" + language + "'"))
         ])
             .then(function (result) { return ({ torrents: result[0], movies: result[1], subtitles: result[2] }); })
             .then(function (result) {

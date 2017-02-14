@@ -20,10 +20,10 @@ var LanguagesService;
     LanguagesService.getCachedLanguages = getCachedLanguages;
     function getLanguages() {
         var subtitleTableName = "subtitles";
-        return Entities_1.Entities.queryEntities(subtitleTableName, new azure.TableQuery())
+        return Entities_1.Entities.queryEntities(subtitleTableName, new azure.TableQuery().select('PartitionKey'))
             .then(function (subs) {
             var langs = subs.reduce(function (map, obj) {
-                map[obj.Language] = 1;
+                map[obj.PartitionKey] = 1;
                 return map;
             }, {});
             var availableLangs = iso639_1.Iso639.languages.filter(function (x) { return langs[x.code]; });

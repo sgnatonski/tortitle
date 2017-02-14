@@ -1,10 +1,10 @@
 "use strict";
 function map(m) {
     return {
-        imdbId: m.PartitionKey,
+        language: m.PartitionKey,
+        imdbId: m.ImdbId,
         subId: m.RowKey,
         linkDownload: m.LinkDownload,
-        language: m.Language,
         releaseName: m.ReleaseName,
         otherReleases: m.OtherReleases ? m.OtherReleases.split("|") : ""
     };

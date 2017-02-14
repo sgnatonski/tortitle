@@ -27,7 +27,7 @@ export module MoviesService {
         return Promise.all([
             Entities.queryEntities<ITorrentEntity>(torrentTableName, new azure.TableQuery()),
             Entities.queryEntities<IMovieEntity>(movieTableName, new azure.TableQuery()),
-            Entities.queryEntities<ISubtitleEntity>(subtitleTableName, new azure.TableQuery().where(`Language eq '${language}'`))
+            Entities.queryEntities<ISubtitleEntity>(subtitleTableName, new azure.TableQuery().where(`PartitionKey eq '${language}'`))
         ])
             .then(result => ({ torrents: result[0], movies: result[1], subtitles: result[2] }))
             .then(result => {
