@@ -35,3 +35,4 @@ _ReSharper*/
 *Web Deploy.pubxml
 config.json
 .vs
+TortitleFunctions/appsettings.json
