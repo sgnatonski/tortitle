@@ -32,7 +32,7 @@ export module MoviesService {
             .then(result => ({ torrents: result[0], movies: result[1], subtitles: result[2] }))
             .then(result => {
                 var torrentsByImdb = result.torrents.groupBy(x => x.ImdbId);
-                var subtitlesByImdb = result.subtitles.groupBy(x => x.PartitionKey);
+                var subtitlesByImdb = result.subtitles.groupBy(x => x.ImdbId);
                 var movies = result.movies.map(e => movieMap(e, torrentsByImdb, subtitlesByImdb));
                 return movies;
             })

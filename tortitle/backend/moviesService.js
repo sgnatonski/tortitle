@@ -30,7 +30,7 @@ var MoviesService;
             .then(function (result) { return ({ torrents: result[0], movies: result[1], subtitles: result[2] }); })
             .then(function (result) {
             var torrentsByImdb = result.torrents.groupBy(function (x) { return x.ImdbId; });
-            var subtitlesByImdb = result.subtitles.groupBy(function (x) { return x.PartitionKey; });
+            var subtitlesByImdb = result.subtitles.groupBy(function (x) { return x.ImdbId; });
             var movies = result.movies.map(function (e) { return movie_1.map(e, torrentsByImdb, subtitlesByImdb); });
             return movies;
         })
