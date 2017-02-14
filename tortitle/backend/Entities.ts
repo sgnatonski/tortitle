@@ -1,5 +1,5 @@
 ﻿import * as azure from "azure-storage";
-import { Promise } from "es6-promise";
+import { Promise, Thenable } from "es6-promise";
 
 var tableService: azure.TableService;
 
@@ -21,16 +21,26 @@ export module Entities {
         tableService = azure.createTableService(accountName, accountKey, undefined);
     }
 
+    function queryTillEnd<T>(table: string, query: azure.TableQuery, currentToken: azure.TableService.TableContinuationToken, array: T[], resolve, reject) {
+        tableService.queryEntities(table, query, currentToken, (error, result, response) => {
+            if (error) {
+                reject(error);
+            } else {
+                var entities = result.entries.map(m => map<any, T>(m));
+                
+                if (result.continuationToken) {
+                    console.log(`getting next page, current array lenght = ${array.length}`);
+                    queryTillEnd<T>(table, query, result.continuationToken, array.concat(entities), resolve, reject);
+                } else {
+                    resolve(array.concat(entities));
+                }
+            }
+        });
+    }
+
     export function queryEntities<T>(table: string, query: azure.TableQuery) {
         return new Promise<T[]>((resolve, reject) => {
-            tableService.queryEntities(table, query, null, (error, result, response) => {
-                if (error) {
-                    reject(error);
-                } else {
-                    var entities = result.entries.map(m => map<any, T>(m));
-                    resolve(entities);
-                }
-            });
+            queryTillEnd(table, query, null, [], resolve, reject);
         });
     }
 }

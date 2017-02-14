@@ -16,17 +16,26 @@ var Entities;
         tableService = azure.createTableService(accountName, accountKey, undefined);
     }
     Entities.initialize = initialize;
-    function queryEntities(table, query) {
-        return new es6_promise_1.Promise(function (resolve, reject) {
-            tableService.queryEntities(table, query, null, function (error, result, response) {
-                if (error) {
-                    reject(error);
+    function queryTillEnd(table, query, currentToken, array, resolve, reject) {
+        tableService.queryEntities(table, query, currentToken, function (error, result, response) {
+            if (error) {
+                reject(error);
+            }
+            else {
+                var entities = result.entries.map(function (m) { return map(m); });
+                if (result.continuationToken) {
+                    console.log("getting next page, current array lenght = " + array.length);
+                    queryTillEnd(table, query, result.continuationToken, array.concat(entities), resolve, reject);
                 }
                 else {
-                    var entities = result.entries.map(function (m) { return map(m); });
-                    resolve(entities);
+                    resolve(array.concat(entities));
                 }
-            });
+            }
+        });
+    }
+    function queryEntities(table, query) {
+        return new es6_promise_1.Promise(function (resolve, reject) {
+            queryTillEnd(table, query, null, [], resolve, reject);
         });
     }
     Entities.queryEntities = queryEntities;
