@@ -89,15 +89,12 @@
     }
 
     function activateModal(el) {
-        // initialize modal element
         var modalEl = el.parentElement.getElementsByClassName('matchesContainer')[0].cloneNode(true);
         modalEl.style.display = 'block';
         modalEl.style.width = '440px';
         modalEl.style.height = '300px';
         modalEl.style.margin = '100px auto';
         modalEl.style.backgroundColor = '#fff';
-
-        // show modal
         mui.overlay('on', modalEl);
     }
 </script>
