@@ -3,7 +3,7 @@ var azure = require("azure-storage");
 var tableService;
 var Entities;
 (function (Entities) {
-    function map(entity) {
+    function mapFromEntity(entity) {
         var mapped = {};
         Object.keys(entity).forEach(function (key) {
             var prop = entity[key];
@@ -21,7 +21,7 @@ var Entities;
                 reject(error);
             }
             else {
-                var entities = result.entries.map(function (m) { return map(m); });
+                var entities = result.entries.map(function (m) { return mapFromEntity(m); });
                 if (result.continuationToken) {
                     console.log("getting next page, current array lenght = " + array.length);
                     queryTillEnd(table, query, result.continuationToken, array.concat(entities), resolve, reject);
@@ -38,5 +38,23 @@ var Entities;
         });
     }
     Entities.queryEntities = queryEntities;
+    function updateEntity(table, obj) {
+        return new Promise(function (resolve, reject) {
+            var entGen = azure.TableUtilities.entityGenerator;
+            var task = {
+                PartitionKey: entGen.String(obj["PartitionKey"]),
+                RowKey: entGen.String(obj["RowKey"])
+            };
+            tableService.insertOrReplaceEntity(table, task, function (error, result, response) {
+                if (error) {
+                    reject(error);
+                }
+                else {
+                    resolve();
+                }
+            });
+        });
+    }
+    Entities.updateEntity = updateEntity;
 })(Entities = exports.Entities || (exports.Entities = {}));
 //# sourceMappingURL=Entities.js.map

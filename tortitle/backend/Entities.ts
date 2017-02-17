@@ -7,7 +7,7 @@ export module Entities {
         _: T;
     }
 
-    function map<TK>(entity): TK {
+    function mapFromEntity<TK>(entity): TK {
         var mapped = {} as TK;
         Object.keys(entity).forEach((key) => {
             var prop: IEntityProperty<any> = entity[key];
@@ -25,7 +25,7 @@ export module Entities {
             if (error) {
                 reject(error);
             } else {
-                const entities = result.entries.map(m => map<T>(m));
+                const entities = result.entries.map(m => mapFromEntity<T>(m));
                 
                 if (result.continuationToken) {
                     console.log(`getting next page, current array lenght = ${array.length}`);
@@ -40,6 +40,25 @@ export module Entities {
     export function queryEntities<T>(table: string, query: azure.TableQuery) {
         return new Promise<T[]>((resolve, reject) => {
             queryTillEnd(table, query, null, [], resolve, reject);
+        });
+    }
+
+    export function updateEntity<T>(table: string, obj: T) {
+        return new Promise<T[]>((resolve, reject) => {
+            var entGen = azure.TableUtilities.entityGenerator;
+            var task = {
+                PartitionKey: entGen.String(obj["PartitionKey"]),
+                RowKey: entGen.String(obj["RowKey"])
+            };
+            tableService.insertOrReplaceEntity(table,
+                task,
+                (error, result, response) => {
+                    if (error) {
+                        reject(error);
+                    } else {
+                        resolve();
+                    }
+                });
         });
     }
 }
