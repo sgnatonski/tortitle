@@ -90,7 +90,6 @@
     </Content>
     <Content Include="views\about.html" />
     <Content Include="views\index.html" />
-    <Content Include="views\index2.html" />
     <Content Include="views\layout.html" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config" />
