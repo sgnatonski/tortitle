@@ -42,14 +42,14 @@ interface IIndexModel {
 
 export function index(req: express.Request, res: express.Response, next) {
     var language: string = req.cookies[languageCookie];
-    var lastVisitTime: string = req.cookies[visitCookie];
+    const lastVisitTime: string = req.cookies[visitCookie];
     var lastVisit = lastVisitTime ? new Date(Date.parse(lastVisitTime)) : new Date(0);
     var page = (parseInt(req.params.page) || 0) + 1;
     var count = page * pageSize;
     var sortType = parseInt(req.params.sort) || 0;
 
     const cacheKey = `index-model-${page}-${count}-${sortType}-${language}`;
-    Promise.resolve(cache.get<IIndexModel>(cacheKey)).then(cached => {
+    cache.getAsync<IIndexModel>(cacheKey).then(cached => {
         if (cached) return cached;
 
         var langs = LanguagesService.getCachedLanguages();
@@ -69,13 +69,12 @@ export function index(req: express.Request, res: express.Response, next) {
                     langs: result.langs,
                     movies: sortedMovies
                 } as IIndexModel;
-                cache.set(cacheKey, model, 300);
-                return model;
-            })
-            .catch(error => next(error));
+                return cache.setAsync(cacheKey, model, 300);
+            });
     }).then(result => {
         result.movies = result.movies.mapAssign(x => ({ isNew: x.addedAt > lastVisit }));
         res.render('index', result);
-    });
+    })
+    .catch(next);
 };
     

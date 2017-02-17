@@ -1,7 +1,6 @@
 ﻿import * as express from "express";
-const visitCookie = 'TortitleLastVisit';
 
-export function index(req: express.Request, res: express.Response, next) {
+export function index(req: express.Request, res: express.Response) {
     res.render('about', {
         app: 'Tortitle'
     });

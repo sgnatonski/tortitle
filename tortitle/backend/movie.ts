@@ -6,19 +6,18 @@ export interface IMatch {
     subtitle: ISubtitle;
 }
 
-
 export interface IMovie {
     name: string;
     imdbId: string;
     pictureLink: string;
     rating: number;
-    addedAt: Date;
-    isNew: boolean;
-    hasMatch: boolean;
-    match: IMatch[];
     torrents: ITorrent[];
     subtitles: ISubtitle[];
     qualities: string[];
+    addedAt: Date;
+    hasMatch: boolean;
+    match: IMatch[];
+    isNew: boolean;
 }
 
 export interface IMovieEntity {
@@ -31,10 +30,10 @@ export interface IMovieEntity {
 }
 
 export function map(m: IMovieEntity, t: IGroupMapString<ITorrentEntity>, s: IGroupMapString<ISubtitleEntity>) {
-    var torrents = (t[m.RowKey] || []).map(torrentMap);
-    var subtitles = (s[m.RowKey] || []).map(subMap);
-    var qualities = torrents.map(x => x.quality).distinct();
-    var match = torrents.equijoin(subtitles, t => t.name, s => s.releaseName, (t, s) => ({ torrent: t, subtitle: s }) as IMatch);
+    const torrents = (t[m.RowKey] || []).map(torrentMap);
+    const subtitles = (s[m.RowKey] || []).map(subMap);
+    const qualities = torrents.map(x => x.quality).distinct();
+    const match = torrents.equijoin(subtitles, t => t.name, s => s.releaseName, (t, s) => ({ torrent: t, subtitle: s }) as IMatch);
     return {
         name: m.MovieName,
         imdbId: m.RowKey,

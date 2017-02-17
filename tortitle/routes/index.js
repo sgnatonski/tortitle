@@ -32,7 +32,7 @@ function index(req, res, next) {
     var count = page * pageSize;
     var sortType = parseInt(req.params.sort) || 0;
     var cacheKey = "index-model-" + page + "-" + count + "-" + sortType + "-" + language;
-    es6_promise_1.Promise.resolve(cache.get(cacheKey)).then(function (cached) {
+    cache.getAsync(cacheKey).then(function (cached) {
         if (cached)
             return cached;
         var langs = languagesService_1.LanguagesService.getCachedLanguages();
@@ -51,14 +51,13 @@ function index(req, res, next) {
                 langs: result.langs,
                 movies: sortedMovies
             };
-            cache.set(cacheKey, model, 300);
-            return model;
-        })
-            .catch(function (error) { return next(error); });
+            return cache.setAsync(cacheKey, model, 300);
+        });
     }).then(function (result) {
         result.movies = result.movies.mapAssign(function (x) { return ({ isNew: x.addedAt > lastVisit }); });
         res.render('index', result);
-    });
+    })
+        .catch(next);
 }
 exports.index = index;
 ;

@@ -8,7 +8,7 @@ export module Entities {
         _: T;
     }
 
-    function map<T, TK>(entity: T): TK {
+    function map<TK>(entity): TK {
         var mapped = {} as TK;
         Object.keys(entity).forEach((key) => {
             var prop: IEntityProperty<any> = entity[key];
@@ -26,7 +26,7 @@ export module Entities {
             if (error) {
                 reject(error);
             } else {
-                var entities = result.entries.map(m => map<any, T>(m));
+                const entities = result.entries.map(m => map<T>(m));
                 
                 if (result.continuationToken) {
                     console.log(`getting next page, current array lenght = ${array.length}`);

@@ -9,13 +9,10 @@ var LanguagesService;
     function getCachedLanguages() {
         var cacheKey = "languages";
         var ttl = 7200;
-        return es6_promise_1.Promise.resolve(cache.get(cacheKey))
+        return cache.getAsync(cacheKey)
             .then(function (cached) { return cached
             ? cached
-            : getLanguages().then(function (langs) {
-                cache.set(cacheKey, langs, ttl);
-                return langs;
-            }); });
+            : getLanguages().then(function (langs) { return cache.setAsync(cacheKey, langs, ttl); }); });
     }
     LanguagesService.getCachedLanguages = getCachedLanguages;
     function getLanguages() {

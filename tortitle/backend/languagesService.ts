@@ -9,13 +9,10 @@ export module LanguagesService {
     export function getCachedLanguages() {
         const cacheKey = "languages";
         const ttl = 7200;
-        return Promise.resolve(cache.get<ILanguage[]>(cacheKey))
+        return cache.getAsync<ILanguage[]>(cacheKey)
             .then(cached => cached
                 ? cached
-                : getLanguages().then(langs => {
-                    cache.set(cacheKey, langs, ttl);
-                    return langs;
-                }));
+                : getLanguages().then(langs => cache.setAsync(cacheKey, langs, ttl)));
     }
 
     export function getLanguages() {

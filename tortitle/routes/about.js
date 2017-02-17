@@ -1,6 +1,5 @@
 "use strict";
-var visitCookie = 'TortitleLastVisit';
-function index(req, res, next) {
+function index(req, res) {
     res.render('about', {
         app: 'Tortitle'
     });
