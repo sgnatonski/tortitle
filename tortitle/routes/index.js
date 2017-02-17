@@ -58,7 +58,7 @@ var sorts = {
     5: "Title (A-Z)",
     6: "Title (Z-A)"
 };
-function index(req, res, next) {
+function index(req, res) {
     return __awaiter(this, void 0, void 0, function () {
         var language, page, count, sortType, cacheKey, cached, langs, movies, sortedMovies, model;
         return __generator(this, function (_a) {

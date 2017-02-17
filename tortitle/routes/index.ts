@@ -39,7 +39,7 @@ interface IIndexModel {
     movies: IMovie[];
 }
 
-export async function index(req: express.Request, res: express.Response, next) {
+export async function index(req: express.Request, res: express.Response) {
     const language: string = req.cookies[languageCookie];
     const page = (parseInt(req.params.page) || 0) + 1;
     const count = page * pageSize;

@@ -71,11 +71,8 @@ var LanguagesService;
                         return [4 /*yield*/, Entities_1.Entities.queryEntities(subtitleTableName, new azure.TableQuery().select('PartitionKey'))];
                     case 1:
                         subs = _a.sent();
-                        langs = subs.reduce(function (map, obj) {
-                            map[obj.PartitionKey] = 1;
-                            return map;
-                        }, {});
-                        availableLangs = iso639_1.Iso639.languages.filter(function (x) { return langs[x.code]; });
+                        langs = new Set(subs.map(function (i) { return i.PartitionKey; }));
+                        availableLangs = iso639_1.Iso639.languages.filter(function (x) { return langs.has(x.code); });
                         return [2 /*return*/, availableLangs];
                 }
             });
