@@ -6,7 +6,8 @@
     <Name>tortitle</Name>
     <RootNamespace>ExpressApp1</RootNamespace>
     <NameOfLastUsedPublishProfile>tortitle - Web Deploy</NameOfLastUsedPublishProfile>
-    <NodeExeArguments>--harmony</NodeExeArguments>
+    <NodeExeArguments>
+    </NodeExeArguments>
     <Environment>
     </Environment>
   </PropertyGroup>
@@ -84,6 +85,9 @@
     <Content Include="public\images\tortitle.svg" />
     <Content Include="public\stylesheets\style.css" />
     <Content Include="README.md" />
+    <Content Include="tsconfig.json">
+      <SubType>Code</SubType>
+    </Content>
     <Content Include="views\about.html" />
     <Content Include="views\index.html" />
     <Content Include="views\index2.html" />

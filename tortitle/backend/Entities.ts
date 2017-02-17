@@ -1,5 +1,4 @@
 ﻿import * as azure from "azure-storage";
-import { Promise, Thenable } from "es6-promise";
 
 var tableService: azure.TableService;
 

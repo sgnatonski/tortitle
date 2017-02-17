@@ -1,40 +1,32 @@
 ﻿import * as azure from "azure-storage";
-import { Promise } from "es6-promise";
-import * as cache from "./cache";
+import { default as cache } from "./cache";
 import { Entities } from "./Entities";
 import { IMovie, IMovieEntity, map as movieMap } from "./movie";
 import { ITorrentEntity } from "./torrent";
 import { ISubtitleEntity } from "./subtitle";
 
 export module MoviesService {
-    export function getCachedRecentTopMovies(language: string) {
+    export async function getCachedRecentTopMovies(language: string) {
         const movieCacheKey = `movies-${language}`;
         const ttl = 3600;
-        return cache.getAsync<IMovie[]>(movieCacheKey)
-            .then(cached => cached
-                ? cached
-                : getRecentTopMovies(language).then(movies => cache.setAsync(movieCacheKey, movies, ttl)));
+        const cached = await cache.get<IMovie[]>(movieCacheKey);
+        if (cached) return cached;
+        const movies = await getRecentTopMovies(language);
+        cache.set(movieCacheKey, movies, ttl);
+        return movies;
     }
 
-    export function getRecentTopMovies(language: string) {
+    export async function getRecentTopMovies(language: string) {
         const movieTableName = "imdbentries";
         const torrentTableName = "torrents";
         const subtitleTableName = "subtitles";
 
-        return Promise.all([
-            Entities.queryEntities<ITorrentEntity>(torrentTableName, new azure.TableQuery()),
-            Entities.queryEntities<IMovieEntity>(movieTableName, new azure.TableQuery()),
-            Entities.queryEntities<ISubtitleEntity>(subtitleTableName, new azure.TableQuery().where(`PartitionKey eq '${language}'`))
-        ])
-            .then(result => ({ torrents: result[0], movies: result[1], subtitles: result[2] }))
-            .then(result => {
-                var torrentsByImdb = result.torrents.groupBy(x => x.ImdbId);
-                var subtitlesByImdb = result.subtitles.groupBy(x => x.ImdbId);
-                var movies = result.movies.map(e => movieMap(e, torrentsByImdb, subtitlesByImdb));
-                return movies;
-            })
-            .catch(error => {
-                return Promise.reject<IMovie[]>(error);
-            });
+        const torrents = await Entities.queryEntities<ITorrentEntity>(torrentTableName, new azure.TableQuery());
+        const movies = await Entities.queryEntities<IMovieEntity>(movieTableName, new azure.TableQuery());
+        const subtitles = await Entities.queryEntities<ISubtitleEntity>(subtitleTableName, new azure.TableQuery().where(`PartitionKey eq '${language}'`));
+        const torrentsByImdb = torrents.groupBy(x => x.ImdbId);
+        const subtitlesByImdb = subtitles.groupBy(x => x.ImdbId);
+        const mappedMovies = movies.map(e => movieMap(e, torrentsByImdb, subtitlesByImdb));
+        return mappedMovies;
     }
 }

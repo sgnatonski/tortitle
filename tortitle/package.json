@@ -21,7 +21,6 @@
     "azure-storage": "^2.0.0",
     "body-parser": "^1.16.1",
     "cookie-parser": "^1.4.3",
-    "es6-promise": "^4.0.5",
     "express": "^4.14.1",
     "gaikan": "^2.0.2",
     "lodash": "^4.17.4",
@@ -30,6 +29,7 @@
     "nconf": "*",
     "node-cache": "^4.1.1",
     "serve-favicon": "^2.3.2",
-    "serve-static": "^1.11.2"
+    "serve-static": "^1.11.2",
+    "typescript": "^2.1.6"
   }
 }

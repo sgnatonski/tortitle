@@ -1,6 +1,5 @@
 ﻿import * as express from "express";
-import * as cache from "../backend/cache";
-import { Promise } from "es6-promise";
+import { default as cache } from "../backend/cache";
 import { LanguagesService } from "../backend/languagesService";
 import { MoviesService } from "../backend/moviesService";
 import { IMovie } from "../backend/movie";
@@ -40,41 +39,39 @@ interface IIndexModel {
     movies: IMovie[];
 }
 
-export function index(req: express.Request, res: express.Response, next) {
-    var language: string = req.cookies[languageCookie];
-    const lastVisitTime: string = req.cookies[visitCookie];
-    var lastVisit = lastVisitTime ? new Date(Date.parse(lastVisitTime)) : new Date(0);
-    var page = (parseInt(req.params.page) || 0) + 1;
-    var count = page * pageSize;
-    var sortType = parseInt(req.params.sort) || 0;
-
+export async function index(req: express.Request, res: express.Response, next) {
+    const language: string = req.cookies[languageCookie];
+    const page = (parseInt(req.params.page) || 0) + 1;
+    const count = page * pageSize;
+    const sortType = parseInt(req.params.sort) || 0;
     const cacheKey = `index-model-${page}-${count}-${sortType}-${language}`;
-    cache.getAsync<IIndexModel>(cacheKey).then(cached => {
-        if (cached) return cached;
 
-        var langs = LanguagesService.getCachedLanguages();
-        var movies = MoviesService.getCachedRecentTopMovies(language);
+    const cached = cache.get<IIndexModel>(cacheKey);
+    if (cached) {
+        return renderSorted(req, res, cached);
+    }
 
-        return Promise.all([langs, movies])
-            .then(result => ({ langs: result[0], movies: result[1] }))
-            .then(result => {
-                var sortedMovies = result.movies.sortWith(sortMap, sortType).slice(0, count);
-                var model = {
-                    app: 'Tortitle',
-                    nextPage: count < result.movies.length ? page + 1 : undefined,
-                    sorts: sorts,
-                    sort: sortType,
-                    currentSort: sorts[sortType] || sorts[0],
-                    lang: result.langs.filter(x => x.code === language).map(x => x.language).first(),
-                    langs: result.langs,
-                    movies: sortedMovies
-                } as IIndexModel;
-                return cache.setAsync(cacheKey, model, 300);
-            });
-    }).then(result => {
-        result.movies = result.movies.mapAssign(x => ({ isNew: x.addedAt > lastVisit }));
-        res.render('index', result);
-    })
-    .catch(next);
+    const langs = await LanguagesService.getCachedLanguages();
+    const movies = await MoviesService.getCachedRecentTopMovies(language);
+    const sortedMovies = movies.sortWith(sortMap, sortType).slice(0, count);
+    const model = {
+        app: 'Tortitle',
+        nextPage: count < movies.length ? page + 1 : undefined,
+        sorts: sorts,
+        sort: sortType,
+        currentSort: sorts[sortType] || sorts[0],
+        lang: langs.filter(x => x.code === language).map(x => x.language).first(),
+        langs: langs,
+        movies: sortedMovies
+    } as IIndexModel;
+    cache.set(cacheKey, model, 300);
+    renderSorted(req, res, model);
 };
+
+function renderSorted(req: express.Request, res: express.Response, model: IIndexModel) {
+    const lastVisitTime: string = req.cookies[visitCookie];
+    const lastVisit = lastVisitTime ? new Date(Date.parse(lastVisitTime)) : new Date(0);
+    model.movies = model.movies.mapAssign(x => ({ isNew: x.addedAt > lastVisit }));
+    res.render('index', model);
+}
     
