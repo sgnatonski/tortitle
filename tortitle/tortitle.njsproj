@@ -63,7 +63,6 @@
   </PropertyGroup>
   <ItemGroup>
     <TypeScriptCompile Include="app.ts" />
-    <TypeScriptCompile Include="azure-storage.d.ts" />
     <TypeScriptCompile Include="backend\cache.ts" />
     <TypeScriptCompile Include="backend\Entities.ts" />
     <TypeScriptCompile Include="backend\languagesService.ts" />

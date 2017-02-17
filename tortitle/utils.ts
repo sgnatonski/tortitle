@@ -30,26 +30,26 @@ declare global {
 
 var varExtractor = new RegExp("return (.*);");
 function getVariableName<TResult>(name: (o: TResult) => TResult) {
-    var m = varExtractor.exec(name + "");
+    const m = varExtractor.exec(name + "");
     if (m == null) throw new Error("The function does not contain a statement matching 'return variableName;'");
-    var fullMemberName = m[1];
-    var memberParts = fullMemberName.split('.');
+    const fullMemberName = m[1];
+    const memberParts = fullMemberName.split('.');
     return memberParts[memberParts.length - 1];
 }
 
 Array.prototype["sortBy"] = function <TResult>(name: (o: TResult) => any): TResult[] {
-    let variable = getVariableName(name);
+    const variable = getVariableName(name);
     return this.sort((a, b) => a[variable] < b[variable] ? -1 : a[variable] > b[variable] ? 1 : 0);
 };
 
 Array.prototype["sortByDesc"] = function <TResult>(name: (o: TResult) => any): TResult[] {
-    let variable = getVariableName(name);
+    const variable = getVariableName(name);
     return this.sort((a, b) => a[variable] < b[variable] ? 1 : a[variable] > b[variable] ? -1 : 0);
 };
 
 Array.prototype["sortWith"] = function <TResult>(sortMap: (arr: TResult[]) => ISortFuncSelector<TResult>, selector: number, defaultSelector?: number): TResult[] {
-    var sortFunc = sortMap(this);
-    var sort = sortFunc[selector] || sortFunc[defaultSelector || 0];
+    const sortFunc = sortMap(this);
+    const sort = sortFunc[selector] || sortFunc[defaultSelector || 0];
     if (sort == null) throw new Error(`sortMap function selector does not contain neither given selector ${selector} or default one`);
     return sort();
 };
@@ -71,18 +71,18 @@ Array.prototype["first"] = function first<TResult>() {
 }
 
 Array.prototype["equijoin"] = function equijoin<TRight, TResult>(foreign: TRight[], primaryKey: (o) => any, foreignKey: (o: TRight) => any, select: (left, right: TRight) => TResult): TResult[] {
-    var m = this.length, n = foreign.length, index = [], c = [];
-    let variableLeft = getVariableName(primaryKey);
-    let variableRight = getVariableName(foreignKey);
+    const m = this.length, n = foreign.length, index = [], c = [];
+    const variableLeft = getVariableName(primaryKey);
+    const variableRight = getVariableName(foreignKey);
 
-    for (var i = 0; i < m; i++) {
-        var row = this[i];
+    for (let i = 0; i < m; i++) {
+        const row = this[i];
         index[row[variableLeft]] = row;
     }
 
-    for (var j = 0; j < n; j++) {
-        var y = foreign[j];
-        var x = index[y[variableRight]];
+    for (let j = 0; j < n; j++) {
+        const y = foreign[j];
+        const x = index[y[variableRight]];
         if (x && y) {
             c.push(select(x, y));
         }

@@ -30,8 +30,8 @@ export interface IMovieEntity {
 }
 
 export function map(m: IMovieEntity, t: IGroupMapString<ITorrentEntity>, s: IGroupMapString<ISubtitleEntity>) {
-    const torrents = (t[m.RowKey] || []).map(torrentMap);
-    const subtitles = (s[m.RowKey] || []).map(subMap);
+    const torrents: ITorrent[] = (t[m.RowKey] || []).map(torrentMap);
+    const subtitles: ISubtitle[] = (s[m.RowKey] || []).map(subMap);
     const qualities = torrents.map(x => x.quality).distinct();
     const match = torrents.equijoin(subtitles, t => t.name, s => s.releaseName, (t, s) => ({ torrent: t, subtitle: s }) as IMatch);
     return {
