@@ -1,6 +1,15 @@
 ﻿#load "../shared/models.csx"
 #load "../shared/request.csx"
+#load "../shared/imdb.csx"
+#r "Microsoft.WindowsAzure.Storage" 
+using Microsoft.WindowsAzure.Storage.Table;
 using System;
+using System.Threading;
+using System.Threading.Tasks;
+using AngleSharp;
+using AngleSharp.Dom;
+using AngleSharp.Network;
+using System.Diagnostics;
 
 public static void Run(string input, CloudTable imdbTable, CloudTable torrentMarksTable, TraceWriter log)
 {
@@ -12,7 +21,7 @@ public static void Run(string input, CloudTable imdbTable, CloudTable torrentMar
         var mark = new TorrentMark { PartitionKey = "0", RowKey = imdbId };
         torrentMarksTable.Execute(TableOperation.InsertOrReplace(mark));
 
-        var imdbPage = TortitleRequest.Open(new Uri($"http://www.imdb.com/title/tt{imdbId}/"), null);
+        var imdbPage = TortitleRequest.Open(new Uri($"http://www.imdb.com/title/tt{imdbId}/"), new CancellationToken());
 
         var originalTitle = imdbPage.QuerySelector(ImdbQueryProvider.OriginalTitleQuery)?.TextContent.Replace("(original title)", "");
         var movieName = originalTitle != null
@@ -35,7 +44,7 @@ public static void Run(string input, CloudTable imdbTable, CloudTable torrentMar
         };
     });
 
-    var distImdbs = imdbs.GroupBy(x => x.ImdbId).Select(x => x.First()).ToList();
+    var distImdbs = imdbs.GroupBy(x => x.RowKey).Select(x => x.First()).ToList();
 
     distImdbs.ForEach(x =>
     {
