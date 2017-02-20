@@ -37,7 +37,7 @@ public static List<Subtitle> GetSubs(string imdbId, TraceWriter log)
         return new List<Subtitle>();
     }
 
-    var subs = osXml.XPathSelectElements("//opensubtitles/search/results/subtitle").Select(x => new SubtitleTemp
+    var subs = osXml.XPathSelectElements("//opensubtitles/search/results/subtitle[count(IDSubtitle)>0]").Select(x => new SubtitleTemp
     {
         PartitionKey = x.Element("ISO639")?.Value,
         ImdbId = imdbId,
@@ -60,7 +60,17 @@ public static List<Subtitle> GetSubs(string imdbId, TraceWriter log)
             return;
         }
 
-        var otherSubs = subXml.XPathSelectElements("//opensubtitles/SubBrowse/Subtitle/OtherSubtitles").Select(x => new SubtitleTemp
+        var mainSubs = subXml.XPathSelectElements("//opensubtitles/SubBrowse/Subtitle[count(IDSubtitle)>0]").Select(x => new SubtitleTemp
+        {
+            PartitionKey = x.Element("LanguageName")?.Attribute("ISO639")?.Value,
+            RowKey = x.Element("IDSubtitle")?.Value,
+            Link = x.Element("IDSubtitle")?.Attribute("Link")?.Value,
+            LinkDownload = x.Element("Download")?.Attribute("LinkDownload")?.Value,
+            ImdbId = imdbId,
+            ReleaseName = x.Element("MovieReleaseName")?.Value,
+        }).ToList();
+
+        var otherSubs = subXml.XPathSelectElements("//opensubtitles/SubBrowse/Subtitle/OtherSubtitles[count(Subtitle)>0]").Select(x => new SubtitleTemp
         {
             PartitionKey = sub.PartitionKey,
             RowKey = x.Element("Subtitle")?.Attribute("LinkDownload")?.Value?.Split('/').Last(),
@@ -70,13 +80,14 @@ public static List<Subtitle> GetSubs(string imdbId, TraceWriter log)
             ReleaseName = x.Element("Subtitle")?.Element("MovieReleaseName")?.Value
         }).ToList();
 
-        var subfiles = subXml.XPathSelectElements("//opensubtitles/SubBrowse/Subtitle/SubtitleFile/Item/CommonMovieFileName")
+        var subfiles = subXml.XPathSelectElements("//opensubtitles/SubBrowse/Subtitle/SubtitleFile/File/Item/CommonMovieFileName")
             .Select(x => x?.Value)
             .Where(x => x != null)
             .DefaultIfEmpty();
         sub.OtherReleases = string.Join("|", subfiles);
 
         allSubs.Add(sub);
+        allSubs.AddRange(mainSubs);
         allSubs.AddRange(otherSubs);
     });
 
