@@ -16,9 +16,9 @@ export module LanguagesService {
     }
 
     export async function getLanguages() {
-        const subtitleTableName = "subtitles";
-        const subs = await Entities.queryEntities<ISubtitleEntity>(subtitleTableName, new azure.TableQuery().select('PartitionKey'));
-        const langs = new Set(subs.map(i => i.PartitionKey));
+        const languagesTableName = "languages";
+        const subs = await Entities.queryEntities<ISubtitleEntity>(languagesTableName, new azure.TableQuery());
+        const langs = new Set(subs.map(i => i.RowKey));
         const availableLangs = Iso639.languages.filter(x => langs.has(x.code));
         return availableLangs;
     }

@@ -63,15 +63,15 @@ var LanguagesService;
     LanguagesService.getCachedLanguages = getCachedLanguages;
     function getLanguages() {
         return __awaiter(this, void 0, void 0, function () {
-            var subtitleTableName, subs, langs, availableLangs;
+            var languagesTableName, subs, langs, availableLangs;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        subtitleTableName = "subtitles";
-                        return [4 /*yield*/, Entities_1.Entities.queryEntities(subtitleTableName, new azure.TableQuery().select('PartitionKey'))];
+                        languagesTableName = "languages";
+                        return [4 /*yield*/, Entities_1.Entities.queryEntities(languagesTableName, new azure.TableQuery())];
                     case 1:
                         subs = _a.sent();
-                        langs = new Set(subs.map(function (i) { return i.PartitionKey; }));
+                        langs = new Set(subs.map(function (i) { return i.RowKey; }));
                         availableLangs = iso639_1.Iso639.languages.filter(function (x) { return langs.has(x.code); });
                         return [2 /*return*/, availableLangs];
                 }
