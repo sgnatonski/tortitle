@@ -65,6 +65,9 @@
     <TypeScriptCompile Include="app.ts" />
     <TypeScriptCompile Include="backend\cache.ts" />
     <TypeScriptCompile Include="backend\Entities.ts" />
+    <TypeScriptCompile Include="backend\language.ts">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
     <TypeScriptCompile Include="backend\languagesService.ts" />
     <TypeScriptCompile Include="backend\movie.ts" />
     <TypeScriptCompile Include="backend\moviesService.ts" />

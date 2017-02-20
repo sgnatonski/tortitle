@@ -1,7 +1,4 @@
-﻿export interface ILanguage {
-    code: string;
-    language: string;
-}
+﻿
 
 export module Iso639 {
     export var languages = [
@@ -997,5 +994,5 @@ export module Iso639 {
             "code": "za",
             "language": "Zhuang"
         }
-    ] as ILanguage[];
+    ];
 }
