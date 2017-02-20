@@ -20,6 +20,13 @@
       "tableName": "subtitles",
       "connection": "AzureWebJobsStorage",
       "direction": "inout"
+    },
+    {
+      "name": "languagesTable",
+      "type": "table",
+      "tableName": "languages",
+      "connection": "AzureWebJobsStorage",
+      "direction": "inout"
     }
   ],
   "disabled": false

@@ -11,18 +11,28 @@ using System.Net;
 using System.Xml.Linq;
 using System.Xml.XPath;
 
-public static void Run(TimerInfo timer, CloudTable torrentsMarksTable, CloudTable subtitlesTable, TraceWriter log)
+public static void Run(TimerInfo timer, CloudTable torrentsMarksTable, CloudTable subtitlesTable, CloudTable languagesTable, TraceWriter log)
 {
     var query = torrentsMarksTable.CreateQuery<TorrentMark>().AsQueryable().Take(1);
     var list = query.ToList();
     foreach (var entity in list)
     {
         var subs = GetSubs(entity.RowKey, log);
+
         subs.ForEach(x =>
         {
             TableOperation operation = TableOperation.InsertOrReplace(x);
             TableResult result = subtitlesTable.Execute(operation);
         });
+
+        var langs = subs.Select(x => x.PartitionKey).Distinct().Select(x => new Language() { PartitionKey = "0", RowKey = x }).ToList();
+
+        langs.ForEach(x =>
+        {
+            TableOperation operation = TableOperation.InsertOrReplace(x);
+            TableResult result = languagesTable.Execute(operation);
+        });
+
         torrentsMarksTable.Execute(TableOperation.Delete(entity));
     }
 }

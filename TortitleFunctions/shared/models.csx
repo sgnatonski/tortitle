@@ -32,3 +32,6 @@ public class Subtitle : TableEntity
 public class TorrentMark : TableEntity
 {
 }
+public class Language : TableEntity
+{
+}
