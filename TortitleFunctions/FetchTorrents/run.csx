@@ -1,4 +1,7 @@
 ﻿#r "Microsoft.WindowsAzure.Storage" 
+#load "models.csx"
+#load "request.csx"
+#load "imdb.csx"
 using Microsoft.WindowsAzure.Storage.Table;
 using System;
 using System.Threading;
@@ -124,86 +127,9 @@ private static string ExtractQuality(string moviename)
     var m = moviename.ToLower().Split(' ', '.', '_', '(', ')', '[', ']');
     var tags = new[]
     {
-                "dvdscr", "camrip", "hdcam", "tc", "hdtc", "hdts", "hd-ts",
-                "hdrip", "hd-rip", "dvdrip", "brrip", "bdrip", "webrip", "web-dl"
-            };
+        "dvdscr", "camrip", "hdcam", "tc", "hdtc", "hdts", "hd-ts",
+        "hdrip", "hd-rip", "dvdrip", "brrip", "bdrip", "webrip", "web-dl"
+    };
 
     return string.Join(" ", m.Intersect(tags)) ?? string.Empty;
-}
-
-public static class TortitleRequest
-{
-    private static IBrowsingContext context;
-
-    static TortitleRequest()
-    {
-        var config = Configuration.Default.WithDefaultLoader();
-        context = BrowsingContext.New(config);
-    }
-
-    public static DocumentRequest Build(string uri)
-    {
-        var documentRequest = new DocumentRequest(new Url(uri));
-        documentRequest.Headers["Accept"] = "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8";
-        documentRequest.Headers["Accept-Charset"] = "utf-8";
-        documentRequest.Headers["User-Agent"] = "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36";
-        return documentRequest;
-    }
-
-    public static IDocument Open(Uri uri, CancellationToken cancellationToken)
-    {
-        var sw = Stopwatch.StartNew();
-        var doc = Task.Run(async () => await context.OpenAsync(Build(uri.AbsoluteUri), cancellationToken)).Result;
-        Debug.WriteLine($"{uri} took {sw.ElapsedMilliseconds} ms");
-        return doc;
-    }
-
-    public static async Task<IDocument> OpenAsync(Uri uri, CancellationToken cancellationToken)
-    {
-        var sw = Stopwatch.StartNew();
-        var doc = await context.OpenAsync(Build(uri.AbsoluteUri), cancellationToken);
-        Debug.WriteLine($"{uri} took {sw.ElapsedMilliseconds} ms");
-        return doc;
-    }
-}
-
-public static class ImdbQueryProvider
-{
-    public static string OriginalTitleQuery => "#title-overview-widget > div.vital > div.title_block > div > div.titleBar > div.title_wrapper > div.originalTitle";
-    public static string TitleQuery => "#title-overview-widget > div.vital > div.title_block > div > div.titleBar > div.title_wrapper > h1";
-    public static string RatingQuery => "#title-overview-widget > div.vital > div.title_block > div > div.ratings_wrapper > div.imdbRating > div.ratingValue > strong > span";
-    public static string PictureQuery => "#title-overview-widget > div.vital > div.slate_wrapper > div.poster > a > img";
-    public static string PosterQuery => "#title-overview-widget > div > div.poster > a > img";
-    public static string YearQuery => "#titleYear > a";
-}
-
-public class ImdbMovie : TableEntity
-{
-    public string MovieName { get; set; }
-    public double Rating { get; set; }
-    public string PictureLink { get; set; }
-    public DateTimeOffset AdddedAt { get; set; }
-}
-
-public class Torrent : TableEntity
-{
-    public string ImdbId { get; set; }
-    public string Quality { get; set; }
-    public string TorrentLink { get; set; }
-    public DateTimeOffset AdddedAt { get; set; }
-}
-
-public class TorrentMark : TableEntity
-{
-}
-
-public class TempEntry
-{
-    public string TorrentLink { get; set; }
-    public string Quality { get; set; }
-    public string ImdbLink { get; set; }
-    public string ImdbId { get; set; }
-    public string MovieName { get; set; }
-    public double Rating { get; set; }
-    public string PictureLink { get; set; }
 }
