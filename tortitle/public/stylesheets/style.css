@@ -25,6 +25,7 @@ header {
     right: 0;
     left: 0;
     z-index: 2;
+    overflow: hidden;
 }
 
     header ul.mui-list--inline {
@@ -232,4 +233,20 @@ ul.mui-dropdown__menu.mui--is-open {
 
 .color9{
     background-color: #05BF00;
+}
+
+#beta {
+    position: absolute;
+    left: 0px;
+    font-weight: bold;
+    color: brown;
+    background-color: rgb(249, 235, 111);
+    padding: 10px;
+    width: 120px;
+    text-align: center;
+    -ms-transform: rotate(-50deg);
+    -webkit-transform: rotate(-50deg);
+    transform: rotate(-50deg);
+    top: 15px;
+    z-index: 5;
 }
