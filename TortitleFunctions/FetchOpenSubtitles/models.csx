@@ -11,15 +11,3 @@ public class SubtitleTemp
     public string ReleaseName { get; set; }
     public string OtherReleases { get; set; }
 }
-
-public class Subtitle : TableEntity
-{
-    public string LinkDownload { get; set; }
-    public string ImdbId { get; set; }
-    public string ReleaseName { get; set; }
-    public string OtherReleases { get; set; }
-}
-
-public class TorrentMark : TableEntity
-{
-}

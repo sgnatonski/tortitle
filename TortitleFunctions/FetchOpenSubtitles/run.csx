@@ -1,6 +1,7 @@
 ﻿#r "Microsoft.WindowsAzure.Storage" 
+#load "../shared/models.csx"
+#load "../shared/xml.csx"
 #load "models.csx"
-#load "xml.csx"
 using Microsoft.WindowsAzure.Storage.Table;
 using System;
 using System.Collections.Generic;

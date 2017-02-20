@@ -1,6 +1,7 @@
 ﻿#r "Microsoft.WindowsAzure.Storage" 
+#load "../shared/models.csx"
+#load "../shared/request.csx"
 #load "models.csx"
-#load "request.csx"
 #load "imdb.csx"
 using Microsoft.WindowsAzure.Storage.Table;
 using System;
