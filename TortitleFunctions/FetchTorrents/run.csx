@@ -56,6 +56,13 @@ public static async Task Run(TimerInfo timer, CloudTable imdbTable, CloudTable t
             TableOperation operation = TableOperation.Retrieve<ImdbMovie>("0", imdbId);
             TableResult result = imdbTable.Execute(operation);
             ImdbMovie imdbMovie = (ImdbMovie)result.Result;
+
+            if (imdbMovie?.AdddedAt > DateTimeOffset.UtcNow.AddHours(-8))
+            {
+                var mark = new TorrentMark { PartitionKey = "0", RowKey = imdbId };
+                torrentMarksTable.Execute(TableOperation.InsertOrReplace(mark));
+            }
+
             if (imdbMovie?.AdddedAt > DateTimeOffset.UtcNow.AddDays(-7))
             {
                 return new TempEntry
@@ -69,10 +76,7 @@ public static async Task Run(TimerInfo timer, CloudTable imdbTable, CloudTable t
                     PictureLink = imdbMovie.PictureLink
                 };
             }
-
-            var mark = new TorrentMark { PartitionKey = "0", RowKey = imdbId };
-            torrentMarksTable.Execute(TableOperation.InsertOrReplace(mark));
-
+            
             var imdbPage = TortitleRequest.Open(new Uri($"http://www.imdb.com/title/tt{imdbId}/"), token);
 
             var originalTitle = imdbPage.QuerySelector(ImdbQueryProvider.OriginalTitleQuery)?.TextContent.Replace("(original title)", "");
