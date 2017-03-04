@@ -57,7 +57,7 @@ public static async Task Run(TimerInfo timer, CloudTable imdbTable, CloudTable t
             TableResult result = imdbTable.Execute(operation);
             ImdbMovie imdbMovie = (ImdbMovie)result.Result;
 
-            if (imdbMovie?.AdddedAt > DateTimeOffset.UtcNow.AddHours(-8))
+            if (imdbMovie?.AdddedAt > DateTimeOffset.UtcNow.AddHours(-14))
             {
                 var mark = new TorrentMark { PartitionKey = "0", RowKey = imdbId };
                 torrentMarksTable.Execute(TableOperation.InsertOrReplace(mark));
