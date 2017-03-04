@@ -43,11 +43,11 @@ Array.prototype["equijoin"] = function equijoin(foreign, primaryKey, foreignKey,
     var variableRight = getVariableName(foreignKey);
     for (var i = 0; i < m; i++) {
         var row = this[i];
-        index[row[variableLeft]] = row;
+        index[row[variableLeft].toLowerCase()] = row;
     }
     for (var j = 0; j < n; j++) {
         var y = foreign[j];
-        var x = index[y[variableRight]];
+        var x = index[y[variableRight].toLowerCase()];
         if (x && y) {
             c.push(select(x, y));
         }

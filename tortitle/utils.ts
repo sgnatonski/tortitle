@@ -77,12 +77,12 @@ Array.prototype["equijoin"] = function equijoin<TRight, TResult>(foreign: TRight
 
     for (let i = 0; i < m; i++) {
         const row = this[i];
-        index[row[variableLeft]] = row;
+        index[row[variableLeft].toLowerCase()] = row;
     }
 
     for (let j = 0; j < n; j++) {
         const y = foreign[j];
-        const x = index[y[variableRight]];
+        const x = index[y[variableRight].toLowerCase()];
         if (x && y) {
             c.push(select(x, y));
         }
