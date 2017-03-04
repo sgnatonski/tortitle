@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var azure = require("azure-storage");
 var tableService;
 var Entities;

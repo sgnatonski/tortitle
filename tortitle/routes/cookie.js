@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var visitCookie = 'TortitleLastVisit';
 var languageCookie = 'TortitleLanguage';
 var visitCookieMaxAge = 1000 * 60 * 60 * 24 * 30;

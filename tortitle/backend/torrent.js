@@ -1,7 +1,8 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 function map(m) {
     return {
-        name: m.RowKey,
+        name: m.RowKey.trim(),
         imdbId: m.ImdbId,
         quality: m.Quality,
         torrentLink: m.TorrentLink,

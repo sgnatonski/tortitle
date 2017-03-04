@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var torrent_1 = require("./torrent");
 var subtitle_1 = require("./subtitle");
 function map(m, t, s) {

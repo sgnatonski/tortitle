@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var Iso639;
 (function (Iso639) {
     Iso639.languages = [

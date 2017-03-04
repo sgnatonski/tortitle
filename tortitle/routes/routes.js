@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var index = require("./index");
 var about = require("./about");
 var cookie = require("./cookie");

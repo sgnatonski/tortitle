@@ -18,7 +18,7 @@ export interface ITorrentEntity {
 
 export function map(m: ITorrentEntity) {
     return {
-        name: m.RowKey,
+        name: m.RowKey.trim(),
         imdbId: m.ImdbId,
         quality: m.Quality,
         torrentLink: m.TorrentLink,
