@@ -82,6 +82,7 @@
     <Content Include="public\favicon-32x32.png" />
     <Content Include="public\favicon.ico" />
     <Content Include="package.json" />
+    <Content Include="public\images\sintel_pl.vtt" />
     <Content Include="public\images\sub.png" />
     <Content Include="public\images\torrent.svg" />
     <Content Include="public\images\tortitle.svg" />

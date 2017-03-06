@@ -72,7 +72,9 @@
     </div>
     <div data-if="root.nextPage" data-extract>
         <a class="mui-btn mui-btn--primary" href="/#{root.sort}/#{root.nextPage}">Show more</a>
+        <button class="mui-btn mui-btn--primary" onclick="play(this)">Play</button>
     </div>
+    <div id="output"> </div>
 </div>
 <script>
     function setCookie(c_name, value, exdays) {
@@ -96,5 +98,33 @@
         modalEl.style.margin = '100px auto';
         modalEl.style.backgroundColor = '#fff';
         mui.overlay('on', modalEl);
+    }
+
+    function play() {
+        var videoContainerEl = document.getElementById('output');
+        var observer = new MutationObserver(function (mutations) {
+            mutations.forEach(function () {
+                if (videoContainerEl.children.length) {
+                    var trackEl = document.createElement('track');
+                    trackEl.setAttribute("label", "English");
+                    trackEl.setAttribute("kind", "subtitles");
+                    trackEl.setAttribute("srclang", "en");
+                    trackEl.setAttribute("src", "/images/sintel_pl.vtt");
+                    trackEl.setAttribute("default", "default");
+                    videoContainerEl.children[0].appendChild(trackEl);
+                }
+            });
+        });
+
+        observer.observe(videoContainerEl, { childList: true });
+
+        var torrentId =
+            'magnet:?xt=urn:btih:6a9759bffd5c0af65319979fb7832189f4f3c35d&dn=sintel.mp4&tr=wss%3A%2F%2Ftracker.btorrent.xyz&tr=wss%3A%2F%2Ftracker.fastcast.nz&tr=wss%3A%2F%2Ftracker.openwebtorrent.com';
+
+        var client = new WebTorrent();
+
+        client.add(torrentId, function(torrent) {
+            torrent.files[0].appendTo('#output');
+        });
     }
 </script>
