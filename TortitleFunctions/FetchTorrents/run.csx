@@ -43,13 +43,14 @@ public static async Task Run(TimerInfo timer, CloudTable imdbTable, CloudTable t
         var links = entryDoc.QuerySelectorAll("a");
         var tmp = links.Select(x => x.GetAttribute("href")?.Trim('\r', '\n')).ToList();
         var imdbLink = tmp.FirstOrDefault(x => x?.StartsWith("http://www.imdb.com/title/") ?? false);
+        var magnetLink = tmp.FirstOrDefault(x => x?.StartsWith("magnet:?") ?? false);
 
         if (!string.IsNullOrEmpty(imdbLink))
         {
             var imdbUri = new Uri(imdbLink.Replace("reference", "")?.Trim().TrimEnd('/') + '/');
             var imdbId = ExtractImdbId(imdbUri).ToString();
 
-            var entity = new Torrent { PartitionKey = "0", RowKey = entry.Title, TorrentLink = entry.TorrentPage, Quality = entry.Quality, ImdbId = imdbId, AdddedAt = DateTimeOffset.UtcNow };
+            var entity = new Torrent { PartitionKey = "0", RowKey = entry.Title, TorrentLink = entry.TorrentPage, MagnetLink = magnetLink, Quality = entry.Quality, ImdbId = imdbId, AdddedAt = DateTimeOffset.UtcNow };
             TableOperation toperation = TableOperation.InsertOrMerge(entity);
             TableResult tresult = torrentsTable.Execute(toperation);
 

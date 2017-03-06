@@ -14,6 +14,7 @@ public class Torrent : TableEntity
     public string ImdbId { get; set; }
     public string Quality { get; set; }
     public string TorrentLink { get; set; }
+    public string MagnetLink { get; set; }
     public DateTimeOffset AdddedAt { get; set; }
 }
 
