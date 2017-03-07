@@ -115,7 +115,7 @@ function watch(req, res) {
                 res.status(400).json({ error: 'magnet param missing or malformed' });
             }
             magnet = 'magnet:?' + req.params.magnet;
-            engine = torrentStream(magnet);
+            engine = torrentStream('magnet:?xt=urn:btih:9d45f004b71036a065b86b8e72053adabd2ec4a8&dn=A.Monster.Calls.2016.DVDScr.XVID.AC3.HQ.Hive-CM8&tr=udp%3A%2F%2Ftracker.leechers-paradise.org%3A6969&tr=udp%3A%2F%2Fzer0day.ch%3A1337&tr=udp%3A%2F%2Ftracker.coppersurfer.tk%3A6969&tr=udp%3A%2F%2Fpublic.popcorn-tracker.org%3A6969');
             engine.on('ready', function () {
                 var file = engine.files[0];
                 console.log('filename:', file.name);
