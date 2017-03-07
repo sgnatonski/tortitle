@@ -9,8 +9,9 @@ function configure(app) {
     app.get('/', index.index);
     app.get('/:sort(\\d+)', index.index);
     app.get('/:sort(\\d+)/:page(\\d+)', index.index);
-    app.get('/watch', index.watch);
-    app.get('/watch/stream', index.watchStream);
+    app.get('/watch/:magnet', index.watch);
+    app.get('/watch/stream/:magnet', index.watchStream);
+    app.get('/watch/sub', index.watchSub);
     app.get('/about', about.index);
 }
 exports.configure = configure;

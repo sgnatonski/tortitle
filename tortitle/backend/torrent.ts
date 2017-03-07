@@ -1,6 +1,8 @@
 ﻿export interface ITorrent {
     name: string;
     torrentLink: string,
+    magnetLink: string,
+    magnetLink64: string,
     imdbId: string,
     quality: string,
     addedAt: Date;
@@ -13,8 +15,23 @@ export interface ITorrentEntity {
     ImdbId: string;
     Quality: string;
     TorrentLink: string;
+    MagnetLink: string;
     AdddedAt: Date;
 }
+
+function btoa(str) {
+    var s = str || "";
+    var buffer;
+
+    if (s instanceof Buffer) {
+        buffer = s;
+    } else {
+        buffer = new Buffer(s.toString(), 'binary');
+    }
+
+    return buffer.toString('base64');
+}
+
 
 export function map(m: ITorrentEntity) {
     return {
@@ -22,6 +39,8 @@ export function map(m: ITorrentEntity) {
         imdbId: m.ImdbId,
         quality: m.Quality,
         torrentLink: m.TorrentLink,
+        magnetLink: m.MagnetLink,
+        magnetLink64: btoa(m.MagnetLink),
         addedAt: m.AdddedAt || new Date(2017, 0)
     } as ITorrent;
 }

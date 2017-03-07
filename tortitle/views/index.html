@@ -56,10 +56,12 @@
                 </h4>
                 <div data-if="msg.hasMatch" data-extract>
                     <button class="mui-btn mui-btn--primary" onclick="activateModal(this)">Show matches</button>
+                    <button class="mui-btn mui-btn--primary" onclick="play(this)">Play</button>
                     <div class="matchesContainer mui-panel" style="display:none;">
                         <div data-for="match in msg.match">
                             <p><img src="/images/torrent.svg" /><a href="#{match.torrent.torrentLink}">#{match.torrent.name}</a></p>
                             <p><img src="/images/sub.png" /><a href="#{match.subtitle.linkDownload}">#{match.subtitle.releaseName}</a></p>
+                            <a href="/watch/#{match.torrent.magnetLink64}" target="_blank" title="#{match.torrent.name}">Watch</a>
                             <hr />
                         </div>
                     </div>

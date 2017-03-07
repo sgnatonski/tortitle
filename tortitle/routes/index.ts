@@ -4,6 +4,8 @@ import { LanguagesService } from "../backend/languagesService";
 import { MoviesService } from "../backend/moviesService";
 import { IMovie } from "../backend/movie";
 import * as torrentStream from "torrent-stream";
+import * as srt2vtt from 'srt-to-vtt';
+import * as fs from 'fs';
 
 const visitCookie = 'TortitleLastVisit';
 const languageCookie = 'TortitleLanguage';
@@ -77,15 +79,24 @@ function renderSorted(req: express.Request, res: express.Response, model: IIndex
 }
 
 export async function watch(req: express.Request, res: express.Response) {
-    res.render('watch');
+    res.render('watch', { magnet: req.params.magnet });
 }
 
 export async function watchStream(req: express.Request, res: express.Response) {
-    
-    var engine = torrentStream('magnet:?xt=urn:btih:9d45f004b71036a065b86b8e72053adabd2ec4a8&dn=A.Monster.Calls.2016.DVDScr.XVID.AC3.HQ.Hive-CM8&tr=udp%3A%2F%2Ftracker.leechers-paradise.org%3A6969&tr=udp%3A%2F%2Fzer0day.ch%3A1337&tr=udp%3A%2F%2Ftracker.coppersurfer.tk%3A6969&tr=udp%3A%2F%2Fpublic.popcorn-tracker.org%3A6969');
+
+    function atob(str) {
+        return new Buffer(str, 'base64').toString('binary');
+    }
+
+    var magnet = atob(req.params.magnet);
+    var engine = torrentStream(magnet);
 
     engine.on('ready', () => {
-        var file = engine.files[0];
+        var files = (<any[]>engine.files).filter(val => {
+            var v = val.name.replace(/\.[^/.]+$/, "");
+            return magnet.indexOf(v) > -1;
+        });
+        var file = (<any[]>engine.files).sortByDesc(f => f.length).first();
         console.log('filename:', file.name);
 
         var range = req.headers.range;
@@ -99,31 +110,28 @@ export async function watchStream(req: express.Request, res: express.Response) {
         res.set("Content-Range", "bytes " + startByte + "-" + endByte + "/" + file.length);
         res.set("Accept-Ranges", "bytes");
         res.set("Content-Length", "" + chunkSize);
-        res.set("Content-Type", "video/avi");
+        res.set("Content-Type", "video/webm");
 
         var stream = file.createReadStream({
             start: startByte,
             end: endByte
         });
-        stream.on('open', () => {
-            // This just pipes the read stream to the response object (which goes to the client)
-            stream.pipe(res);
-        });
-
-        // This catches any errors that happen while creating the readable stream (usually invalid names)
+        stream.pipe(res);
+        
         stream.on('error', (err) => {
-            res.end(err);
+            console.log(err);
         });
     });
 
     engine.on('download', () => {
-        console.log('torrent download started');
-        //res.status(200).json({ msg: 'torrent download started' });
     });
 
     engine.on('torrent', () => {
-        console.log('torrent metadata ready');
-        //res.status(200).json({ msg: 'torrent metadata ready' });
     });
 }
-    
+
+export async function watchSub(req: express.Request, res: express.Response) {
+    fs.createReadStream('some-subtitle-file.srt')
+        .pipe(srt2vtt())
+        .pipe(res);
+}

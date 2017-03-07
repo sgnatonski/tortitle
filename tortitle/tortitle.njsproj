@@ -8,7 +8,8 @@
     <NameOfLastUsedPublishProfile>tortitle - Web Deploy</NameOfLastUsedPublishProfile>
     <NodeExeArguments>
     </NodeExeArguments>
-    <Environment>DEBUG=*</Environment>
+    <Environment>
+    </Environment>
   </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>

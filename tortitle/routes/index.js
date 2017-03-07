@@ -39,6 +39,8 @@ var cache_1 = require("../backend/cache");
 var languagesService_1 = require("../backend/languagesService");
 var moviesService_1 = require("../backend/moviesService");
 var torrentStream = require("torrent-stream");
+var srt2vtt = require("srt-to-vtt");
+var fs = require("fs");
 var visitCookie = 'TortitleLastVisit';
 var languageCookie = 'TortitleLanguage';
 var pageSize = 100;
@@ -110,7 +112,7 @@ function renderSorted(req, res, model) {
 function watch(req, res) {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
-            res.render('watch');
+            res.render('watch', { magnet: req.params.magnet });
             return [2 /*return*/];
         });
     });
@@ -118,11 +120,19 @@ function watch(req, res) {
 exports.watch = watch;
 function watchStream(req, res) {
     return __awaiter(this, void 0, void 0, function () {
-        var engine;
+        function atob(str) {
+            return new Buffer(str, 'base64').toString('binary');
+        }
+        var magnet, engine;
         return __generator(this, function (_a) {
-            engine = torrentStream('magnet:?xt=urn:btih:9d45f004b71036a065b86b8e72053adabd2ec4a8&dn=A.Monster.Calls.2016.DVDScr.XVID.AC3.HQ.Hive-CM8&tr=udp%3A%2F%2Ftracker.leechers-paradise.org%3A6969&tr=udp%3A%2F%2Fzer0day.ch%3A1337&tr=udp%3A%2F%2Ftracker.coppersurfer.tk%3A6969&tr=udp%3A%2F%2Fpublic.popcorn-tracker.org%3A6969');
+            magnet = atob(req.params.magnet);
+            engine = torrentStream(magnet);
             engine.on('ready', function () {
-                var file = engine.files[0];
+                var files = engine.files.filter(function (val) {
+                    var v = val.name.replace(/\.[^/.]+$/, "");
+                    return magnet.indexOf(v) > -1;
+                });
+                var file = engine.files.sortByDesc(function (f) { return f.length; }).first();
                 console.log('filename:', file.name);
                 var range = req.headers.range;
                 var split = range.split(/[-=]/);
@@ -134,31 +144,34 @@ function watchStream(req, res) {
                 res.set("Content-Range", "bytes " + startByte + "-" + endByte + "/" + file.length);
                 res.set("Accept-Ranges", "bytes");
                 res.set("Content-Length", "" + chunkSize);
-                res.set("Content-Type", "video/avi");
+                res.set("Content-Type", "video/webm");
                 var stream = file.createReadStream({
                     start: startByte,
                     end: endByte
                 });
-                stream.on('open', function () {
-                    // This just pipes the read stream to the response object (which goes to the client)
-                    stream.pipe(res);
-                });
-                // This catches any errors that happen while creating the readable stream (usually invalid names)
+                stream.pipe(res);
                 stream.on('error', function (err) {
-                    res.end(err);
+                    console.log(err);
                 });
             });
             engine.on('download', function () {
-                console.log('torrent download started');
-                //res.status(200).json({ msg: 'torrent download started' });
             });
             engine.on('torrent', function () {
-                console.log('torrent metadata ready');
-                //res.status(200).json({ msg: 'torrent metadata ready' });
             });
             return [2 /*return*/];
         });
     });
 }
 exports.watchStream = watchStream;
+function watchSub(req, res) {
+    return __awaiter(this, void 0, void 0, function () {
+        return __generator(this, function (_a) {
+            fs.createReadStream('some-subtitle-file.srt')
+                .pipe(srt2vtt())
+                .pipe(res);
+            return [2 /*return*/];
+        });
+    });
+}
+exports.watchSub = watchSub;
 //# sourceMappingURL=index.js.map
