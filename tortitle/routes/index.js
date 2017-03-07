@@ -117,11 +117,6 @@ function watch(req, res) {
             magnet = 'magnet:?' + req.params.magnet;
             engine = torrentStream(magnet);
             engine.on('ready', function () {
-                var args = [];
-                for (var _i = 0; _i < arguments.length; _i++) {
-                    args[_i] = arguments[_i];
-                }
-                console.log.apply(console, args);
                 var file = engine.files[0];
                 console.log('filename:', file.name);
                 var stream = file.createReadStream();
@@ -135,19 +130,11 @@ function watch(req, res) {
                 });
             });
             engine.on('download', function () {
-                var args = [];
-                for (var _i = 0; _i < arguments.length; _i++) {
-                    args[_i] = arguments[_i];
-                }
-                console.log.apply(console, args);
+                console.log('torrent download started');
                 //res.status(200).json({ msg: 'torrent download started' });
             });
             engine.on('torrent', function () {
-                var args = [];
-                for (var _i = 0; _i < arguments.length; _i++) {
-                    args[_i] = arguments[_i];
-                }
-                console.log.apply(console, args);
+                console.log('torrent metadata ready');
                 //res.status(200).json({ msg: 'torrent metadata ready' });
             });
             return [2 /*return*/];

@@ -85,8 +85,7 @@ export async function watch(req: express.Request, res: express.Response) {
     
     var engine = torrentStream(magnet);
 
-    engine.on('ready', (...args: any[]) => {
-        console.log.apply(console, args);
+    engine.on('ready', () => {
         var file = engine.files[0];
         console.log('filename:', file.name);
         var stream = file.createReadStream();
@@ -101,13 +100,13 @@ export async function watch(req: express.Request, res: express.Response) {
         });
     });
 
-    engine.on('download', (...args: any[]) => {
-        console.log.apply(console, args);
+    engine.on('download', () => {
+        console.log('torrent download started');
         //res.status(200).json({ msg: 'torrent download started' });
     });
 
-    engine.on('torrent', (...args: any[]) => {
-        console.log.apply(console, args);
+    engine.on('torrent', () => {
+        console.log('torrent metadata ready');
         //res.status(200).json({ msg: 'torrent metadata ready' });
     });
 }
