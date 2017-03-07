@@ -120,13 +120,16 @@ function watch(req, res) {
             //buf.name = 'Some file name';
             client.on('error', function (err) {
                 console.log(err);
+                res.status(500).json({ error: err });
             });
             client.add(magnet, { path: '/bin' }, function (torrent) {
                 torrent.on('metadata', function () {
                     console.log('torrent metadata ready');
+                    res.status(200).json({ msg: 'torrent metadata ready' });
                 });
                 torrent.on('download', function (bytes) {
                     buf.write(bytes);
+                    res.status(200).json({ msg: 'torrent download started' });
                 });
                 torrent.on('done', function () {
                     console.log('torrent download finished');

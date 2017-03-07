@@ -89,14 +89,17 @@ export async function watch(req: express.Request, res: express.Response) {
 
     client.on('error', err => {
         console.log(err);
+        res.status(500).json({ error: err });
     });
 
     client.add(magnet, { path: '/bin' }, torrent => {
         torrent.on('metadata', () => {
             console.log('torrent metadata ready');
+            res.status(200).json({ msg: 'torrent metadata ready' });
         });
         torrent.on('download', bytes => {
             buf.write(bytes);
+            res.status(200).json({ msg: 'torrent download started' });
         });
         torrent.on('done', () => {
             console.log('torrent download finished');
