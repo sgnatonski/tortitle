@@ -77,18 +77,34 @@ function renderSorted(req: express.Request, res: express.Response, model: IIndex
 }
 
 export async function watch(req: express.Request, res: express.Response) {
-    if (!req.params.magnet) {
-        res.status(400).json({ error: 'magnet param missing or malformed' });
-    }
+    res.render('watch');
+}
 
-    const magnet = 'magnet:?' + req.params.magnet;
+export async function watchStream(req: express.Request, res: express.Response) {
     
     var engine = torrentStream('magnet:?xt=urn:btih:9d45f004b71036a065b86b8e72053adabd2ec4a8&dn=A.Monster.Calls.2016.DVDScr.XVID.AC3.HQ.Hive-CM8&tr=udp%3A%2F%2Ftracker.leechers-paradise.org%3A6969&tr=udp%3A%2F%2Fzer0day.ch%3A1337&tr=udp%3A%2F%2Ftracker.coppersurfer.tk%3A6969&tr=udp%3A%2F%2Fpublic.popcorn-tracker.org%3A6969');
 
     engine.on('ready', () => {
         var file = engine.files[0];
         console.log('filename:', file.name);
-        var stream = file.createReadStream();
+
+        var range = req.headers.range;
+        var split = range.split(/[-=]/);
+        var startByte = +split[1];
+        var endByte = split[2] ? +split[2] : file.length - 1;
+        var chunkSize = endByte - startByte + 1;
+
+        res.status(206);
+        res.set('Connection', 'keep-alive');
+        res.set("Content-Range", "bytes " + startByte + "-" + endByte + "/" + file.length);
+        res.set("Accept-Ranges", "bytes");
+        res.set("Content-Length", "" + chunkSize);
+        res.set("Content-Type", "video/mp4");
+
+        var stream = file.createReadStream({
+            start: startByte,
+            end: endByte
+        });
         stream.on('open', () => {
             // This just pipes the read stream to the response object (which goes to the client)
             stream.pipe(res);

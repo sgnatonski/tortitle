@@ -8,8 +8,7 @@
     <NameOfLastUsedPublishProfile>tortitle - Web Deploy</NameOfLastUsedPublishProfile>
     <NodeExeArguments>
     </NodeExeArguments>
-    <Environment>
-    </Environment>
+    <Environment>DEBUG=*</Environment>
   </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -91,6 +90,7 @@
     <Content Include="tsconfig.json">
       <SubType>Code</SubType>
     </Content>
+    <Content Include="views\watch.html" />
     <Content Include="views\about.html" />
     <Content Include="views\index.html" />
     <Content Include="views\layout.html" />
