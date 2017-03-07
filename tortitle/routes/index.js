@@ -38,6 +38,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var cache_1 = require("../backend/cache");
 var languagesService_1 = require("../backend/languagesService");
 var moviesService_1 = require("../backend/moviesService");
+var WebTorrent = require("webtorrent-hybrid");
 var visitCookie = 'TortitleLastVisit';
 var languageCookie = 'TortitleLanguage';
 var pageSize = 100;
@@ -106,4 +107,34 @@ function renderSorted(req, res, model) {
     model.movies = model.movies.mapAssign(function (x) { return ({ isNew: x.addedAt > lastVisit }); });
     res.render('index', model);
 }
+function watch(req, res) {
+    return __awaiter(this, void 0, void 0, function () {
+        var magnet, client, buf;
+        return __generator(this, function (_a) {
+            magnet = 'magnet:?xt=urn:btih:9d45f004b71036a065b86b8e72053adabd2ec4a8&dn=A.Monster.Calls.2016.DVDScr.XVID.AC3.HQ.Hive-CM8&tr=udp%3A%2F%2Ftracker.leechers-paradise.org%3A6969&tr=udp%3A%2F%2Fzer0day.ch%3A1337&tr=udp%3A%2F%2Ftracker.coppersurfer.tk%3A6969&tr=udp%3A%2F%2Fpublic.popcorn-tracker.org%3A6969';
+            if (!magnet || !magnet.startsWith('magnet:?')) {
+                res.status(400).json({ error: 'magnet param missing or malformed' });
+            }
+            client = new WebTorrent();
+            buf = new Buffer([]);
+            //buf.name = 'Some file name';
+            client.on('error', function (err) {
+                console.log(err);
+            });
+            client.add(magnet, { path: '/bin' }, function (torrent) {
+                torrent.on('metadata', function () {
+                    console.log('torrent metadata ready');
+                });
+                torrent.on('download', function (bytes) {
+                    buf.write(bytes);
+                });
+                torrent.on('done', function () {
+                    console.log('torrent download finished');
+                });
+            });
+            return [2 /*return*/];
+        });
+    });
+}
+exports.watch = watch;
 //# sourceMappingURL=index.js.map

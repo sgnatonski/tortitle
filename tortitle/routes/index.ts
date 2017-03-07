@@ -3,6 +3,7 @@ import { default as cache } from "../backend/cache";
 import { LanguagesService } from "../backend/languagesService";
 import { MoviesService } from "../backend/moviesService";
 import { IMovie } from "../backend/movie";
+import * as WebTorrent from "webtorrent-hybrid";
 
 const visitCookie = 'TortitleLastVisit';
 const languageCookie = 'TortitleLanguage';
@@ -73,5 +74,33 @@ function renderSorted(req: express.Request, res: express.Response, model: IIndex
     const lastVisit = lastVisitTime ? new Date(Date.parse(lastVisitTime)) : new Date(0);
     model.movies = model.movies.mapAssign(x => ({ isNew: x.addedAt > lastVisit }));
     res.render('index', model);
+}
+
+export async function watch(req: express.Request, res: express.Response) {
+    const magnet: string =
+        'magnet:?xt=urn:btih:9d45f004b71036a065b86b8e72053adabd2ec4a8&dn=A.Monster.Calls.2016.DVDScr.XVID.AC3.HQ.Hive-CM8&tr=udp%3A%2F%2Ftracker.leechers-paradise.org%3A6969&tr=udp%3A%2F%2Fzer0day.ch%3A1337&tr=udp%3A%2F%2Ftracker.coppersurfer.tk%3A6969&tr=udp%3A%2F%2Fpublic.popcorn-tracker.org%3A6969';// req.params.magnet;
+    if (!magnet || !magnet.startsWith('magnet:?')) {
+        res.status(400).json({ error: 'magnet param missing or malformed' });
+    }
+
+    var client = new WebTorrent();
+    var buf = new Buffer([]);
+    //buf.name = 'Some file name';
+
+    client.on('error', err => {
+        console.log(err);
+    });
+
+    client.add(magnet, { path: '/bin' }, torrent => {
+        torrent.on('metadata', () => {
+            console.log('torrent metadata ready');
+        });
+        torrent.on('download', bytes => {
+            buf.write(bytes);
+        });
+        torrent.on('done', () => {
+            console.log('torrent download finished');
+        });
+    });
 }
     
