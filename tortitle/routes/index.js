@@ -109,28 +109,39 @@ function renderSorted(req, res, model) {
 }
 function watch(req, res) {
     return __awaiter(this, void 0, void 0, function () {
-        var magnet, buf, engine;
+        var magnet, stream, engine;
         return __generator(this, function (_a) {
             magnet = 'magnet:?xt=urn:btih:9d45f004b71036a065b86b8e72053adabd2ec4a8&dn=A.Monster.Calls.2016.DVDScr.XVID.AC3.HQ.Hive-CM8&tr=udp%3A%2F%2Ftracker.leechers-paradise.org%3A6969&tr=udp%3A%2F%2Fzer0day.ch%3A1337&tr=udp%3A%2F%2Ftracker.coppersurfer.tk%3A6969&tr=udp%3A%2F%2Fpublic.popcorn-tracker.org%3A6969';
             if (!magnet || !magnet.startsWith('magnet:?')) {
                 res.status(400).json({ error: 'magnet param missing or malformed' });
             }
-            buf = new Buffer([]);
+            stream = null;
             engine = torrentStream(magnet);
             engine.on('ready', function () {
-                engine.files.forEach(function (file) {
-                    console.log('filename:', file.name);
-                    var stream = file.createReadStream();
-                    // stream is readable stream to containing the file content
-                });
+                var args = [];
+                for (var _i = 0; _i < arguments.length; _i++) {
+                    args[_i] = arguments[_i];
+                }
+                console.log.apply(console, args);
+                var file = engine.files[0];
+                console.log('filename:', file.name);
+                stream = file.createReadStream();
             });
-            engine.on('download', function (bytes) {
-                res.status(200).json({ msg: 'torrent download started' });
-                buf.write(bytes);
+            engine.on('download', function () {
+                var args = [];
+                for (var _i = 0; _i < arguments.length; _i++) {
+                    args[_i] = arguments[_i];
+                }
+                console.log.apply(console, args);
+                //res.status(200).json({ msg: 'torrent download started' });
             });
-            engine.on('torrent', function (bytes) {
-                res.status(200).json({ msg: 'torrent metadata ready' });
-                buf.write(bytes);
+            engine.on('torrent', function () {
+                var args = [];
+                for (var _i = 0; _i < arguments.length; _i++) {
+                    args[_i] = arguments[_i];
+                }
+                console.log.apply(console, args);
+                //res.status(200).json({ msg: 'torrent metadata ready' });
             });
             return [2 /*return*/];
         });

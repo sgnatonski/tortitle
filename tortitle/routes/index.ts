@@ -83,26 +83,25 @@ export async function watch(req: express.Request, res: express.Response) {
         res.status(400).json({ error: 'magnet param missing or malformed' });
     }
 
-    var buf = new Buffer([]);
+    var stream: any = null;
 
     var engine = torrentStream(magnet);
 
-    engine.on('ready', function () {
-        engine.files.forEach(function (file) {
-            console.log('filename:', file.name);
-            var stream = file.createReadStream();
-            // stream is readable stream to containing the file content
-        });
+    engine.on('ready', (...args: any[]) => {
+        console.log.apply(console, args);
+        var file = engine.files[0];
+        console.log('filename:', file.name);
+        stream = file.createReadStream();
     });
 
-    engine.on('download', bytes => {
-        res.status(200).json({ msg: 'torrent download started' });
-        buf.write(bytes);
-        });
+    engine.on('download', (...args: any[]) => {
+        console.log.apply(console, args);
+        //res.status(200).json({ msg: 'torrent download started' });
+    });
 
-    engine.on('torrent', bytes => {
-        res.status(200).json({ msg: 'torrent metadata ready' });
-        buf.write(bytes);
-});
+    engine.on('torrent', (...args: any[]) => {
+        console.log.apply(console, args);
+        //res.status(200).json({ msg: 'torrent metadata ready' });
+    });
 }
     
