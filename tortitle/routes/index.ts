@@ -3,7 +3,7 @@ import { default as cache } from "../backend/cache";
 import { LanguagesService } from "../backend/languagesService";
 import { MoviesService } from "../backend/moviesService";
 import { IMovie } from "../backend/movie";
-import * as WebTorrent from "webtorrent-hybrid";
+import * as torrentStream from "torrent-stream";
 
 const visitCookie = 'TortitleLastVisit';
 const languageCookie = 'TortitleLanguage';
@@ -83,27 +83,26 @@ export async function watch(req: express.Request, res: express.Response) {
         res.status(400).json({ error: 'magnet param missing or malformed' });
     }
 
-    var client = new WebTorrent();
     var buf = new Buffer([]);
-    //buf.name = 'Some file name';
 
-    client.on('error', err => {
-        console.log(err);
-        res.status(500).json({ error: err });
+    var engine = torrentStream(magnet);
+
+    engine.on('ready', function () {
+        engine.files.forEach(function (file) {
+            console.log('filename:', file.name);
+            var stream = file.createReadStream();
+            // stream is readable stream to containing the file content
+        });
     });
 
-    client.add(magnet, { path: '/bin' }, torrent => {
-        torrent.on('metadata', () => {
-            console.log('torrent metadata ready');
-            res.status(200).json({ msg: 'torrent metadata ready' });
+    engine.on('download', bytes => {
+        res.status(200).json({ msg: 'torrent download started' });
+        buf.write(bytes);
         });
-        torrent.on('download', bytes => {
-            buf.write(bytes);
-            res.status(200).json({ msg: 'torrent download started' });
-        });
-        torrent.on('done', () => {
-            console.log('torrent download finished');
-        });
-    });
+
+    engine.on('torrent', bytes => {
+        res.status(200).json({ msg: 'torrent metadata ready' });
+        buf.write(bytes);
+});
 }
     
