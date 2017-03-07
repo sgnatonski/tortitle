@@ -134,7 +134,7 @@ function watchStream(req, res) {
                 res.set("Content-Range", "bytes " + startByte + "-" + endByte + "/" + file.length);
                 res.set("Accept-Ranges", "bytes");
                 res.set("Content-Length", "" + chunkSize);
-                res.set("Content-Type", "video/mp4");
+                res.set("Content-Type", "video/avi");
                 var stream = file.createReadStream({
                     start: startByte,
                     end: endByte
