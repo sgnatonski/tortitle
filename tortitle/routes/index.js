@@ -109,13 +109,12 @@ function renderSorted(req, res, model) {
 }
 function watch(req, res) {
     return __awaiter(this, void 0, void 0, function () {
-        var magnet, stream, engine;
+        var magnet, engine;
         return __generator(this, function (_a) {
-            magnet = 'magnet:?xt=urn:btih:9d45f004b71036a065b86b8e72053adabd2ec4a8&dn=A.Monster.Calls.2016.DVDScr.XVID.AC3.HQ.Hive-CM8&tr=udp%3A%2F%2Ftracker.leechers-paradise.org%3A6969&tr=udp%3A%2F%2Fzer0day.ch%3A1337&tr=udp%3A%2F%2Ftracker.coppersurfer.tk%3A6969&tr=udp%3A%2F%2Fpublic.popcorn-tracker.org%3A6969';
-            if (!magnet || !magnet.startsWith('magnet:?')) {
+            if (!req.params.magnet) {
                 res.status(400).json({ error: 'magnet param missing or malformed' });
             }
-            stream = null;
+            magnet = 'magnet:?' + req.params.magnet;
             engine = torrentStream(magnet);
             engine.on('ready', function () {
                 var args = [];
@@ -125,7 +124,15 @@ function watch(req, res) {
                 console.log.apply(console, args);
                 var file = engine.files[0];
                 console.log('filename:', file.name);
-                stream = file.createReadStream();
+                var stream = file.createReadStream();
+                stream.on('open', function () {
+                    // This just pipes the read stream to the response object (which goes to the client)
+                    stream.pipe(res);
+                });
+                // This catches any errors that happen while creating the readable stream (usually invalid names)
+                stream.on('error', function (err) {
+                    res.end(err);
+                });
             });
             engine.on('download', function () {
                 var args = [];
