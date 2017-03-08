@@ -24,6 +24,7 @@
     "express": "^4.15.0",
     "gaikan": "^2.0.2",
     "lodash": "^4.17.4",
+    "memory-chunk-store": "^1.2.0",
     "method-override": "^2.3.7",
     "morgan": "^1.8.1",
     "nconf": "*",

@@ -3,9 +3,6 @@ import { default as cache } from "../backend/cache";
 import { LanguagesService } from "../backend/languagesService";
 import { MoviesService } from "../backend/moviesService";
 import { IMovie } from "../backend/movie";
-import * as torrentStream from "torrent-stream";
-import * as srt2vtt from 'srt-to-vtt';
-import * as fs from 'fs';
 
 const visitCookie = 'TortitleLastVisit';
 const languageCookie = 'TortitleLanguage';
@@ -76,62 +73,4 @@ function renderSorted(req: express.Request, res: express.Response, model: IIndex
     const lastVisit = lastVisitTime ? new Date(Date.parse(lastVisitTime)) : new Date(0);
     model.movies = model.movies.mapAssign(x => ({ isNew: x.addedAt > lastVisit }));
     res.render('index', model);
-}
-
-export async function watch(req: express.Request, res: express.Response) {
-    res.render('watch', { magnet: req.params.magnet });
-}
-
-export async function watchStream(req: express.Request, res: express.Response) {
-
-    function atob(str) {
-        return new Buffer(str, 'base64').toString('binary');
-    }
-
-    var magnet = atob(req.params.magnet);
-    var engine = torrentStream(magnet);
-
-    engine.on('ready', () => {
-        var files = (<any[]>engine.files).filter(val => {
-            var v = val.name.replace(/\.[^/.]+$/, "");
-            return magnet.indexOf(v) > -1;
-        });
-        var file = (<any[]>engine.files).sortByDesc(f => f.length).first();
-        console.log('filename:', file.name);
-
-        var range = req.headers.range;
-        var split = range.split(/[-=]/);
-        var startByte = +split[1];
-        var endByte = split[2] ? +split[2] : file.length - 1;
-        var chunkSize = endByte - startByte + 1;
-
-        res.status(206);
-        res.set('Connection', 'keep-alive');
-        res.set("Content-Range", "bytes " + startByte + "-" + endByte + "/" + file.length);
-        res.set("Accept-Ranges", "bytes");
-        res.set("Content-Length", "" + chunkSize);
-        res.set("Content-Type", "video/webm");
-
-        var stream = file.createReadStream({
-            start: startByte,
-            end: endByte
-        });
-        stream.pipe(res);
-        
-        stream.on('error', (err) => {
-            console.log(err);
-        });
-    });
-
-    engine.on('download', () => {
-    });
-
-    engine.on('torrent', () => {
-    });
-}
-
-export async function watchSub(req: express.Request, res: express.Response) {
-    fs.createReadStream('some-subtitle-file.srt')
-        .pipe(srt2vtt())
-        .pipe(res);
 }

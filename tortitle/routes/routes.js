@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var index = require("./index");
+var watch = require("./watch");
 var about = require("./about");
 var cookie = require("./cookie");
 function configure(app) {
@@ -9,9 +10,9 @@ function configure(app) {
     app.get('/', index.index);
     app.get('/:sort(\\d+)', index.index);
     app.get('/:sort(\\d+)/:page(\\d+)', index.index);
-    app.get('/watch/:magnet', index.watch);
-    app.get('/watch/stream/:magnet', index.watchStream);
-    app.get('/watch/sub', index.watchSub);
+    app.get('/watch/:magnet', watch.watch);
+    app.get('/watch/stream/:magnet', watch.watchStream);
+    app.get('/watch/sub', watch.watchSub);
     app.get('/about', about.index);
 }
 exports.configure = configure;

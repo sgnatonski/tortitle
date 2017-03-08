@@ -38,9 +38,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var cache_1 = require("../backend/cache");
 var languagesService_1 = require("../backend/languagesService");
 var moviesService_1 = require("../backend/moviesService");
-var torrentStream = require("torrent-stream");
-var srt2vtt = require("srt-to-vtt");
-var fs = require("fs");
 var visitCookie = 'TortitleLastVisit';
 var languageCookie = 'TortitleLanguage';
 var pageSize = 100;
@@ -109,69 +106,4 @@ function renderSorted(req, res, model) {
     model.movies = model.movies.mapAssign(function (x) { return ({ isNew: x.addedAt > lastVisit }); });
     res.render('index', model);
 }
-function watch(req, res) {
-    return __awaiter(this, void 0, void 0, function () {
-        return __generator(this, function (_a) {
-            res.render('watch', { magnet: req.params.magnet });
-            return [2 /*return*/];
-        });
-    });
-}
-exports.watch = watch;
-function watchStream(req, res) {
-    return __awaiter(this, void 0, void 0, function () {
-        function atob(str) {
-            return new Buffer(str, 'base64').toString('binary');
-        }
-        var magnet, engine;
-        return __generator(this, function (_a) {
-            magnet = atob(req.params.magnet);
-            engine = torrentStream(magnet);
-            engine.on('ready', function () {
-                var files = engine.files.filter(function (val) {
-                    var v = val.name.replace(/\.[^/.]+$/, "");
-                    return magnet.indexOf(v) > -1;
-                });
-                var file = engine.files.sortByDesc(function (f) { return f.length; }).first();
-                console.log('filename:', file.name);
-                var range = req.headers.range;
-                var split = range.split(/[-=]/);
-                var startByte = +split[1];
-                var endByte = split[2] ? +split[2] : file.length - 1;
-                var chunkSize = endByte - startByte + 1;
-                res.status(206);
-                res.set('Connection', 'keep-alive');
-                res.set("Content-Range", "bytes " + startByte + "-" + endByte + "/" + file.length);
-                res.set("Accept-Ranges", "bytes");
-                res.set("Content-Length", "" + chunkSize);
-                res.set("Content-Type", "video/webm");
-                var stream = file.createReadStream({
-                    start: startByte,
-                    end: endByte
-                });
-                stream.pipe(res);
-                stream.on('error', function (err) {
-                    console.log(err);
-                });
-            });
-            engine.on('download', function () {
-            });
-            engine.on('torrent', function () {
-            });
-            return [2 /*return*/];
-        });
-    });
-}
-exports.watchStream = watchStream;
-function watchSub(req, res) {
-    return __awaiter(this, void 0, void 0, function () {
-        return __generator(this, function (_a) {
-            fs.createReadStream('some-subtitle-file.srt')
-                .pipe(srt2vtt())
-                .pipe(res);
-            return [2 /*return*/];
-        });
-    });
-}
-exports.watchSub = watchSub;
 //# sourceMappingURL=index.js.map
