@@ -56,12 +56,16 @@
                 </h4>
                 <div data-if="msg.hasMatch" data-extract>
                     <button class="mui-btn mui-btn--primary" onclick="activateModal(this)">Show matches</button>
-                    <button class="mui-btn mui-btn--primary" onclick="play(this)">Play</button>
                     <div class="matchesContainer mui-panel" style="display:none;">
                         <div data-for="match in msg.match">
-                            <p><img src="/images/torrent.svg" /><a href="#{match.torrent.torrentLink}">#{match.torrent.name}</a></p>
-                            <p><img src="/images/sub.png" /><a href="#{match.subtitle.linkDownload}">#{match.subtitle.releaseName}</a></p>
-                            <a href="/watch/#{match.torrent.magnetLink64}" target="_blank" title="#{match.torrent.name}">Watch</a>
+                            <p>
+                                #{match.torrent.name}
+                            </p>
+                            <p>
+                                <a href="#{match.torrent.torrentLink}"><img src="/images/torrent.svg"/></a>
+                                <a href="#{match.subtitle.linkDownload}"><img src="/images/sub.png"/></a>
+                                <a href="/watch/#{match.torrent.magnetLink64}" target="_blank" title="#{match.torrent.name}">Watch</a>
+                            </p>
                             <hr />
                         </div>
                     </div>
@@ -74,7 +78,6 @@
     </div>
     <div data-if="root.nextPage" data-extract>
         <a class="mui-btn mui-btn--primary" href="/#{root.sort}/#{root.nextPage}">Show more</a>
-        <button class="mui-btn mui-btn--primary" onclick="play(this)">Play</button>
     </div>
     <div id="output"> </div>
 </div>
@@ -100,33 +103,5 @@
         modalEl.style.margin = '100px auto';
         modalEl.style.backgroundColor = '#fff';
         mui.overlay('on', modalEl);
-    }
-
-    function play() {
-        var videoContainerEl = document.getElementById('output');
-        var observer = new MutationObserver(function (mutations) {
-            mutations.forEach(function () {
-                if (videoContainerEl.children.length) {
-                    var trackEl = document.createElement('track');
-                    trackEl.setAttribute("label", "English");
-                    trackEl.setAttribute("kind", "subtitles");
-                    trackEl.setAttribute("srclang", "en");
-                    trackEl.setAttribute("src", "/images/sintel_pl.vtt");
-                    trackEl.setAttribute("default", "default");
-                    videoContainerEl.children[0].appendChild(trackEl);
-                }
-            });
-        });
-
-        observer.observe(videoContainerEl, { childList: true });
-
-        var torrentId =
-            'magnet:?xt=urn:btih:6a9759bffd5c0af65319979fb7832189f4f3c35d&dn=sintel.mp4&tr=wss%3A%2F%2Ftracker.btorrent.xyz&tr=wss%3A%2F%2Ftracker.fastcast.nz&tr=wss%3A%2F%2Ftracker.openwebtorrent.com';
-
-        var client = new WebTorrent();
-
-        client.add(torrentId, function(torrent) {
-            torrent.files[0].appendTo('#output');
-        });
     }
 </script>

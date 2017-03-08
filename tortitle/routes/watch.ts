@@ -11,8 +11,7 @@ function parseRange(range: string, totalSize: number) {
     const split = range.split(/[-=]/);
     const startByte = +split[1];
     const endByte = split[2] ? +split[2] : totalSize - 1;
-    const chunkSize = endByte - startByte + 1;
-    return { startByte, endByte, chunkSize };
+    return { startByte, endByte };
 }
 
 export async function watch(req: express.Request, res: express.Response) {
@@ -22,14 +21,14 @@ export async function watch(req: express.Request, res: express.Response) {
 export async function watchStream(req: express.Request, res: express.Response) {
     const magnet = atob(req.params.magnet);
     const file = await Torrents.getFileByMagnet(magnet);
-    const { startByte, endByte, chunkSize } = parseRange(req.headers.range, file.length);
+    const { startByte, endByte } = parseRange(req.headers.range, file.length);
 
     res.status(206);
     res.set({
         "Connection": "keep-alive",
         "Content-Range": `bytes ${startByte}-${endByte}/${file.length}`,
         "Accept-Ranges": "bytes",
-        "Content-Length": `${chunkSize}`,
+        "Content-Length": `${endByte - startByte + 1}`,
         "Content-Type": "video/webm"
     });
 

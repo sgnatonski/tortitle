@@ -45,8 +45,7 @@ function parseRange(range, totalSize) {
     var split = range.split(/[-=]/);
     var startByte = +split[1];
     var endByte = split[2] ? +split[2] : totalSize - 1;
-    var chunkSize = endByte - startByte + 1;
-    return { startByte: startByte, endByte: endByte, chunkSize: chunkSize };
+    return { startByte: startByte, endByte: endByte };
 }
 function watch(req, res) {
     return __awaiter(this, void 0, void 0, function () {
@@ -59,7 +58,7 @@ function watch(req, res) {
 exports.watch = watch;
 function watchStream(req, res) {
     return __awaiter(this, void 0, void 0, function () {
-        var magnet, file, _a, startByte, endByte, chunkSize;
+        var magnet, file, _a, startByte, endByte;
         return __generator(this, function (_b) {
             switch (_b.label) {
                 case 0:
@@ -67,13 +66,13 @@ function watchStream(req, res) {
                     return [4 /*yield*/, Torrents_1.Torrents.getFileByMagnet(magnet)];
                 case 1:
                     file = _b.sent();
-                    _a = parseRange(req.headers.range, file.length), startByte = _a.startByte, endByte = _a.endByte, chunkSize = _a.chunkSize;
+                    _a = parseRange(req.headers.range, file.length), startByte = _a.startByte, endByte = _a.endByte;
                     res.status(206);
                     res.set({
                         "Connection": "keep-alive",
                         "Content-Range": "bytes " + startByte + "-" + endByte + "/" + file.length,
                         "Accept-Ranges": "bytes",
-                        "Content-Length": "" + chunkSize,
+                        "Content-Length": "" + (endByte - startByte + 1),
                         "Content-Type": "video/webm"
                     });
                     file.createReadStream({
