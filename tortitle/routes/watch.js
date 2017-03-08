@@ -35,8 +35,11 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+var http = require("http");
 var srt2vtt = require("srt-to-vtt");
-var fs = require("fs");
+var stream_1 = require("stream");
+var HTMLParser = require("fast-html-parser");
+var AdmZip = require("adm-zip");
 var Torrents_1 = require("../backend/Torrents");
 function atob(str) {
     return new Buffer(str, 'base64').toString('binary');
@@ -50,7 +53,7 @@ function parseRange(range, totalSize) {
 function watch(req, res) {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
-            res.render("watch", { magnet: req.params.magnet });
+            res.render("watch", { magnet: req.params.magnet, subid: req.params.subid });
             return [2 /*return*/];
         });
     });
@@ -89,10 +92,45 @@ function watchStream(req, res) {
 exports.watchStream = watchStream;
 function watchSub(req, res) {
     return __awaiter(this, void 0, void 0, function () {
+        var subid, entryUrl;
         return __generator(this, function (_a) {
-            fs.createReadStream("some-subtitle-file.srt")
-                .pipe(srt2vtt())
-                .pipe(res);
+            subid = req.params.subid;
+            entryUrl = 'http://osdownloader.org/en/osdownloader.subtitles-download/subtitles/' + subid;
+            http.get(entryUrl, function (resp) {
+                resp.setEncoding('utf8');
+                var rawData = '';
+                resp.on('data', function (chunk) { return rawData += chunk; });
+                resp.on('end', function () {
+                    try {
+                        var root = HTMLParser.parse(rawData);
+                        var dlurl = root.querySelector('#downloadSubtitles').childNodes[0].childNodes[1].attributes.href;
+                        http.get(dlurl, function (subres) {
+                            var data = [], dataLen = 0;
+                            subres.on('data', function (chunk) {
+                                data.push(chunk);
+                                dataLen += chunk.length;
+                            }).on('end', function () {
+                                var buf = new Buffer(dataLen);
+                                for (var i = 0, len = data.length, pos = 0; i < len; i++) {
+                                    data[i].copy(buf, pos);
+                                    pos += data[i].length;
+                                }
+                                var zip = new AdmZip(buf);
+                                var zipEntries = zip.getEntries();
+                                var strEntry = zipEntries.find(function (x) { return x.entryName.toLowerCase().endsWith('.srt'); });
+                                console.log(zip.readAsText(strEntry));
+                                var srtStream = new stream_1.Readable();
+                                srtStream.push(zip.readAsText(strEntry));
+                                srtStream.push(null);
+                                srtStream.pipe(srt2vtt()).pipe(res);
+                            });
+                        });
+                    }
+                    catch (e) {
+                        console.log(e.message);
+                    }
+                });
+            });
             return [2 /*return*/];
         });
     });
