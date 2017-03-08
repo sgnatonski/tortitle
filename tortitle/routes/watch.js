@@ -35,27 +35,23 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var torrentStream = require("torrent-stream");
-var memoryChunkStore = require("memory-chunk-store");
 var srt2vtt = require("srt-to-vtt");
 var fs = require("fs");
-var engine;
-function resolveLargetsFile(resolve) {
-    var file = engine.files.sortByDesc(function (f) { return f.length; }).first();
-    console.log('filename:', file.name);
-    resolve(file);
+var Torrents_1 = require("../backend/Torrents");
+function atob(str) {
+    return new Buffer(str, 'base64').toString('binary');
 }
-function getFileByMagnet(magnet) {
-    return new Promise(function (resolve, reject) {
-        if (!engine) {
-            engine = torrentStream(magnet, { storage: memoryChunkStore }, function () { return resolveLargetsFile(resolve); });
-        }
-    });
+function parseRange(range, totalSize) {
+    var split = range.split(/[-=]/);
+    var startByte = +split[1];
+    var endByte = split[2] ? +split[2] : totalSize - 1;
+    var chunkSize = endByte - startByte + 1;
+    return { startByte: startByte, endByte: endByte, chunkSize: chunkSize };
 }
 function watch(req, res) {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
-            res.render('watch', { magnet: req.params.magnet });
+            res.render("watch", { magnet: req.params.magnet });
             return [2 /*return*/];
         });
     });
@@ -63,36 +59,29 @@ function watch(req, res) {
 exports.watch = watch;
 function watchStream(req, res) {
     return __awaiter(this, void 0, void 0, function () {
-        function atob(str) {
-            return new Buffer(str, 'base64').toString('binary');
-        }
-        var magnet, file, range, split, startByte, endByte, chunkSize, stream;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
+        var magnet, file, _a, startByte, endByte, chunkSize;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
                 case 0:
                     magnet = atob(req.params.magnet);
-                    return [4 /*yield*/, getFileByMagnet(magnet)];
+                    return [4 /*yield*/, Torrents_1.Torrents.getFileByMagnet(magnet)];
                 case 1:
-                    file = _a.sent();
-                    range = req.headers.range;
-                    split = range.split(/[-=]/);
-                    startByte = +split[1];
-                    endByte = split[2] ? +split[2] : file.length - 1;
-                    chunkSize = endByte - startByte + 1;
+                    file = _b.sent();
+                    _a = parseRange(req.headers.range, file.length), startByte = _a.startByte, endByte = _a.endByte, chunkSize = _a.chunkSize;
                     res.status(206);
-                    res.set('Connection', 'keep-alive');
-                    res.set("Content-Range", "bytes " + startByte + "-" + endByte + "/" + file.length);
-                    res.set("Accept-Ranges", "bytes");
-                    res.set("Content-Length", "" + chunkSize);
-                    res.set("Content-Type", "video/webm");
-                    stream = file.createReadStream({
+                    res.set({
+                        "Connection": "keep-alive",
+                        "Content-Range": "bytes " + startByte + "-" + endByte + "/" + file.length,
+                        "Accept-Ranges": "bytes",
+                        "Content-Length": "" + chunkSize,
+                        "Content-Type": "video/webm"
+                    });
+                    file.createReadStream({
                         start: startByte,
                         end: endByte
-                    });
-                    stream.pipe(res);
-                    stream.on('error', function (err) {
+                    }).on('error', function (err) {
                         console.log(err);
-                    });
+                    }).pipe(res);
                     return [2 /*return*/];
             }
         });
@@ -102,7 +91,7 @@ exports.watchStream = watchStream;
 function watchSub(req, res) {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
-            fs.createReadStream('some-subtitle-file.srt')
+            fs.createReadStream("some-subtitle-file.srt")
                 .pipe(srt2vtt())
                 .pipe(res);
             return [2 /*return*/];

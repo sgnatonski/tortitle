@@ -73,6 +73,7 @@
     <TypeScriptCompile Include="backend\moviesService.ts" />
     <TypeScriptCompile Include="backend\subtitle.ts" />
     <TypeScriptCompile Include="backend\torrent.ts" />
+    <TypeScriptCompile Include="backend\Torrents.ts" />
     <TypeScriptCompile Include="iso639.ts" />
     <TypeScriptCompile Include="routes\about.ts" />
     <TypeScriptCompile Include="routes\cookie.ts" />
