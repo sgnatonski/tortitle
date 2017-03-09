@@ -1,9 +1,10 @@
 ﻿import * as http from "http";
 import * as express from "express";
-import * as srt2vtt from 'srt-to-vtt';
+import * as srt2vtt from 'srt2vtt';
 import { Readable } from 'stream';
 import * as HTMLParser from 'fast-html-parser';
 import * as AdmZip from 'adm-zip';
+import * as iconv from 'iconv-lite';
 import { Torrents } from "../backend/Torrents";
 
 function atob(str: string) {
@@ -55,27 +56,23 @@ export async function watchSub(req: express.Request, res: express.Response) {
                 var root = HTMLParser.parse(rawData);
                 var dlurl = root.querySelector('#downloadSubtitles').childNodes[0].childNodes[1].attributes.href;
                 http.get(dlurl, subres => {
-                    var data = [], dataLen = 0;
-                    subres.on('data', function (chunk) {
+                    var data = [];
+                    subres.on('data', chunk => {
                         data.push(chunk);
-                        dataLen += chunk.length;
-                    }).on('end', function () {
-                        var buf = new Buffer(dataLen);
-
-                        for (var i = 0, len = data.length, pos = 0; i < len; i++) {
-                            data[i].copy(buf, pos);
-                            pos += data[i].length;
-                        }
-
-                        var zip = new AdmZip(buf);
+                    }).on('end', () => {
+                        var zip = new AdmZip(Buffer.concat(data));
                         var zipEntries = zip.getEntries() as any[];
 
-                        var strEntry = zipEntries.find(x => (<string>x.entryName).toLowerCase().endsWith('.srt'));
-                        console.log(zip.readAsText(strEntry));
-                        var srtStream = new Readable();
-                        srtStream.push(zip.readAsText(strEntry));
-                        srtStream.push(null);
-                        srtStream.pipe(srt2vtt()).pipe(res);
+                        var srtEntry = zipEntries.find(x => (<string>x.entryName).toLowerCase().endsWith('.srt'));
+                        var srtData = zip.readFile(srtEntry, "binary");
+                        srt2vtt(srtData, (err, vttData) => {
+                            if (err) throw new Error(err);
+                            //var decodedVtt = iconv.decode(vttData, 'utf-8').replace('NOTE Converted from .srt via srt2vtt: https://github.com/deestan/srt2vtt\n\n', '');
+                            //console.log(decodedVtt);
+                            var vtt = vttData.toString().replace('NOTE Converted from .srt via srt2vtt: https://github.com/deestan/srt2vtt\n\n', '');
+                            res.write(vtt);
+                            res.end();
+                        });
                     });
                 });
             } catch (e) {

@@ -36,8 +36,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var http = require("http");
-var srt2vtt = require("srt-to-vtt");
-var stream_1 = require("stream");
+var srt2vtt = require("srt2vtt");
 var HTMLParser = require("fast-html-parser");
 var AdmZip = require("adm-zip");
 var Torrents_1 = require("../backend/Torrents");
@@ -105,24 +104,23 @@ function watchSub(req, res) {
                         var root = HTMLParser.parse(rawData);
                         var dlurl = root.querySelector('#downloadSubtitles').childNodes[0].childNodes[1].attributes.href;
                         http.get(dlurl, function (subres) {
-                            var data = [], dataLen = 0;
+                            var data = [];
                             subres.on('data', function (chunk) {
                                 data.push(chunk);
-                                dataLen += chunk.length;
                             }).on('end', function () {
-                                var buf = new Buffer(dataLen);
-                                for (var i = 0, len = data.length, pos = 0; i < len; i++) {
-                                    data[i].copy(buf, pos);
-                                    pos += data[i].length;
-                                }
-                                var zip = new AdmZip(buf);
+                                var zip = new AdmZip(Buffer.concat(data));
                                 var zipEntries = zip.getEntries();
-                                var strEntry = zipEntries.find(function (x) { return x.entryName.toLowerCase().endsWith('.srt'); });
-                                console.log(zip.readAsText(strEntry));
-                                var srtStream = new stream_1.Readable();
-                                srtStream.push(zip.readAsText(strEntry));
-                                srtStream.push(null);
-                                srtStream.pipe(srt2vtt()).pipe(res);
+                                var srtEntry = zipEntries.find(function (x) { return x.entryName.toLowerCase().endsWith('.srt'); });
+                                var srtData = zip.readFile(srtEntry, "binary");
+                                srt2vtt(srtData, function (err, vttData) {
+                                    if (err)
+                                        throw new Error(err);
+                                    //var decodedVtt = iconv.decode(vttData, 'utf-8').replace('NOTE Converted from .srt via srt2vtt: https://github.com/deestan/srt2vtt\n\n', '');
+                                    //console.log(decodedVtt);
+                                    var vtt = vttData.toString().replace('NOTE Converted from .srt via srt2vtt: https://github.com/deestan/srt2vtt\n\n', '');
+                                    res.write(vtt);
+                                    res.end();
+                                });
                             });
                         });
                     }
