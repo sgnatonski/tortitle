@@ -35,11 +35,8 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var http = require("http");
-var srt2vtt = require("srt2vtt");
-var HTMLParser = require("fast-html-parser");
-var AdmZip = require("adm-zip");
 var Torrents_1 = require("../backend/Torrents");
+var Subtitles_1 = require("../backend/Subtitles");
 function atob(str) {
     return new Buffer(str, 'base64').toString('binary');
 }
@@ -48,6 +45,15 @@ function parseRange(range, totalSize) {
     var startByte = +split[1];
     var endByte = split[2] ? +split[2] : totalSize - 1;
     return { startByte: startByte, endByte: endByte };
+}
+function getContentRangeResponseHeaders(startByte, endByte, totalSize) {
+    return {
+        "Connection": "keep-alive",
+        "Content-Range": "bytes " + startByte + "-" + endByte + "/" + totalSize,
+        "Accept-Ranges": "bytes",
+        "Content-Length": "" + (endByte - startByte + 1),
+        "Content-Type": "video/webm"
+    };
 }
 function watch(req, res) {
     return __awaiter(this, void 0, void 0, function () {
@@ -70,13 +76,7 @@ function watchStream(req, res) {
                     file = _b.sent();
                     _a = parseRange(req.headers.range, file.length), startByte = _a.startByte, endByte = _a.endByte;
                     res.status(206);
-                    res.set({
-                        "Connection": "keep-alive",
-                        "Content-Range": "bytes " + startByte + "-" + endByte + "/" + file.length,
-                        "Accept-Ranges": "bytes",
-                        "Content-Length": "" + (endByte - startByte + 1),
-                        "Content-Type": "video/webm"
-                    });
+                    res.set(getContentRangeResponseHeaders(startByte, endByte, file.length));
                     file.createReadStream({
                         start: startByte,
                         end: endByte
@@ -91,51 +91,16 @@ function watchStream(req, res) {
 exports.watchStream = watchStream;
 function watchSub(req, res) {
     return __awaiter(this, void 0, void 0, function () {
-        var subid, entryUrl;
+        var sub;
         return __generator(this, function (_a) {
-            subid = req.params.subid;
-            entryUrl = 'http://osdownloader.org/en/osdownloader.subtitles-download/subtitles/' + subid;
-            http.get(entryUrl, function (resp) {
-                resp.setEncoding('utf8');
-                var rawData = '';
-                resp.on('data', function (chunk) { return rawData += chunk; });
-                resp.on('end', function () {
-                    try {
-                        var root = HTMLParser.parse(rawData);
-                        var dlurl = root.querySelector('#downloadSubtitles').childNodes[0].childNodes[1].attributes.href;
-                        http.get(dlurl, function (subres) {
-                            var data = [];
-                            subres.on('data', function (chunk) {
-                                data.push(chunk);
-                            }).on('end', function () {
-                                try {
-                                    var zip = new AdmZip(Buffer.concat(data));
-                                    var zipEntries = zip.getEntries();
-                                    var srtEntry = zipEntries.find(function (x) { return x.entryName.toLowerCase().endsWith('.srt'); });
-                                    var srtData = zip.readFile(srtEntry, "binary");
-                                    srt2vtt(srtData, function (err, vttData) {
-                                        if (err)
-                                            throw new Error(err);
-                                        //var decodedVtt = iconv.decode(vttData, 'utf-8').replace('NOTE Converted from .srt via srt2vtt: https://github.com/deestan/srt2vtt\n\n', '');
-                                        //console.log(decodedVtt);
-                                        var vtt = vttData.toString().replace('NOTE Converted from .srt via srt2vtt: https://github.com/deestan/srt2vtt\n\n', '');
-                                        res.write(vtt);
-                                        res.end();
-                                    });
-                                }
-                                catch (e) {
-                                    console.log(e.message);
-                                    res.status(500).end();
-                                }
-                            });
-                        });
-                    }
-                    catch (e) {
-                        console.log(e.message);
-                    }
-                });
-            });
-            return [2 /*return*/];
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, Subtitles_1.Subtitles.getSubtitle(req.params.subid)];
+                case 1:
+                    sub = _a.sent();
+                    res.write(sub);
+                    res.end();
+                    return [2 /*return*/];
+            }
         });
     });
 }
