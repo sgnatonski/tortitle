@@ -39,6 +39,7 @@ var http = require("http");
 var srt2vtt = require("srt2vtt");
 var HTMLParser = require("fast-html-parser");
 var AdmZip = require("adm-zip");
+var cache_1 = require("../backend/cache");
 var Subtitles;
 (function (Subtitles) {
     function getDownloadUrl(subid) {
@@ -87,30 +88,37 @@ var Subtitles;
     }
     function getSubtitle(subid) {
         return __awaiter(this, void 0, void 0, function () {
-            var dlurl, zipBuffer, zip, zipEntries, srtEntry, srtData, vtt, e_1;
+            var cacheKey, cachedData, dlurl, zipBuffer, zip, zipEntries, srtEntry, srtData, vtt, e_1;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        _a.trys.push([0, 4, , 5]);
+                        cacheKey = "subtitle_" + subid;
+                        cachedData = cache_1.default.get(cacheKey);
+                        if (!cachedData) return [3 /*break*/, 2];
+                        return [4 /*yield*/, convertToVtt(cachedData)];
+                    case 1: return [2 /*return*/, _a.sent()];
+                    case 2:
+                        _a.trys.push([2, 6, , 7]);
                         return [4 /*yield*/, getDownloadUrl(subid)];
-                    case 1:
+                    case 3:
                         dlurl = _a.sent();
                         return [4 /*yield*/, getSubtitleZip(dlurl)];
-                    case 2:
+                    case 4:
                         zipBuffer = _a.sent();
                         zip = new AdmZip(zipBuffer);
                         zipEntries = zip.getEntries();
                         srtEntry = zipEntries.find(function (x) { return x.entryName.toLowerCase().endsWith('.srt'); });
                         srtData = zip.readFile(srtEntry, "binary");
+                        cache_1.default.set(cacheKey, srtData, 7200);
                         return [4 /*yield*/, convertToVtt(srtData)];
-                    case 3:
+                    case 5:
                         vtt = _a.sent();
                         return [2 /*return*/, vtt];
-                    case 4:
+                    case 6:
                         e_1 = _a.sent();
                         console.log(e_1.message);
-                        return [3 /*break*/, 5];
-                    case 5: return [2 /*return*/];
+                        return [3 /*break*/, 7];
+                    case 7: return [2 /*return*/];
                 }
             });
         });

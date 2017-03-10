@@ -1,9 +1,9 @@
 ﻿import * as http from "http";
 import * as srt2vtt from 'srt2vtt';
-import { Readable } from 'stream';
 import * as HTMLParser from 'fast-html-parser';
 import * as AdmZip from 'adm-zip';
 import * as iconv from 'iconv-lite';
+import { default as cache } from "../backend/cache";
 
 export module Subtitles {
     function getDownloadUrl(subid) {
@@ -38,7 +38,7 @@ export module Subtitles {
         });
     }
 
-    function convertToVtt(srtData) {
+    function convertToVtt(srtData: Buffer) {
         const annoyingCreditText = 'NOTE Converted from .srt via srt2vtt: https://github.com/deestan/srt2vtt\n\n';
         return new Promise<string>((resolve, reject) => {
             srt2vtt(srtData, (err, vttData) => {
@@ -51,7 +51,14 @@ export module Subtitles {
         });
     }
 
-    export async function getSubtitle(subid){
+    export async function getSubtitle(subid) {
+        const cacheKey = `subtitle_${subid}`;
+
+        const cachedData = cache.get<Buffer>(cacheKey);
+        if (cachedData) {
+            return await convertToVtt(cachedData);
+        }
+
         try {
             const dlurl = await getDownloadUrl(subid);
             const zipBuffer = await getSubtitleZip(dlurl);
@@ -59,7 +66,8 @@ export module Subtitles {
             const zipEntries = zip.getEntries();
             const srtEntry = zipEntries.find(x => x.entryName.toLowerCase().endsWith('.srt'));
             const srtData = zip.readFile(srtEntry, "binary");
-            const vtt = await convertToVtt(srtData); 
+            cache.set(cacheKey, srtData, 7200);
+            const vtt = await convertToVtt(srtData);
             return vtt;           
         } catch (e) {
             console.log(e.message);
