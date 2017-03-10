@@ -108,19 +108,25 @@ function watchSub(req, res) {
                             subres.on('data', function (chunk) {
                                 data.push(chunk);
                             }).on('end', function () {
-                                var zip = new AdmZip(Buffer.concat(data));
-                                var zipEntries = zip.getEntries();
-                                var srtEntry = zipEntries.find(function (x) { return x.entryName.toLowerCase().endsWith('.srt'); });
-                                var srtData = zip.readFile(srtEntry, "binary");
-                                srt2vtt(srtData, function (err, vttData) {
-                                    if (err)
-                                        throw new Error(err);
-                                    //var decodedVtt = iconv.decode(vttData, 'utf-8').replace('NOTE Converted from .srt via srt2vtt: https://github.com/deestan/srt2vtt\n\n', '');
-                                    //console.log(decodedVtt);
-                                    var vtt = vttData.toString().replace('NOTE Converted from .srt via srt2vtt: https://github.com/deestan/srt2vtt\n\n', '');
-                                    res.write(vtt);
-                                    res.end();
-                                });
+                                try {
+                                    var zip = new AdmZip(Buffer.concat(data));
+                                    var zipEntries = zip.getEntries();
+                                    var srtEntry = zipEntries.find(function (x) { return x.entryName.toLowerCase().endsWith('.srt'); });
+                                    var srtData = zip.readFile(srtEntry, "binary");
+                                    srt2vtt(srtData, function (err, vttData) {
+                                        if (err)
+                                            throw new Error(err);
+                                        //var decodedVtt = iconv.decode(vttData, 'utf-8').replace('NOTE Converted from .srt via srt2vtt: https://github.com/deestan/srt2vtt\n\n', '');
+                                        //console.log(decodedVtt);
+                                        var vtt = vttData.toString().replace('NOTE Converted from .srt via srt2vtt: https://github.com/deestan/srt2vtt\n\n', '');
+                                        res.write(vtt);
+                                        res.end();
+                                    });
+                                }
+                                catch (e) {
+                                    console.log(e.message);
+                                    res.status(500).end();
+                                }
                             });
                         });
                     }

@@ -24,6 +24,7 @@ export async function watch(req: express.Request, res: express.Response) {
 
 export async function watchStream(req: express.Request, res: express.Response) {
     const magnet = atob(req.params.magnet);
+
     const file = await Torrents.getFileByMagnet(magnet);
     const { startByte, endByte } = parseRange(req.headers.range, file.length);
 
@@ -60,19 +61,24 @@ export async function watchSub(req: express.Request, res: express.Response) {
                     subres.on('data', chunk => {
                         data.push(chunk);
                     }).on('end', () => {
-                        var zip = new AdmZip(Buffer.concat(data));
-                        var zipEntries = zip.getEntries() as any[];
+                        try {
+                            var zip = new AdmZip(Buffer.concat(data));
+                            var zipEntries = zip.getEntries() as any[];
 
-                        var srtEntry = zipEntries.find(x => (<string>x.entryName).toLowerCase().endsWith('.srt'));
-                        var srtData = zip.readFile(srtEntry, "binary");
-                        srt2vtt(srtData, (err, vttData) => {
-                            if (err) throw new Error(err);
-                            //var decodedVtt = iconv.decode(vttData, 'utf-8').replace('NOTE Converted from .srt via srt2vtt: https://github.com/deestan/srt2vtt\n\n', '');
-                            //console.log(decodedVtt);
-                            var vtt = vttData.toString().replace('NOTE Converted from .srt via srt2vtt: https://github.com/deestan/srt2vtt\n\n', '');
-                            res.write(vtt);
-                            res.end();
-                        });
+                            var srtEntry = zipEntries.find(x => (<string>x.entryName).toLowerCase().endsWith('.srt'));
+                            var srtData = zip.readFile(srtEntry, "binary");
+                            srt2vtt(srtData, (err, vttData) => {
+                                if (err) throw new Error(err);
+                                //var decodedVtt = iconv.decode(vttData, 'utf-8').replace('NOTE Converted from .srt via srt2vtt: https://github.com/deestan/srt2vtt\n\n', '');
+                                //console.log(decodedVtt);
+                                var vtt = vttData.toString().replace('NOTE Converted from .srt via srt2vtt: https://github.com/deestan/srt2vtt\n\n', '');
+                                res.write(vtt);
+                                res.end();
+                            });
+                        } catch (e) {
+                            console.log(e.message);
+                            res.status(500).end();
+                        }
                     });
                 });
             } catch (e) {
