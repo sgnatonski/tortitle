@@ -10,8 +10,8 @@ export function configure(app: express.Express) {
     app.get('/', index.index);
     app.get('/:sort(\\d+)', index.index);
     app.get('/:sort(\\d+)/:page(\\d+)', index.index);
-    app.get('/watch/:magnet/:subid', watch.watch);
+    app.get('/watch/:magnet/:subid/:subenc', watch.watch);
     app.get('/stream/:magnet', watch.watchStream);
-    app.get('/sub/:subid', watch.watchSub);
+    app.get('/sub/:subid/:encoding', watch.watchSub);
     app.get('/about', about.index);
 }

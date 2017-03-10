@@ -58,7 +58,7 @@ function getContentRangeResponseHeaders(startByte, endByte, totalSize) {
 function watch(req, res) {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
-            res.render("watch", { magnet: req.params.magnet, subid: req.params.subid });
+            res.render("watch", { magnet: req.params.magnet, subid: req.params.subid, subenc: req.params.subenc });
             return [2 /*return*/];
         });
     });
@@ -94,10 +94,12 @@ function watchSub(req, res) {
         var sub;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, Subtitles_1.Subtitles.getSubtitle(req.params.subid)];
+                case 0: return [4 /*yield*/, Subtitles_1.Subtitles.getSubtitle(req.params.subid, req.params.encoding)];
                 case 1:
                     sub = _a.sent();
-                    res.write(sub);
+                    if (sub) {
+                        res.write(sub);
+                    }
                     res.end();
                     return [2 /*return*/];
             }

@@ -24,7 +24,7 @@ function getContentRangeResponseHeaders(startByte: number, endByte: number, tota
 }
 
 export async function watch(req: express.Request, res: express.Response) {
-    res.render("watch", { magnet: req.params.magnet, subid: req.params.subid });
+    res.render("watch", { magnet: req.params.magnet, subid: req.params.subid, subenc: req.params.subenc });
 }
 
 export async function watchStream(req: express.Request, res: express.Response) {
@@ -44,7 +44,9 @@ export async function watchStream(req: express.Request, res: express.Response) {
 }
 
 export async function watchSub(req: express.Request, res: express.Response) {
-    var sub = await Subtitles.getSubtitle(req.params.subid);
-    res.write(sub);
+    var sub = await Subtitles.getSubtitle(req.params.subid, req.params.encoding);
+    if (sub) {
+        res.write(sub);
+    }
     res.end();
 }

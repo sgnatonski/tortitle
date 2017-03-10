@@ -36,9 +36,9 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var http = require("http");
-var srt2vtt = require("srt2vtt");
 var HTMLParser = require("fast-html-parser");
 var AdmZip = require("adm-zip");
+var iconv = require("iconv-lite");
 var cache_1 = require("../backend/cache");
 var Subtitles;
 (function (Subtitles) {
@@ -48,9 +48,9 @@ var Subtitles;
             http.get(entryUrl, function (resp) {
                 resp.setEncoding('utf8');
                 var rawData = '';
-                resp.on('data', function (chunk) { return rawData += chunk; })
-                    .on('error', function (e) { return reject(e); })
-                    .on('end', function () {
+                resp.on('data', function (chunk) { return rawData += chunk; });
+                resp.on('error', function (e) { return reject(e); });
+                resp.on('end', function () {
                     try {
                         var root = HTMLParser.parse(rawData);
                         var dlurl = root.querySelector('#downloadSubtitles').childNodes[0].childNodes[1].attributes.href;
@@ -60,33 +60,32 @@ var Subtitles;
                         reject(e);
                     }
                 });
-            });
+            }).end();
         });
     }
     function getSubtitleZip(dlurl) {
         return new Promise(function (resolve, reject) {
             http.get(dlurl, function (resp) {
                 var data = [];
-                resp.on('data', function (chunk) { return data.push(chunk); })
-                    .on('error', function (e) { return reject(e); })
-                    .on('end', function () { return resolve(Buffer.concat(data)); });
-            });
+                resp.on('data', function (chunk) { return data.push(chunk); });
+                resp.on('error', function (e) { return reject(e); });
+                resp.on('end', function () { return resolve(Buffer.concat(data)); });
+            }).end();
         });
     }
-    function convertToVtt(srtData) {
-        var annoyingCreditText = 'NOTE Converted from .srt via srt2vtt: https://github.com/deestan/srt2vtt\n\n';
-        return new Promise(function (resolve, reject) {
-            srt2vtt(srtData, function (err, vttData) {
-                if (err)
-                    return reject(err);
-                //var decodedVtt = iconv.decode(vttData, 'utf-8').replace(annoyingCreditText, '');
-                //console.log(decodedVtt);
-                var vtt = vttData.toString().replace(annoyingCreditText, '');
-                resolve(vtt);
-            });
+    function convertToVtt(srtData, encoding) {
+        var data = iconv.decode(srtData, encoding);
+        var lines = data.split('\r\n').map(function (line) {
+            return line
+                .replace(/\{\\([ibu])\}/g, '</$1>')
+                .replace(/\{\\([ibu])1\}/g, '<$1>')
+                .replace(/\{([ibu])\}/g, '<$1>')
+                .replace(/\{\/([ibu])\}/g, '</$1>')
+                .replace(/(\d\d:\d\d:\d\d),(\d\d\d)/g, '$1.$2');
         });
+        return 'WEBVTT\r\n' + lines.join('\r\n');
     }
-    function getSubtitle(subid) {
+    function getSubtitle(subid, encoding) {
         return __awaiter(this, void 0, void 0, function () {
             var cacheKey, cachedData, dlurl, zipBuffer, zip, zipEntries, srtEntry, srtData, vtt, e_1;
             return __generator(this, function (_a) {
@@ -94,31 +93,31 @@ var Subtitles;
                     case 0:
                         cacheKey = "subtitle_" + subid;
                         cachedData = cache_1.default.get(cacheKey);
-                        if (!cachedData) return [3 /*break*/, 2];
-                        return [4 /*yield*/, convertToVtt(cachedData)];
-                    case 1: return [2 /*return*/, _a.sent()];
-                    case 2:
-                        _a.trys.push([2, 6, , 7]);
+                        if (cachedData) {
+                            return [2 /*return*/, convertToVtt(cachedData, encoding)];
+                        }
+                        _a.label = 1;
+                    case 1:
+                        _a.trys.push([1, 4, , 5]);
                         return [4 /*yield*/, getDownloadUrl(subid)];
-                    case 3:
+                    case 2:
                         dlurl = _a.sent();
                         return [4 /*yield*/, getSubtitleZip(dlurl)];
-                    case 4:
+                    case 3:
                         zipBuffer = _a.sent();
+                        console.log(zipBuffer.byteLength);
                         zip = new AdmZip(zipBuffer);
                         zipEntries = zip.getEntries();
                         srtEntry = zipEntries.find(function (x) { return x.entryName.toLowerCase().endsWith('.srt'); });
                         srtData = zip.readFile(srtEntry, "binary");
                         cache_1.default.set(cacheKey, srtData, 7200);
-                        return [4 /*yield*/, convertToVtt(srtData)];
-                    case 5:
-                        vtt = _a.sent();
+                        vtt = convertToVtt(srtData, encoding);
                         return [2 /*return*/, vtt];
-                    case 6:
+                    case 4:
                         e_1 = _a.sent();
-                        console.log(e_1.message);
-                        return [3 /*break*/, 7];
-                    case 7: return [2 /*return*/];
+                        console.log(e_1);
+                        return [3 /*break*/, 5];
+                    case 5: return [2 /*return*/];
                 }
             });
         });
