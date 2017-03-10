@@ -48,6 +48,7 @@ cache.on("expired", function (key, value) {
 });
 var Torrents;
 (function (Torrents) {
+    ;
     function resolveLargetsFile(engine, resolve) {
         var largest = engine.files.sortByDesc(function (f) { return f.length; }).first();
         engine.files.forEach(function (file) {

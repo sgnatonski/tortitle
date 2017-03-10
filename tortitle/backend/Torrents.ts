@@ -13,10 +13,14 @@ cache.on("expired", function (key: string, value) {
 });
 
 export module Torrents {
+    interface TorrentResolveData {
+        engine: TorrentStream.TorrentEngine;
+        file: TorrentStream.TorrentFile
+    };
 
-    function resolveLargetsFile(engine, resolve) {
-        var largest = (<any[]>engine.files).sortByDesc(f => f.length).first();
-        (<any[]>engine.files).forEach(file => {
+    function resolveLargetsFile(engine: TorrentStream.TorrentEngine, resolve) {
+        var largest = engine.files.sortByDesc(f => f.length).first();
+        engine.files.forEach(file => {
             if (file.name != largest.name) {
                 file.deselect();
                 console.log(file.name + ' deselected');
@@ -32,8 +36,8 @@ export module Torrents {
         resolve({ engine: engine, file: largest });
     }
 
-    function getFileFromEngine(magnet: string, engine?: any) {
-        return new Promise<any>((resolve, reject) => {
+    function getFileFromEngine(magnet: string, engine?: TorrentStream.TorrentEngine) {
+        return new Promise<TorrentResolveData>((resolve, reject) => {
             if (!engine) {
                 engine = torrentStream(magnet, { storage: memoryChunkStore });
                 engine.on("ready", () => resolveLargetsFile(engine, resolve));
@@ -45,16 +49,16 @@ export module Torrents {
     }
 
     export async function getFileByMagnet(magnet: string) {        
-        const cached = cache.get<any>(magnetCacheKey + magnet);
+        const cached = cache.get<TorrentStream.TorrentEngine>(magnetCacheKey + magnet);
         if (cached) {
-            console.log("Torrent fetched from cache " + (<any[]>cached.files).sortByDesc(f => f.length).first().name);
+            console.log("Torrent fetched from cache " + cached.files.sortByDesc(f => f.length).first().name);
             cache.ttl(magnetCacheKey + magnet, magnetTTL);
             var { engine, file } = await getFileFromEngine(magnet, cached);
             return file;
         }
 
         var { engine, file } = await getFileFromEngine(magnet);
-        cache.set<any>(magnetCacheKey + magnet, engine, magnetTTL);
+        cache.set(magnetCacheKey + magnet, engine, magnetTTL);
         return file;
     }
 }

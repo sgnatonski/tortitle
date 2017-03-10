@@ -103,6 +103,7 @@
     <Content Include="bin\setup_web.cmd" />
     <Content Include="bin\node.cmd" />
     <TypeScriptCompile Include="routes\watch.ts" />
+    <TypeScriptCompile Include="torrent-stream.d.ts" />
     <TypeScriptCompile Include="utils.ts" />
   </ItemGroup>
   <ItemGroup>
