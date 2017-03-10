@@ -15,9 +15,21 @@ cache.on("expired", function (key: string, value) {
 export module Torrents {
 
     function resolveLargetsFile(engine, resolve) {
-        var file = (<any[]>engine.files).sortByDesc(f => f.length).first();
-        console.log('filename:', file.name);
-        resolve({ engine, file });
+        var largest = (<any[]>engine.files).sortByDesc(f => f.length).first();
+        (<any[]>engine.files).forEach(file => {
+            if (file.name != largest.name) {
+                file.deselect();
+                console.log(file.name + ' deselected');
+            }
+        });
+        if (largest.name.endsWith('.avi')) {
+            largest.deselect();
+            console.log(largest.name + ' deselected - not possible to stream');
+        }
+        else {
+            console.log(largest.name + ' selected to stream');
+        }
+        resolve({ engine: engine, file: largest });
     }
 
     function getFileFromEngine(magnet: string, engine?: any) {
@@ -25,7 +37,6 @@ export module Torrents {
             if (!engine) {
                 engine = torrentStream(magnet, { storage: memoryChunkStore });
                 engine.on("ready", () => resolveLargetsFile(engine, resolve));
-                engine.on('download', () => console.log('Downloaded portion of', (<any[]>engine.files).sortByDesc(f => f.length).first().name));
             }
             if (engine.files && engine.files.length) {
                 resolveLargetsFile(engine, resolve);

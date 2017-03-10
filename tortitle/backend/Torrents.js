@@ -49,16 +49,27 @@ cache.on("expired", function (key, value) {
 var Torrents;
 (function (Torrents) {
     function resolveLargetsFile(engine, resolve) {
-        var file = engine.files.sortByDesc(function (f) { return f.length; }).first();
-        console.log('filename:', file.name);
-        resolve({ engine: engine, file: file });
+        var largest = engine.files.sortByDesc(function (f) { return f.length; }).first();
+        engine.files.forEach(function (file) {
+            if (file.name != largest.name) {
+                file.deselect();
+                console.log(file.name + ' deselected');
+            }
+        });
+        if (largest.name.endsWith('.avi')) {
+            largest.deselect();
+            console.log(largest.name + ' deselected - not possible to stream');
+        }
+        else {
+            console.log(largest.name + ' selected to stream');
+        }
+        resolve({ engine: engine, file: largest });
     }
     function getFileFromEngine(magnet, engine) {
         return new Promise(function (resolve, reject) {
             if (!engine) {
                 engine = torrentStream(magnet, { storage: memoryChunkStore });
                 engine.on("ready", function () { return resolveLargetsFile(engine, resolve); });
-                engine.on('download', function () { return console.log('Downloaded portion of', engine.files.sortByDesc(function (f) { return f.length; }).first().name); });
             }
             if (engine.files && engine.files.length) {
                 resolveLargetsFile(engine, resolve);
