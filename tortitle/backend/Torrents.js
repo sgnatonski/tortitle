@@ -60,11 +60,12 @@ var Torrents;
         if (allowedExtensions.filter(function (ext) { return largest.name.endsWith(ext); }).length === 0) {
             largest.deselect();
             console.log(largest.name + ' deselected - not possible to stream');
+            resolve({ engine: engine, file: undefined });
         }
         else {
             console.log(largest.name + ' selected to stream');
+            resolve({ engine: engine, file: largest });
         }
-        resolve({ engine: engine, file: largest });
     }
     function getFileFromEngine(magnet, engine) {
         return new Promise(function (resolve, reject) {

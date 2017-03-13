@@ -44,20 +44,17 @@ function parseRange(range, totalSize) {
     return { startByte: startByte, endByte: endByte };
 }
 function streamResponse(file, res) {
-    function getContentRangeResponseHeaders(startByte, endByte, totalSize) {
-        return {
-            "Connection": "keep-alive",
-            "Content-Range": "bytes " + startByte + "-" + endByte + "/" + totalSize,
-            "Accept-Ranges": "bytes",
-            "Content-Length": "" + (endByte - startByte + 1),
-            "Content-Type": "video/webm"
-        };
-    }
     return function (range) { return file
         .createReadStream({ start: range.startByte, end: range.endByte })
         .pipe(res
         .status(206)
-        .set(getContentRangeResponseHeaders(range.startByte, range.endByte, file.length))); };
+        .set({
+        "Connection": "keep-alive",
+        "Content-Range": "bytes " + range.startByte + "-" + range.endByte + "/" + file.length,
+        "Accept-Ranges": "bytes",
+        "Content-Length": "" + (range.endByte - range.startByte + 1),
+        "Content-Type": "video/webm"
+    })); };
 }
 function watch(req, res) {
     return __awaiter(this, void 0, void 0, function () {
@@ -78,7 +75,12 @@ function watchStream(req, res) {
                     return [4 /*yield*/, Torrents_1.Torrents.getFileByMagnet(magnet)];
                 case 1:
                     file = _a.sent();
-                    streamResponse(file, res)(parseRange(req.headers.range, file.length));
+                    if (file) {
+                        streamResponse(file, res)(parseRange(req.headers.range, file.length));
+                    }
+                    else {
+                        res.status(404).end();
+                    }
                     return [2 /*return*/];
             }
         });

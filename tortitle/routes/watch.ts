@@ -10,21 +10,17 @@ function parseRange(range: string, totalSize: number) {
 }
 
 function streamResponse(file: TorrentStream.TorrentFile, res: express.Response) {
-    function getContentRangeResponseHeaders(startByte: number, endByte: number, totalSize: number) {
-        return {
-            "Connection": "keep-alive",
-            "Content-Range": `bytes ${startByte}-${endByte}/${totalSize}`,
-            "Accept-Ranges": "bytes",
-            "Content-Length": `${endByte - startByte + 1}`,
-            "Content-Type": "video/webm"
-        };
-    }
-
     return (range: { startByte: number, endByte: number }) => file
         .createReadStream({ start: range.startByte, end: range.endByte })
         .pipe(res
             .status(206)
-            .set(getContentRangeResponseHeaders(range.startByte, range.endByte, file.length)
+            .set({
+                "Connection": "keep-alive",
+                "Content-Range": `bytes ${range.startByte}-${range.endByte}/${file.length}`,
+                "Accept-Ranges": "bytes",
+                "Content-Length": `${range.endByte - range.startByte + 1}`,
+                "Content-Type": "video/webm"
+            }
         )
     );
 }
@@ -36,7 +32,11 @@ export async function watch(req: express.Request, res: express.Response) {
 export async function watchStream(req: express.Request, res: express.Response) {
     const magnet = atob(req.params.magnet);
     const file = await Torrents.getFileByMagnet(magnet);
-    streamResponse(file, res)(parseRange(req.headers.range, file.length));
+    if (file) {
+        streamResponse(file, res)(parseRange(req.headers.range, file.length));
+    } else {
+        res.status(404).end();
+    }
 }
 
 export async function watchSub(req: express.Request, res: express.Response) {
