@@ -19,20 +19,6 @@ export interface ITorrentEntity {
     AdddedAt: Date;
 }
 
-function btoa(str) {
-    var s = str || "";
-    var buffer;
-
-    if (s instanceof Buffer) {
-        buffer = s;
-    } else {
-        buffer = new Buffer(s.toString(), 'binary');
-    }
-
-    return buffer.toString('base64');
-}
-
-
 export function map(m: ITorrentEntity) {
     return {
         name: m.RowKey.trim(),

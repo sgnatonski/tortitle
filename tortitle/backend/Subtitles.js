@@ -38,7 +38,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var http = require("http");
 var HTMLParser = require("fast-html-parser");
 var AdmZip = require("adm-zip");
-var iconv = require("iconv-lite");
+var srtToVtt = require("../backend/srtToVtt");
 var cache_1 = require("../backend/cache");
 var Subtitles;
 (function (Subtitles) {
@@ -73,51 +73,43 @@ var Subtitles;
             }).end();
         });
     }
-    function convertToVtt(srtData, encoding) {
-        var data = iconv.decode(srtData, encoding);
-        var lines = data.split('\r\n').map(function (line) {
-            return line
-                .replace(/\{\\([ibu])\}/g, '</$1>')
-                .replace(/\{\\([ibu])1\}/g, '<$1>')
-                .replace(/\{([ibu])\}/g, '<$1>')
-                .replace(/\{\/([ibu])\}/g, '</$1>')
-                .replace(/(\d\d:\d\d:\d\d),(\d\d\d)/g, '$1.$2');
-        });
-        return 'WEBVTT\r\n' + lines.join('\r\n');
+    function unzipSrt(zipBuffer) {
+        var zip = new AdmZip(zipBuffer);
+        var zipEntries = zip.getEntries();
+        var srtEntry = zipEntries.find(function (x) { return x.entryName.toLowerCase().endsWith('.srt'); });
+        return zip.readFile(srtEntry, "binary");
     }
     function getSubtitle(subid, encoding) {
         return __awaiter(this, void 0, void 0, function () {
-            var cacheKey, cachedData, dlurl, zipBuffer, zip, zipEntries, srtEntry, srtData, vtt, e_1;
+            var cacheKey, cachedData, dlurl, zipBuffer, srtData, vtt, e_1;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         cacheKey = "subtitle_" + subid;
                         cachedData = cache_1.default.get(cacheKey);
                         if (cachedData) {
-                            return [2 /*return*/, convertToVtt(cachedData, encoding)];
+                            return [2 /*return*/, srtToVtt.convertToVtt(cachedData, encoding)];
                         }
                         _a.label = 1;
                     case 1:
-                        _a.trys.push([1, 4, , 5]);
+                        _a.trys.push([1, 5, , 6]);
                         return [4 /*yield*/, getDownloadUrl(subid)];
                     case 2:
                         dlurl = _a.sent();
                         return [4 /*yield*/, getSubtitleZip(dlurl)];
                     case 3:
                         zipBuffer = _a.sent();
-                        console.log(zipBuffer.byteLength);
-                        zip = new AdmZip(zipBuffer);
-                        zipEntries = zip.getEntries();
-                        srtEntry = zipEntries.find(function (x) { return x.entryName.toLowerCase().endsWith('.srt'); });
-                        srtData = zip.readFile(srtEntry, "binary");
-                        cache_1.default.set(cacheKey, srtData, 7200);
-                        vtt = convertToVtt(srtData, encoding);
-                        return [2 /*return*/, vtt];
+                        return [4 /*yield*/, unzipSrt(zipBuffer)];
                     case 4:
+                        srtData = _a.sent();
+                        cache_1.default.set(cacheKey, srtData, 7200);
+                        vtt = srtToVtt.convertToVtt(srtData, encoding);
+                        return [2 /*return*/, vtt];
+                    case 5:
                         e_1 = _a.sent();
                         console.log(e_1);
-                        return [3 /*break*/, 5];
-                    case 5: return [2 /*return*/];
+                        return [2 /*return*/, undefined];
+                    case 6: return [2 /*return*/];
                 }
             });
         });

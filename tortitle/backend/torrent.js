@@ -1,16 +1,5 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-function btoa(str) {
-    var s = str || "";
-    var buffer;
-    if (s instanceof Buffer) {
-        buffer = s;
-    }
-    else {
-        buffer = new Buffer(s.toString(), 'binary');
-    }
-    return buffer.toString('base64');
-}
 function map(m) {
     return {
         name: m.RowKey.trim(),
