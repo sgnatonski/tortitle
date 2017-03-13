@@ -7,6 +7,7 @@ import * as cookie from "./cookie";
 export function configure(app: express.Express) {
     app.use(cookie.language);
     app.use(cookie.lastVisit);
+    app.use(cookie.clientId);
     app.get('/', index.index);
     app.get('/:sort(\\d+)', index.index);
     app.get('/:sort(\\d+)/:page(\\d+)', index.index);
