@@ -38,6 +38,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var torrentStream = require("torrent-stream");
 var memoryChunkStore = require("memory-chunk-store");
 var Cache = require("node-cache");
+var allowedExtensions = ['mkv', 'mp4'];
 var magnetCacheKey = 'magnet_';
 var magnetTTL = 7200;
 var cache = new Cache({ stdTTL: magnetTTL, checkperiod: 120, useClones: false });
@@ -48,16 +49,15 @@ cache.on("expired", function (key, value) {
 });
 var Torrents;
 (function (Torrents) {
-    ;
     function resolveLargetsFile(engine, resolve) {
         var largest = engine.files.sortByDesc(function (f) { return f.length; }).first();
         engine.files.forEach(function (file) {
-            if (file.name != largest.name) {
+            if (file.name !== largest.name) {
                 file.deselect();
                 console.log(file.name + ' deselected');
             }
         });
-        if (largest.name.endsWith('.avi')) {
+        if (allowedExtensions.filter(function (ext) { return largest.name.endsWith(ext); }).length === 0) {
             largest.deselect();
             console.log(largest.name + ' deselected - not possible to stream');
         }
@@ -79,22 +79,21 @@ var Torrents;
     }
     function getFileByMagnet(magnet) {
         return __awaiter(this, void 0, void 0, function () {
-            var cached, _a, engine, file, _b, engine, file;
-            return __generator(this, function (_c) {
-                switch (_c.label) {
+            var cached, _a, engine, file;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
                     case 0:
                         cached = cache.get(magnetCacheKey + magnet);
-                        if (!cached) return [3 /*break*/, 2];
-                        console.log("Torrent fetched from cache " + cached.files.sortByDesc(function (f) { return f.length; }).first().name);
-                        cache.ttl(magnetCacheKey + magnet, magnetTTL);
                         return [4 /*yield*/, getFileFromEngine(magnet, cached)];
                     case 1:
-                        _a = _c.sent(), engine = _a.engine, file = _a.file;
-                        return [2 /*return*/, file];
-                    case 2: return [4 /*yield*/, getFileFromEngine(magnet)];
-                    case 3:
-                        _b = _c.sent(), engine = _b.engine, file = _b.file;
-                        cache.set(magnetCacheKey + magnet, engine, magnetTTL);
+                        _a = _b.sent(), engine = _a.engine, file = _a.file;
+                        if (cached) {
+                            console.log("Torrent fetched from cache " + cached.files.sortByDesc(function (f) { return f.length; }).first().name);
+                            cache.ttl(magnetCacheKey + magnet, magnetTTL);
+                        }
+                        else {
+                            cache.set(magnetCacheKey + magnet, engine, magnetTTL);
+                        }
                         return [2 /*return*/, file];
                 }
             });
