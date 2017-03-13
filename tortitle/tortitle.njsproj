@@ -70,6 +70,7 @@
       <SubType>Code</SubType>
     </TypeScriptCompile>
     <TypeScriptCompile Include="backend\languagesService.ts" />
+    <TypeScriptCompile Include="backend\magnetCrypt.ts" />
     <TypeScriptCompile Include="backend\movie.ts" />
     <TypeScriptCompile Include="backend\moviesService.ts" />
     <TypeScriptCompile Include="backend\srtToVtt.ts" />

@@ -1,22 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var _ = require("lodash");
-function atob(str) {
-    return new Buffer(str, 'base64').toString('binary');
-}
-exports.atob = atob;
-function btoa(str) {
-    var s = str || "";
-    var buffer;
-    if (s instanceof Buffer) {
-        buffer = s;
-    }
-    else {
-        buffer = new Buffer(s.toString(), 'binary');
-    }
-    return buffer.toString('base64');
-}
-exports.btoa = btoa;
 var varExtractor = new RegExp("return (.*);");
 function getVariableName(name) {
     var m = varExtractor.exec(name + "");

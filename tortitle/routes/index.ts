@@ -3,7 +3,9 @@ import { default as cache } from "../backend/cache";
 import { LanguagesService } from "../backend/languagesService";
 import { MoviesService } from "../backend/moviesService";
 import { IMovie } from "../backend/movie";
+import * as magnetCrypt from "../backend/magnetCrypt";
 
+const cidCookie = 'cid';
 const visitCookie = 'TortitleLastVisit';
 const languageCookie = 'TortitleLanguage';
 const pageSize = 100;
@@ -70,7 +72,13 @@ export async function index(req: express.Request, res: express.Response) {
 
 function renderSorted(req: express.Request, res: express.Response, model: IIndexModel) {
     const lastVisitTime: string = req.cookies[visitCookie];
+    const cid: string = req.cookies[cidCookie];
     const lastVisit = lastVisitTime ? new Date(Date.parse(lastVisitTime)) : new Date(0);
-    model.movies = model.movies.mapAssign(x => ({ isNew: x.addedAt > lastVisit }));
+    model.movies = model.movies.mapAssign(x => ({
+        isNew: x.addedAt > lastVisit,
+        torrents: x.torrents.mapAssign(t => ({
+            magnetLink64: magnetCrypt.hashMagnet(cid, t.magnetLink)
+        }))
+    }));
     res.render('index', model);
 }

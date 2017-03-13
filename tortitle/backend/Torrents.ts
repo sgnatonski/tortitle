@@ -45,7 +45,7 @@ export module Torrents {
         });
     }
 
-    export async function getFileByMagnet(magnet: string) {        
+    export async function getFileByMagnet(magnet: string) {
         const cached = cache.get<TorrentStream.TorrentEngine>(magnetCacheKey + magnet);
         const { engine, file } = await getFileFromEngine(magnet, cached);
         if (cached) {

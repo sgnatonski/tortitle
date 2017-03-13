@@ -26,7 +26,6 @@ export function map(m: ITorrentEntity) {
         quality: m.Quality,
         torrentLink: m.TorrentLink,
         magnetLink: m.MagnetLink,
-        magnetLink64: btoa(m.MagnetLink),
         addedAt: m.AdddedAt || new Date(2017, 0)
     } as ITorrent;
 }
