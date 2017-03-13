@@ -72,6 +72,7 @@
     <TypeScriptCompile Include="backend\languagesService.ts" />
     <TypeScriptCompile Include="backend\movie.ts" />
     <TypeScriptCompile Include="backend\moviesService.ts" />
+    <TypeScriptCompile Include="backend\srtToVtt.ts" />
     <TypeScriptCompile Include="backend\subtitle.ts" />
     <TypeScriptCompile Include="backend\Subtitles.ts" />
     <TypeScriptCompile Include="backend\torrent.ts" />
