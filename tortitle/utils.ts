@@ -28,6 +28,23 @@ declare global {
     }
 }
 
+export function atob(str: string) {
+    return new Buffer(str, 'base64').toString('binary');
+}
+
+export function btoa(str) {
+    var s = str || "";
+    var buffer;
+
+    if (s instanceof Buffer) {
+        buffer = s;
+    } else {
+        buffer = new Buffer(s.toString(), 'binary');
+    }
+
+    return buffer.toString('base64');
+}
+
 var varExtractor = new RegExp("return (.*);");
 function getVariableName<TResult>(name: (o: TResult) => TResult) {
     const m = varExtractor.exec(name + "");
