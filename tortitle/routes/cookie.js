@@ -32,7 +32,7 @@ function clientId(req, res, next) {
     if (!cid) {
         cid = crypto.randomBytes(16).toString("hex");
     }
-    var options = { maxAge: clientIdCookieMaxAge, httpOnly: true, secure: true };
+    var options = { maxAge: clientIdCookieMaxAge, httpOnly: true, secure: false };
     res.cookie(clientIdCookie, cid, options);
     req.cookies[clientIdCookie] = cid;
     next();

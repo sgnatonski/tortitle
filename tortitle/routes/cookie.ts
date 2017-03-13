@@ -33,7 +33,7 @@ export function clientId(req: express.Request, res: express.Response, next) {
     if (!cid) {
         cid = crypto.randomBytes(16).toString("hex");
     }
-    const options = { maxAge: clientIdCookieMaxAge, httpOnly: true, secure: true };
+    const options = { maxAge: clientIdCookieMaxAge, httpOnly: true, secure: false };
     res.cookie(clientIdCookie, cid, options);
     req.cookies[clientIdCookie] = cid;
     next();

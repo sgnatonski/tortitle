@@ -73,7 +73,7 @@ function watchStream(req, res) {
         return __generator(this, function (_b) {
             switch (_b.label) {
                 case 0:
-                    magnetHash = atob(req.params.magnet);
+                    magnetHash = req.params.magnet;
                     cookieCid = req.cookies[cidCookie];
                     _a = magnetCrypt.dehashMagnet(magnetHash), cid = _a.cid, magnet = _a.magnet;
                     if (cookieCid !== cid) {

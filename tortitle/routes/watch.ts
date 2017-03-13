@@ -33,7 +33,7 @@ export async function watch(req: express.Request, res: express.Response) {
 }
 
 export async function watchStream(req: express.Request, res: express.Response) {
-    const magnetHash = atob(req.params.magnet);
+    const magnetHash = req.params.magnet;
     const cookieCid: string = req.cookies[cidCookie];
     const { cid, magnet } = magnetCrypt.dehashMagnet(magnetHash);
     if (cookieCid !== cid) {
