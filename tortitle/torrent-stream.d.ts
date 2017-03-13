@@ -37,7 +37,7 @@
 
         select(): void;
         deselect(): void;
-        createReadStream(options?: ReadStreamOptions): any;
+        createReadStream(options?: ReadStreamOptions): NodeJS.ReadableStream;
     }
     interface ReadStreamOptions {
         start: number;
