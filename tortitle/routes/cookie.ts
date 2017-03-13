@@ -24,6 +24,7 @@ export function language(req: express.Request, res: express.Response, next) {
     const language: string = req.params.lang || req.cookies[languageCookie] || "en";
     const options = { maxAge: languageCookieMaxAge, httpOnly: false, secure: false };
     res.cookie(languageCookie, language, options);
+    req.cookies[languageCookie] = language;
     next();
 }
 
@@ -34,5 +35,6 @@ export function clientId(req: express.Request, res: express.Response, next) {
     }
     const options = { maxAge: clientIdCookieMaxAge, httpOnly: true, secure: true };
     res.cookie(clientIdCookie, cid, options);
+    req.cookies[clientIdCookie] = cid;
     next();
 }

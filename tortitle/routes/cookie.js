@@ -23,6 +23,7 @@ function language(req, res, next) {
     var language = req.params.lang || req.cookies[languageCookie] || "en";
     var options = { maxAge: languageCookieMaxAge, httpOnly: false, secure: false };
     res.cookie(languageCookie, language, options);
+    req.cookies[languageCookie] = language;
     next();
 }
 exports.language = language;
@@ -33,6 +34,7 @@ function clientId(req, res, next) {
     }
     var options = { maxAge: clientIdCookieMaxAge, httpOnly: true, secure: true };
     res.cookie(clientIdCookie, cid, options);
+    req.cookies[clientIdCookie] = cid;
     next();
 }
 exports.clientId = clientId;
