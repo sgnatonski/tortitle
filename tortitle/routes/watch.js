@@ -37,6 +37,8 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var Torrents_1 = require("../backend/Torrents");
 var Subtitles_1 = require("../backend/Subtitles");
+var magnetCrypt = require("../backend/magnetCrypt");
+var cidCookie = 'cid';
 function parseRange(range, totalSize) {
     var split = range.split(/[-=]/);
     var startByte = +split[1];
@@ -67,14 +69,20 @@ function watch(req, res) {
 exports.watch = watch;
 function watchStream(req, res) {
     return __awaiter(this, void 0, void 0, function () {
-        var magnet, file;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
+        var magnetHash, cookieCid, _a, cid, magnet, file;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
                 case 0:
-                    magnet = atob(req.params.magnet);
+                    magnetHash = atob(req.params.magnet);
+                    cookieCid = req.cookies[cidCookie];
+                    _a = magnetCrypt.dehashMagnet(magnetHash), cid = _a.cid, magnet = _a.magnet;
+                    if (cookieCid !== cid) {
+                        res.status(400).end();
+                        return [2 /*return*/];
+                    }
                     return [4 /*yield*/, Torrents_1.Torrents.getFileByMagnet(magnet)];
                 case 1:
-                    file = _a.sent();
+                    file = _b.sent();
                     if (file) {
                         streamResponse(file, res)(parseRange(req.headers.range, file.length));
                     }

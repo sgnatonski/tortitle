@@ -1,6 +1,9 @@
 ﻿import * as express from "express";
 import { Torrents } from "../backend/Torrents";
 import { Subtitles } from "../backend/Subtitles";
+import * as magnetCrypt from "../backend/magnetCrypt";
+
+const cidCookie = 'cid';
 
 function parseRange(range: string, totalSize: number) {
     const split = range.split(/[-=]/);
@@ -30,7 +33,13 @@ export async function watch(req: express.Request, res: express.Response) {
 }
 
 export async function watchStream(req: express.Request, res: express.Response) {
-    const magnet = atob(req.params.magnet);
+    const magnetHash = atob(req.params.magnet);
+    const cookieCid: string = req.cookies[cidCookie];
+    const { cid, magnet } = magnetCrypt.dehashMagnet(magnetHash);
+    if (cookieCid !== cid) {
+        res.status(400).end();
+        return;
+    }
     const file = await Torrents.getFileByMagnet(magnet);
     if (file) {
         streamResponse(file, res)(parseRange(req.headers.range, file.length));
