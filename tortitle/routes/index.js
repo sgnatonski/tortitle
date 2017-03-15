@@ -44,7 +44,7 @@ var visitCookie = 'TortitleLastVisit';
 var languageCookie = 'TortitleLanguage';
 var pageSize = 100;
 var sortMap = function (movies) { return ({
-    0: function () { return movies.sortByDesc(function (x) { return x.hasMatch; }); },
+    0: function () { return movies.sortByDesc(function (x) { return x.torrentCount; }); },
     1: function () { return movies.sortByDesc(function (x) { return x.addedAt; }); },
     2: function () { return movies.sortBy(function (x) { return x.addedAt; }); },
     3: function () { return movies.sortByDesc(function (x) { return x.rating; }); },
@@ -53,7 +53,7 @@ var sortMap = function (movies) { return ({
     6: function () { return movies.sortByDesc(function (x) { return x.name; }); }
 }); };
 var sorts = {
-    0: "Matching first",
+    0: "Release count",
     1: "Date added &darr;",
     2: "Date added &uarr;",
     3: "Rating &darr;",
