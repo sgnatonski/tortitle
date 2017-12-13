@@ -6,7 +6,7 @@ function map(m) {
         imdbId: m.ImdbId,
         subId: m.RowKey,
         linkDownload: m.LinkDownload,
-        releaseName: m.ReleaseName.trim(),
+        releaseName: (m.ReleaseName || "").trim(),
         otherReleases: m.OtherReleases ? m.OtherReleases.split("|") : ""
     };
 }

@@ -1,7 +1,10 @@
 ﻿import * as express from "express";
+import * as crypto from "crypto";
 
+const clientIdCookie = 'cid';
 const visitCookie = 'TortitleLastVisit';
 const languageCookie = 'TortitleLanguage';
+const clientIdCookieMaxAge = 1000 * 60 * 60;
 const visitCookieMaxAge = 1000 * 60 * 60 * 24 * 30;
 const languageCookieMaxAge = 1000 * 60 * 60 * 24 * 30;
 
@@ -21,5 +24,17 @@ export function language(req: express.Request, res: express.Response, next) {
     const language: string = req.params.lang || req.cookies[languageCookie] || "en";
     const options = { maxAge: languageCookieMaxAge, httpOnly: false, secure: false };
     res.cookie(languageCookie, language, options);
+    req.cookies[languageCookie] = language;
+    next();
+}
+
+export function clientId(req: express.Request, res: express.Response, next) {
+    let cid: string = req.cookies[clientIdCookie];
+    if (!cid) {
+        cid = crypto.randomBytes(16).toString("hex");
+    }
+    const options = { maxAge: clientIdCookieMaxAge, httpOnly: true, secure: false };
+    res.cookie(clientIdCookie, cid, options);
+    req.cookies[clientIdCookie] = cid;
     next();
 }

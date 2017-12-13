@@ -26,7 +26,8 @@
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <ProjectTypeGuids>{3AF33F2E-1136-4D97-BBB7-1795711AC8B8};{349c5851-65df-11da-9384-00065b846f21};{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}</ProjectTypeGuids>
     <ProjectView>ShowAllFiles</ProjectView>
-    <NodejsPort>1337</NodejsPort>
+    <NodejsPort>
+    </NodejsPort>
     <TypeScriptSourceMap>true</TypeScriptSourceMap>
     <TypeScriptModuleKind>CommonJS</TypeScriptModuleKind>
     <EnableTypeScript>true</EnableTypeScript>
@@ -62,6 +63,7 @@
     <TypeScriptSourceRoot />
   </PropertyGroup>
   <ItemGroup>
+    <TypeScriptCompile Include="adm-zip.d.ts" />
     <TypeScriptCompile Include="app.ts" />
     <TypeScriptCompile Include="backend\cache.ts" />
     <TypeScriptCompile Include="backend\Entities.ts" />
@@ -69,10 +71,14 @@
       <SubType>Code</SubType>
     </TypeScriptCompile>
     <TypeScriptCompile Include="backend\languagesService.ts" />
+    <TypeScriptCompile Include="backend\magnetCrypt.ts" />
     <TypeScriptCompile Include="backend\movie.ts" />
     <TypeScriptCompile Include="backend\moviesService.ts" />
+    <TypeScriptCompile Include="backend\srtToVtt.ts" />
     <TypeScriptCompile Include="backend\subtitle.ts" />
+    <TypeScriptCompile Include="backend\Subtitles.ts" />
     <TypeScriptCompile Include="backend\torrent.ts" />
+    <TypeScriptCompile Include="backend\Torrents.ts" />
     <TypeScriptCompile Include="iso639.ts" />
     <TypeScriptCompile Include="routes\about.ts" />
     <TypeScriptCompile Include="routes\cookie.ts" />
@@ -82,6 +88,7 @@
     <Content Include="public\favicon-32x32.png" />
     <Content Include="public\favicon.ico" />
     <Content Include="package.json" />
+    <Content Include="public\images\sintel_pl.vtt" />
     <Content Include="public\images\sub.png" />
     <Content Include="public\images\torrent.svg" />
     <Content Include="public\images\tortitle.svg" />
@@ -90,6 +97,7 @@
     <Content Include="tsconfig.json">
       <SubType>Code</SubType>
     </Content>
+    <Content Include="views\watch.html" />
     <Content Include="views\about.html" />
     <Content Include="views\index.html" />
     <Content Include="views\layout.html" />
@@ -99,6 +107,8 @@
     <Content Include="bin\download.ps1" />
     <Content Include="bin\setup_web.cmd" />
     <Content Include="bin\node.cmd" />
+    <TypeScriptCompile Include="routes\watch.ts" />
+    <TypeScriptCompile Include="torrent-stream.d.ts" />
     <TypeScriptCompile Include="utils.ts" />
   </ItemGroup>
   <ItemGroup>

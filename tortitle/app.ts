@@ -29,16 +29,16 @@ app.use(bodyParser.json());
 app.use(methodOverride());
 app.use(serveFavicon(__dirname + '/public/favicon.ico'));
 app.use(serveStatic(__dirname + '/public'));
-app.set('port', (process.env.PORT || 3000));
 app.set('views', __dirname + '/views');
 app.set('view engine', 'html');
 app.engine('html', gaikan);
 
 if (process.env.NODE_ENV === 'production') {
-    //var accessLogStream = fs.createWriteStream(path.join(__dirname, 'access.log'), { flags: 'a' });
-    app.use(morgan('short'/*, { stream: accessLogStream }*/));
+    app.set('port', process.env.PORT);
+    app.use(morgan('short'));
 }
 else {
+    app.set('port', 1337);
     app.use(morgan('dev'));
 }
 

@@ -38,11 +38,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var cache_1 = require("../backend/cache");
 var languagesService_1 = require("../backend/languagesService");
 var moviesService_1 = require("../backend/moviesService");
+var magnetCrypt = require("../backend/magnetCrypt");
+var cidCookie = 'cid';
 var visitCookie = 'TortitleLastVisit';
 var languageCookie = 'TortitleLanguage';
 var pageSize = 100;
 var sortMap = function (movies) { return ({
-    0: function () { return movies.sortByDesc(function (x) { return x.hasMatch; }); },
+    0: function () { return movies.sortByDesc(function (x) { return x.torrentCount; }); },
     1: function () { return movies.sortByDesc(function (x) { return x.addedAt; }); },
     2: function () { return movies.sortBy(function (x) { return x.addedAt; }); },
     3: function () { return movies.sortByDesc(function (x) { return x.rating; }); },
@@ -51,7 +53,7 @@ var sortMap = function (movies) { return ({
     6: function () { return movies.sortByDesc(function (x) { return x.name; }); }
 }); };
 var sorts = {
-    0: "Matching first",
+    0: "Release count",
     1: "Date added &darr;",
     2: "Date added &uarr;",
     3: "Rating &darr;",
@@ -102,8 +104,14 @@ exports.index = index;
 ;
 function renderSorted(req, res, model) {
     var lastVisitTime = req.cookies[visitCookie];
+    var cid = req.cookies[cidCookie];
     var lastVisit = lastVisitTime ? new Date(Date.parse(lastVisitTime)) : new Date(0);
-    model.movies = model.movies.mapAssign(function (x) { return ({ isNew: x.addedAt > lastVisit }); });
+    model.movies = model.movies.mapAssign(function (x) { return ({
+        isNew: x.addedAt > lastVisit,
+        torrents: x.torrents.mapAssign(function (t) { return ({
+            magnetLink64: magnetCrypt.hashMagnet(cid, t.magnetLink)
+        }); })
+    }); });
     res.render('index', model);
 }
 //# sourceMappingURL=index.js.map

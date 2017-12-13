@@ -54,18 +54,32 @@
                 <h4>
                     <a href="http://imdb.com/title/tt#{msg.imdbId}" target="_blank" title="#{msg.name}">#{msg.name}</a>
                 </h4>
-                <div data-if="msg.hasMatch" data-extract>
-                    <button class="mui-btn mui-btn--primary" onclick="activateModal(this)">Show matches</button>
-                    <div class="matchesContainer mui-panel" style="display:none;">
-                        <div data-for="match in msg.match">
-                            <p><img src="/images/torrent.svg" /><a href="#{match.torrent.torrentLink}">#{match.torrent.name}</a></p>
-                            <p><img src="/images/sub.png" /><a href="#{match.subtitle.linkDownload}">#{match.subtitle.releaseName}</a></p>
-                            <hr />
-                        </div>
+                <button class="mui-btn mui-btn--primary" onclick="activateModal(this)">Show matches</button>
+                <div class="matchesContainer mui-panel" style="display:none;">
+                    <div data-for="torrent in msg.torrents">
+                        <p>
+                            #{torrent.name}
+                        </p>
+                        <p>
+                            <a href="#{torrent.torrentLink}"><img src="/images/torrent.svg" /></a>
+                            <div data-if="torrent.subtitle && torrent.subtitle.linkDownload" data-extract>
+                                <a href="#{torrent.subtitle.linkDownload}"><img src="/images/sub.png" /></a>
+                            </div>
+                            @{ var subId = torrent.subtitle ? torrent.subtitle.subId : null; }
+                            <a data-if="torrent.isStreamable && torrent.magnetLink64" href="/watch/#{torrent.magnetLink64}/#{subId}/win1250" target="_blank" title="#{torrent.name}">
+                                <div data-if="torrent.files" data-extract>
+                                    Watch
+                                </div>
+                                <div data-if="!torrent.files" data-extract>
+                                    Try watch
+                                </div>
+                            </a>
+                        </p>
+                        <hr />
                     </div>
-                    <div>
-                        <small>#{msg.addedAt.toLocaleDateString("en-US")}</small>
-                    </div>
+                </div>
+                <div>
+                    <small>#{msg.addedAt.toLocaleDateString("en-US")}</small>
                 </div>
             </div>
         </div>
@@ -73,6 +87,7 @@
     <div data-if="root.nextPage" data-extract>
         <a class="mui-btn mui-btn--primary" href="/#{root.sort}/#{root.nextPage}">Show more</a>
     </div>
+    <div id="output"> </div>
 </div>
 <script>
     function setCookie(c_name, value, exdays) {
@@ -91,10 +106,6 @@
     function activateModal(el) {
         var modalEl = el.parentElement.getElementsByClassName('matchesContainer')[0].cloneNode(true);
         modalEl.style.display = 'block';
-        modalEl.style.width = '440px';
-        modalEl.style.height = '300px';
-        modalEl.style.margin = '100px auto';
-        modalEl.style.backgroundColor = '#fff';
         mui.overlay('on', modalEl);
     }
 </script>

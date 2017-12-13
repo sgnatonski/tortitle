@@ -33,7 +33,8 @@ public static async Task Run(TimerInfo timer, CloudTable imdbTable, CloudTable t
         {
             Title = m.Text,
             Quality = ExtractQuality(m.Text),
-            TorrentPage = pb.PageBaseUrl + m.Href
+            TorrentPage = pb.PageBaseUrl + m.Href,
+            TorrentId = m.Href.Split('/').Skip(1).First()
         }).ToList();
 
     var imdbs = entries.AsParallel().Select(entry =>
@@ -49,8 +50,24 @@ public static async Task Run(TimerInfo timer, CloudTable imdbTable, CloudTable t
         {
             var imdbUri = new Uri(imdbLink.Replace("reference", "")?.Trim().TrimEnd('/') + '/');
             var imdbId = ExtractImdbId(imdbUri).ToString();
-
-            var entity = new Torrent { PartitionKey = "0", RowKey = entry.Title, TorrentLink = entry.TorrentPage, MagnetLink = magnetLink, Quality = entry.Quality, ImdbId = imdbId, AdddedAt = DateTimeOffset.UtcNow };
+            string files = null;
+            try
+            {
+                HttpClient client = new HttpClient();
+                client.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("text/html"));
+                var resp = client.GetStringAsync("https://thepiratebay.org/ajax_details_filelist.php?id=" + entry.TorrentId).Result;
+                client.Dispose();
+                var parser = new AngleSharp.Parser.Html.HtmlParser();
+                var filesDoc = parser.Parse(resp);
+                files = Newtonsoft.Json.JsonConvert.SerializeObject(filesDoc.QuerySelectorAll("tr").Where(x => x.Children.Count() == 2)
+                    .Select(x => new { File = x.Children[0].TextContent, Size = x.Children[1].TextContent }));
+            }
+            catch (Exception ex)
+            {
+                log.Info(ex.Message);
+            }
+            
+            var entity = new Torrent { PartitionKey = "0", RowKey = entry.Title, TorrentLink = entry.TorrentPage, MagnetLink = magnetLink, Files = files, Quality = entry.Quality, ImdbId = imdbId, AdddedAt = DateTimeOffset.UtcNow };
             TableOperation toperation = TableOperation.InsertOrMerge(entity);
             TableResult tresult = torrentsTable.Execute(toperation);
 
@@ -58,7 +75,7 @@ public static async Task Run(TimerInfo timer, CloudTable imdbTable, CloudTable t
             TableResult result = imdbTable.Execute(operation);
             ImdbMovie imdbMovie = (ImdbMovie)result.Result;
 
-            if (imdbMovie?.AdddedAt > DateTimeOffset.UtcNow.AddHours(-14))
+            if (imdbMovie?.AdddedAt > DateTimeOffset.UtcNow.AddHours(-16))
             {
                 var mark = new TorrentMark { PartitionKey = "0", RowKey = imdbId };
                 torrentMarksTable.Execute(TableOperation.InsertOrReplace(mark));

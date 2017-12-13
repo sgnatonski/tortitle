@@ -7,6 +7,8 @@
   "compileOnSave": true,
   "files": [
     "node_modules/typescript/lib/lib.es6.d.ts",
+    "adm-zip.d.ts",
+    "torrent-stream.d.ts",
     "app.ts"
   ]
 }
